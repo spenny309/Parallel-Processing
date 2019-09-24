@@ -68,8 +68,7 @@ int to_lower(int read_pipe, char* match_me, int return_pipe){
     exit(0);
   } else {
     close(child1_to_child2[0]);
-    char* current_word;
-    current_word = (char*)malloc(255 * sizeof(char));
+    char current_word[255];
 
     while(read(read_pipe, current_word, 255) != 0){
       int i = 0;
@@ -79,11 +78,9 @@ int to_lower(int read_pipe, char* match_me, int return_pipe){
       }
       write(child1_to_child2[1], current_word, i);
       printf("word: %s\n", current_word);
-      memset(current_word, '\0', 255 * sizeof(char));
     }
     close(read_pipe);
     close(child1_to_child2[1]);
-    free(current_word);
     exit(0);
   }
 }
