@@ -31,7 +31,7 @@ int strip_puntuation(int read_pipe, char* match_me, int return_pipe){
 
   if(pid == 0){
     close(child2_to_child3[1]);
-    compare(child2_to_child3[0], match_me);
+    compare(child2_to_child3[0], match_me, return_pipe);
     close(child2_to_child3[0]);
     exit(0);
   } else {
@@ -41,7 +41,7 @@ int strip_puntuation(int read_pipe, char* match_me, int return_pipe){
     //read from read_pipe
     //remove punct as in main
     //write to child2_to_child3
-
+    wait(NULL);
     close(child2_to_child3[1]);
     exit(0);
   }
@@ -83,6 +83,7 @@ int to_lower(int read_pipe, char* match_me, int return_pipe){
       write(child1_to_child2[1], current_word, i);
       printf("word: %s\n", current_word);
     }
+    wait(NULL);
     close(child1_to_child2[1]);
     exit(0);
   }
@@ -165,6 +166,7 @@ int main(int argc, char** argv){
         write(parent_to_child1[1], current_word, 255);
       }
       //cleanup
+      wait(NULL);
       close(parent_to_child1[1]);
       close(child3_to_parent[0]);
       fclose(fp);
