@@ -69,7 +69,6 @@ int to_lower(int read_pipe, char* match_me, int return_pipe){
   } else {
     close(child1_to_child2[0]);
     char current_word[255];
-
     while(read(read_pipe, current_word, 255) != 0){
       int i = 0;
       while(current_word[i] != '\0'){
@@ -137,9 +136,8 @@ int main(int argc, char** argv){
       //won't read from pipe
       close(parent_to_child1[0]);
       close(child3_to_parent[1]);
-      char* current_word;
+      char current_word[255];
       char curr;
-      current_word = (char*)malloc(255 * sizeof(char));
 
       while((curr = fgetc(fp)) != EOF) {
         int index = 0;
@@ -155,7 +153,6 @@ int main(int argc, char** argv){
       close(parent_to_child1[1]);
       close(child3_to_parent[0]);
       fclose(fp);
-      free(current_word);
     }
   }
 }
