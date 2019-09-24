@@ -14,7 +14,6 @@ void compare(int read_pipe, char* match_me, int return_pipe){
   char return_string[33];
 
   while(read(read_pipe, current_word, 255) != 0){
-    printf("%s\n", current_word);
     if (strcmp(current_word, match_me) == 0){
       return_count += 1;
     }
@@ -53,10 +52,6 @@ void strip_punctuation(int read_pipe, char* match_me, int return_pipe){
     close(child2_to_child3[0]);
     char current_word[255];
 
-    //read from read_pipe
-    //remove punct as in main
-    //write to child2_to_child3
-
     while(read(read_pipe, current_word, 255) != 0){
       int old_index = 0;
       int new_index = 0;
@@ -70,9 +65,8 @@ void strip_punctuation(int read_pipe, char* match_me, int return_pipe){
       current_word[new_index] = '\0';
       write(child2_to_child3[1], current_word, 255);
     }
-
-    wait(NULL);
     close(child2_to_child3[1]);
+    wait(NULL);
     exit(0);
   }
 }
@@ -112,8 +106,8 @@ void to_lower(int read_pipe, char* match_me, int return_pipe){
       }
       write(child1_to_child2[1], current_word, 255);
     }
-    wait(NULL);
     close(child1_to_child2[1]);
+    wait(NULL);
     exit(0);
   }
 }
@@ -195,6 +189,7 @@ int main(int argc, char** argv){
         write(parent_to_child1[1], current_word, 255);
       }
       //cleanup
+      close(parent_to_child1[1]);
       wait(NULL);
 
       char output_str[33];
@@ -203,7 +198,6 @@ int main(int argc, char** argv){
       output_int = atoi(output_str);
       printf("count: %d\n", output_int);
 
-      close(parent_to_child1[1]);
       close(child3_to_parent[0]);
       fclose(fp);
       exit(0);
