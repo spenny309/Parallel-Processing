@@ -7,7 +7,7 @@
 #include <sys/wait.h>
 #include <ctype.h>
 
-int compare(int read_pipe, char* match_me, int return_pipe){
+void compare(int read_pipe, char* match_me, int return_pipe){
   char current_word[255];
   int return_count = 0;
   //max int bits + null byte
@@ -26,7 +26,7 @@ int compare(int read_pipe, char* match_me, int return_pipe){
 }
 
 
-int strip_puntuation(int read_pipe, char* match_me, int return_pipe){
+void strip_puntuation(int read_pipe, char* match_me, int return_pipe){
   int child2_to_child3[2];
   if(pipe(child2_to_child3) == -1){
     perror("failed to open pipe\n");
@@ -67,7 +67,7 @@ int strip_puntuation(int read_pipe, char* match_me, int return_pipe){
         old_index++;
       }
       current_word[new_index] = '\0';
-      write(child1_to_child2[1], current_word, 255);
+      write(child2_to_child3[1], current_word, 255);
       printf("word: %s\n", current_word);
     }
 
@@ -79,7 +79,7 @@ int strip_puntuation(int read_pipe, char* match_me, int return_pipe){
 
 
 
-int to_lower(int read_pipe, char* match_me, int return_pipe){
+void to_lower(int read_pipe, char* match_me, int return_pipe){
   int child1_to_child2[2];
   if(pipe(child1_to_child2) == -1){
     perror("failed to open pipe\n");
