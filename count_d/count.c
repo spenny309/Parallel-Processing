@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <ctype.h>
-/*
+
 int compare(int read_pipe, char* match_me, int return_pipe){
   exit(0);
 }
@@ -16,55 +16,60 @@ int strip_puntuation(int read_pipe, char* match_me, int return_pipe){
   int child2_to_child3[2];
   if(pipe(child2_to_child3) == -1){
     perror("failed to open pipe\n");
+    close(read_pipe);
+    close(return_pipe);
     exit(1);
   }
 
   pid_t pid = fork();
   if(pid == -1){
     perror("failed to fork\n");
+    close(read_pipe);
+    close(return_pipe);
     exit(1);
   }
 
   if(pid == 0){
     close(child2_to_child3[1]);
-    close(read_pipe);
     compare(child2_to_child3[0], match_me);
+    close(child2_to_child3[0]);
     exit(0);
   } else {
     close(child2_to_child3[0]);
-    char* current_word
-    current_word = (char*)malloc(255 * sizeof(char));
+    char current_word[255];
 
     //read from read_pipe
     //remove punct as in main
     //write to child2_to_child3
 
-    close(read_pipe);
     close(child2_to_child3[1]);
-    free(current_word);
     exit(0);
   }
 }
-*/
+
 
 
 int to_lower(int read_pipe, char* match_me, int return_pipe){
   int child1_to_child2[2];
   if(pipe(child1_to_child2) == -1){
     perror("failed to open pipe\n");
+    close(read_pipe);
+    close(return_pipe);
     exit(1);
   }
 
   pid_t pid = fork();
   if(pid == -1){
     perror("failed to fork\n");
+    close(read_pipe);
+    close(return_pipe);
     exit(1);
   }
 
   if (pid == 0){
     close(child1_to_child2[1]);
-    close(read_pipe);
-    //strip_punctuation(child1_to_child2[0], match_me);
+    //strip_punctuation(child1_to_child2[0], match_me, return_pipe);
+    close(child1_to_child2[0]);
     exit(0);
   } else {
     close(child1_to_child2[0]);
@@ -78,7 +83,6 @@ int to_lower(int read_pipe, char* match_me, int return_pipe){
       write(child1_to_child2[1], current_word, i);
       printf("word: %s\n", current_word);
     }
-    close(read_pipe);
     close(child1_to_child2[1]);
     exit(0);
   }
@@ -103,19 +107,24 @@ int main(int argc, char** argv){
     int child3_to_parent[2];
     if(pipe(child3_to_parent) == -1){
       perror("failed to open pipe\n");
+      close(parent_to_child1[0]);
+      close(parent_to_child1[1]);
       exit(1);
     }
     pid_t pid = fork();
     if(pid == -1){
       perror("failed to fork\n");
+      close(parent_to_child1[0]);
+      close(parent_to_child1[1]);
+      close(child3_to_parent[0]);
+      close(child3_to_parent[1]);
       exit(1);
     }
-
-    int result = 0;
 
     if(pid == 0){
       //won't write to pipe
       close(parent_to_child1[1]);
+      //will never read this
       close(child3_to_parent[0]);
 
       //strip punctuation and set tolower our search term
@@ -130,11 +139,17 @@ int main(int argc, char** argv){
       search_term[new_index] = '\0';
 
       to_lower(parent_to_child1[0], search_term, child3_to_parent[1]);
+
+      close(parent_to_child1[0]);
+      close(child3_to_parent[1]);
+
       exit(0);
     } else {
       /* main process sends each word to the pipe */
+
       //won't read from pipe
       close(parent_to_child1[0]);
+      //will never write to this
       close(child3_to_parent[1]);
       char current_word[255];
       char curr;
@@ -153,6 +168,7 @@ int main(int argc, char** argv){
       close(parent_to_child1[1]);
       close(child3_to_parent[0]);
       fclose(fp);
+      exit(0);
     }
   }
 }
