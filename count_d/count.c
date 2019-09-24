@@ -8,6 +8,20 @@
 #include <ctype.h>
 
 int compare(int read_pipe, char* match_me, int return_pipe){
+  char current_word[255];
+  int return_count = 0;
+  //max int bits + null byte
+  char return_string[33];
+
+  while(read(read_pipe, current_word, 255) != 0){
+    if (strcmp(current_word, match_me) == 0){
+      return_count += 1;
+    }
+  }
+
+  sprintf(return_string, "%d", return_count);
+  write(return_pipe, return_string, 33);
+
   exit(0);
 }
 
@@ -41,6 +55,22 @@ int strip_puntuation(int read_pipe, char* match_me, int return_pipe){
     //read from read_pipe
     //remove punct as in main
     //write to child2_to_child3
+
+    while(read(read_pipe, current_word, 255) != 0){
+      int old_index = 0;
+      int new_index = 0;
+      while(current_word[old_index] != '\0'){
+        if(!ispunct(current_word[old_index])){
+          current_word[new_index] = current_word[old_index];
+          new_index++;
+        }
+        old_index++;
+      }
+      current_word[new_index] = '\0';
+      write(child1_to_child2[1], current_word, 255);
+      printf("word: %s\n", current_word);
+    }
+
     wait(NULL);
     close(child2_to_child3[1]);
     exit(0);
@@ -68,7 +98,7 @@ int to_lower(int read_pipe, char* match_me, int return_pipe){
 
   if (pid == 0){
     close(child1_to_child2[1]);
-    //strip_punctuation(child1_to_child2[0], match_me, return_pipe);
+    strip_punctuation(child1_to_child2[0], match_me, return_pipe);
     close(child1_to_child2[0]);
     exit(0);
   } else {
@@ -80,7 +110,7 @@ int to_lower(int read_pipe, char* match_me, int return_pipe){
         current_word[i] = tolower(current_word[i]);
         i++;
       }
-      write(child1_to_child2[1], current_word, i);
+      write(child1_to_child2[1], current_word, 255);
       printf("word: %s\n", current_word);
     }
     wait(NULL);
@@ -167,6 +197,13 @@ int main(int argc, char** argv){
       }
       //cleanup
       wait(NULL);
+
+      char output_str[33];
+      int output_int = 0;
+      read(child3_to_parent[0], output_str, 33);
+      output_int = atoi(output_str);
+      printf("count: %d\n", output_int);
+
       close(parent_to_child1[1]);
       close(child3_to_parent[0]);
       fclose(fp);
