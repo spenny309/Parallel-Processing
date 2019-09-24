@@ -149,7 +149,7 @@ int main(int argc, char** argv){
           index++;
         }
         current_word[index] = '\0';
-        write(parent_to_child1[1], current_word, index);
+        write(parent_to_child1[1], current_word, 255);
       }
       //cleanup
       close(parent_to_child1[1]);
