@@ -26,7 +26,7 @@ void compare(int read_pipe, char* match_me, int return_pipe){
 }
 
 
-void strip_puntuation(int read_pipe, char* match_me, int return_pipe){
+void strip_punctuation(int read_pipe, char* match_me, int return_pipe){
   int child2_to_child3[2];
   if(pipe(child2_to_child3) == -1){
     perror("failed to open pipe\n");
