@@ -7,13 +7,19 @@
 #include <sys/wait.h>
 #include <ctype.h>
 
+//assume words encountered won't exceed MAX_WORD_SIZE
+#define MAX_WORD_SIZE 255
+
+//bit size of int (32, 64) + 1 ('\0') for itoa conversion
+#define INT_STRING 33
+
 void compare(int read_pipe, char* match_me, int return_pipe){
-  char current_word[255];
+  char current_word[MAX_WORD_SIZE];
   int return_count = 0;
   //max int bits + null byte
   char return_string[33];
 
-  while(read(read_pipe, current_word, 255) != 0){
+  while(read(read_pipe, current_word, MAX_WORD_SIZE) != 0){
     if (strcmp(current_word, match_me) == 0){
       return_count += 1;
     }
@@ -50,9 +56,9 @@ void strip_punctuation(int read_pipe, char* match_me, int return_pipe){
     exit(0);
   } else {
     close(child2_to_child3[0]);
-    char current_word[255];
+    char current_word[MAX_WORD_SIZE];
 
-    while(read(read_pipe, current_word, 255) != 0){
+    while(read(read_pipe, current_word, MAX_WORD_SIZE) != 0){
       int old_index = 0;
       int new_index = 0;
       while(current_word[old_index] != '\0'){
@@ -63,7 +69,7 @@ void strip_punctuation(int read_pipe, char* match_me, int return_pipe){
         old_index++;
       }
       current_word[new_index] = '\0';
-      write(child2_to_child3[1], current_word, 255);
+      write(child2_to_child3[1], current_word, MAX_WORD_SIZE);
     }
     close(child2_to_child3[1]);
     wait(NULL);
@@ -97,14 +103,14 @@ void to_lower(int read_pipe, char* match_me, int return_pipe){
     exit(0);
   } else {
     close(child1_to_child2[0]);
-    char current_word[255];
-    while(read(read_pipe, current_word, 255) != 0){
+    char current_word[MAX_WORD_SIZE];
+    while(read(read_pipe, current_word, MAX_WORD_SIZE) != 0){
       int i = 0;
       while(current_word[i] != '\0'){
         current_word[i] = tolower(current_word[i]);
         i++;
       }
-      write(child1_to_child2[1], current_word, 255);
+      write(child1_to_child2[1], current_word, MAX_WORD_SIZE);
     }
     close(child1_to_child2[1]);
     wait(NULL);
@@ -175,7 +181,7 @@ int main(int argc, char** argv){
       close(parent_to_child1[0]);
       //will never write to this
       close(child3_to_parent[1]);
-      char current_word[255];
+      char current_word[MAX_WORD_SIZE];
       char curr;
 
       while((curr = fgetc(fp)) != EOF) {
@@ -186,7 +192,7 @@ int main(int argc, char** argv){
           index++;
         }
         current_word[index] = '\0';
-        write(parent_to_child1[1], current_word, 255);
+        write(parent_to_child1[1], current_word, MAX_WORD_SIZE);
       }
       //cleanup
       close(parent_to_child1[1]);
