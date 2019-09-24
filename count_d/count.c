@@ -11,7 +11,7 @@
 #define MAX_WORD_SIZE 255
 
 //bit size of int (32, 64) + 1 ('\0') for itoa conversion
-#define INT_STRING 33
+#define INT_STRING sizeof(int)*8
 
 void compare(int read_pipe, char* match_me, int return_pipe){
   char current_word[MAX_WORD_SIZE];
