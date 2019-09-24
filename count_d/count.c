@@ -17,7 +17,7 @@ void compare(int read_pipe, char* match_me, int return_pipe){
   char current_word[MAX_WORD_SIZE];
   int return_count = 0;
   //max int bits + null byte
-  char return_string[33];
+  char return_string[INT_STRING];
 
   while(read(read_pipe, current_word, MAX_WORD_SIZE) != 0){
     if (strcmp(current_word, match_me) == 0){
@@ -26,7 +26,7 @@ void compare(int read_pipe, char* match_me, int return_pipe){
   }
 
   sprintf(return_string, "%d", return_count);
-  write(return_pipe, return_string, 33);
+  write(return_pipe, return_string, INT_STRING);
 
   exit(0);
 }
@@ -198,9 +198,9 @@ int main(int argc, char** argv){
       close(parent_to_child1[1]);
       wait(NULL);
 
-      char output_str[33];
+      char output_str[INT_STRING];
       int output_int = 0;
-      read(child3_to_parent[0], output_str, 33);
+      read(child3_to_parent[0], output_str, INT_STRING);
       output_int = atoi(output_str);
       printf("count: %d\n", output_int);
 
