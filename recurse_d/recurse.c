@@ -7,9 +7,11 @@
 #include <sys/wait.h>
 #include <ctype.h>
 
+#define INT_STRING sizeof(int)*8
+
 void recurse(int read_from_parent, int write_to_parent){
   char n_as_str[33];
-  int n_as_num
+  int n_as_num;
   read(read_from_parent, n_as_str, 33);
   close(read_from_parent);
   n_as_num = atoi(n_as_str);
@@ -78,6 +80,10 @@ int main(int argc, char **argv){
   } else {
     char* input = argv[1];
     for (int i = 0; i < strlen(input); i++){
+      if(strlen(input) == 1 && input[0] == '0'){
+	perror("invalid input. must input positive integer n\n");
+	exit(1);
+      }
       if (input[i] > '9' || input[i] < '0'){
         perror("invalid input. must input positive integer n\n");
         exit(1);
@@ -118,14 +124,14 @@ int main(int argc, char **argv){
       write(parent_to_recurse[1], input, 33);
       close(parent_to_recurse[1]);
 
-      char* result[33];
+      char result[33];
       int sum;
 
       read(recurse_to_parent[0], result, 33);
       close(recurse_to_parent[0]);
 
       sum = atoi(result);
-      printf("sum to n: %d", sum);
+      printf("sum to n: %d\n", sum);
 
       exit(0);
     }
