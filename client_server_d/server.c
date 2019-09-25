@@ -212,7 +212,7 @@ int main(int argc, char **argv){
     char remove_fifo[strlen(server_to_client_ID) + 4];
     remove_fifo[0] = '\0';
     strcat(remove_fifo, "rm ");
-    strcat(remove_fifo, server_to_client_ID)
+    strcat(remove_fifo, server_to_client_ID);
     system(remove_fifo);
   }
   close(client_to_server);
