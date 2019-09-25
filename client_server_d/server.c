@@ -30,6 +30,7 @@ int find_word(char word_buffer[], int file, int word_in_file){
       return 1;
     }
     for (int i = 0; i < j; i++){
+      printf("tb[i]: %c  |\n", temp_buffer[i]);
       if(temp_buffer[i] == '\n'){
         words_encountered += 1;
       }
