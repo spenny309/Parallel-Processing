@@ -21,6 +21,8 @@ int find_word(char word_buffer[], int file, int word_in_file){
   char temp_buffer[MAX_RESULT_LENGTH];
   int words_encountered = 0;
 
+  printf("word_in_file num: %d\n", word_in_file);
+
   while(words_encountered < word_in_file){
     int j = read(file, temp_buffer, 1);
     if (j == 0){
