@@ -16,7 +16,6 @@ void search_in_file(FILE *fp, char* search_term, char* file_name){
     perror("failed to malloc internal buffer\n");
     exit(1);
   }
-  if (output)
   output[0] = '\0';
 
   //search file line by line, looking for strstr match
