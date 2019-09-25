@@ -66,5 +66,12 @@ int main(int argc, char **argv){
   printf("OUTPUT: %s\n", result);
 
   close(server_to_client);
+
+  char remove_fifo[strlen(server_to_client_ID) + 4];
+  remove_fifo[0] = '\0';
+  strcat(remove_fifo, "rm ");
+  strcat(remove_fifo, server_to_client_ID);
+  system(remove_fifo);
+
   exit(0);
 }

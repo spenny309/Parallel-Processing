@@ -207,14 +207,9 @@ int main(int argc, char **argv){
     write(server_to_client, result, MAX_RESULT_LENGTH);
     close(server_to_client);
 
-    sleep(5);
-
-    char remove_fifo[strlen(server_to_client_ID) + 4];
-    remove_fifo[0] = '\0';
-    strcat(remove_fifo, "rm ");
-    strcat(remove_fifo, server_to_client_ID);
-    system(remove_fifo);
+    sleep(3);
   }
+
   close(client_to_server);
 
   exit(0);
