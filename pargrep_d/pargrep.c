@@ -29,7 +29,7 @@ void search_in_file(FILE *fp, char* search_term, char* file_name, char* print_th
     }
   }
   strcat(print_this, output);
-  //printf("%s", output);
+  printf("%s", output);
   free(output);
 }
 
