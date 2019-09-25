@@ -7,7 +7,7 @@
 #include <sys/wait.h>
 #include <ctype.h>
 
-#define INT_STRING sizeof(int)*8
+#define INT_STRING (sizeof(int)*8 + 1)
 
 void recurse(int read_from_parent, int write_to_parent){
   char n_as_str[33];
