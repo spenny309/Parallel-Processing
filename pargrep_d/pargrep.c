@@ -41,7 +41,6 @@ int main(int argc, char **argv){
     case 0:
     case 1:
     printf("to use: ./pargrep term file_1 file_2 ...\n");
-    free(print_this);
     exit(1);
     default:
     //fork once per file specified in argument
@@ -64,6 +63,5 @@ int main(int argc, char **argv){
   for (int i = 2; i < argc; i++) {
     wait(NULL);
   }
-
   exit(0);
 }
