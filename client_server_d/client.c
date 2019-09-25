@@ -3,9 +3,12 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <ctype.h>
+#include <time.h>
 
 #define FILE_PRE "server_to_client_"
 #define PATH_SIZE (strlen("server_to_client_") + 1)
@@ -25,7 +28,7 @@ int main(int argc, char **argv){
     exit(1);
   }
   int client_to_server = open("client_to_server_fifo", O_WRONLY);
-  if(fd == -1){
+  if(client_to_server == -1){
     perror("could not open or create fifo\n");
     exit(1);
   }
@@ -49,7 +52,7 @@ int main(int argc, char **argv){
     exit(1);
   }
   int server_to_client = open(server_to_client_ID, O_RDONLY);
-  if(fd == -1){
+  if(server_to_client == -1){
     perror("could not open or create fifo\n");
     exit(1);
   }

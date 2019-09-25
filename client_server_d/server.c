@@ -17,13 +17,38 @@
 
 extern int errno;
 
+int find_word(char word_buffer[], int file, int word_in_file){
+  char temp_buffer[MAX_RESULT_LENGTH];
+  int words_encountered = 0;
+
+  while(words_encountered < word_in_file){
+    int j = read(file, temp_buffer, 1);
+    if (j == 0){
+      perror("reached EOF without reaching word_in_file\n");
+      return 1;
+    } else if (temp_buffer[0] == '\n'){
+      words_encountered += 1;
+    }
+  }
+
+  int final_read = read(file, temp_buffer, MAX_RESULT_LENGTH);
+  for(int i = 0; i < final_read; i++){
+    if(temp_buffer[i] == '\n'){
+      temp_buffer[i] = '\0';
+      break;
+    }
+  }
+
+  strcpy(word_buffer, temp_buffer);
+  printf("selected word: %s", word_buffer);
+  return 0;
+}
+
 int count(int file_descriptor){
   int result = 1;
   char current_chars[MAX_RESULT_LENGTH];
-
-  read(file_descriptor, current_chars, 1);
   int j;
-  
+
   while(j = read(file_descriptor, current_chars, MAX_RESULT_LENGTH)){
     for(int i = 0; i < j; i++) {
       if(current_chars[i] == '\n'){
@@ -31,7 +56,7 @@ int count(int file_descriptor){
       }
     }
   }
-  
+
   printf("word count: %d\n", result);
   return result;
 }
@@ -84,25 +109,25 @@ int open_word_files(int file_array[], int file_word_counts[]){
 
 int main(int argc, char **argv){
   int spot = 0;
-printf("%d\n", ++spot);
+  printf("%d\n", ++spot);
   if(argc != 1){
     perror("invalid input. to run: ./server");
     exit(1);
   }
-printf("%d\n", ++spot);
+  printf("%d\n", ++spot);
   int fifo_check = mkfifo("client_to_server_fifo", S_IRWXU);
   if (fifo_check == -1 && errno != EEXIST){
     perror("failed to create new fifo");
     exit(1);
   }
-printf("%d\n", ++spot);
+  printf("%d\n", ++spot);
   int client_to_server = open("client_to_server_fifo", O_RDONLY);
   if(client_to_server == -1){
     perror("could not open or create fifo\n");
     exit(1);
   }
 
-printf("%d\n", ++spot);
+  printf("%d\n", ++spot);
   int word_files[4];
   int word_counts[4];
   if (open_word_files(word_files, word_counts) != 0){
@@ -110,7 +135,7 @@ printf("%d\n", ++spot);
     exit(1);
   }
 
-printf("%d\n", ++spot);
+  printf("%d\n", ++spot);
   char result[MAX_RESULT_LENGTH];
   char child_ID_str[PID_STRLEN];
   srand(time(0));
@@ -138,15 +163,28 @@ printf("%d\n", ++spot);
       exit(1);
     }
 
-    int num = rand(); //# of words in file;
+    char output_words[4][MAX_RESULT_LENGTH];
 
-    //RNG
-    //build result
-    //write result to s_t_c fifo
+    int num_verb = rand() % word_counts[0]; //# of words in file;
+    int num_prep = rand() % word_counts[1];
+    int num_adjc = rand() % word_counts[2];
+    int num_noun = rand() % word_counts[3];
 
+    find_word(output_words[0], word_files[0], num_verb);
+    find_word(output_words[1], word_files[1], num_prep);
+    find_word(output_words[2], word_files[2], num_adjc);
+    find_word(output_words[3], word_files[3], num_noun);
 
-      }
+    strcat(result, output_words[0]);
+    strcat(result, output_words[1]);
+    strcat(result, " the ");
+    strcat(result, output_words[2]);
+    strcat(result, output_words[3]);
+
+    write(server_to_client, result, MAX_RESULT_LENGTH);
+    close(server_to_client);
+  }
   close(client_to_server);
-  //close(server_to_client);
+
   exit(0);
 }
