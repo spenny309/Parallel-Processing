@@ -208,6 +208,8 @@ int main(int argc, char **argv){
     close(server_to_client);
 
     sleep(5);
+
+    system("rm %s", server_to_client);
   }
   close(client_to_server);
 
