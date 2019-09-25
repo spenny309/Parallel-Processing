@@ -28,12 +28,13 @@ int find_word(char word_buffer[], int file, int word_in_file){
     if (j == 0){
       perror("reached EOF without reaching word_in_file\n");
       return 1;
-    } else if (temp_buffer[0] == '\n'){
-      words_encountered += 1;
-      printf("words enc: %d", words_encountered);
+    }
+    for (int i = 0; i < j; i++){
+      if(temp_buffer[i] == '\n'){
+        words_encountered += 1;
+      }
     }
   }
-
 
   int final_read = read(file, temp_buffer, MAX_RESULT_LENGTH);
   for(int i = 0; i < final_read; i++){

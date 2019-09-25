@@ -63,7 +63,7 @@ int main(int argc, char **argv){
 
   char result[MAX_RESULT_LENGTH];
   read(server_to_client, result, MAX_RESULT_LENGTH);
-  printf("%s", result);
+  printf("OUTPUT: %s\n", result);
 
   close(server_to_client);
   exit(0);
