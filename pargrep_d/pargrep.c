@@ -32,7 +32,6 @@ void search_in_file(FILE *fp, char* search_term, char* file_name){
       strcat(output, file_name);
       strcat(output, ": ");
       strcat(output, buffer);
-      strcat(output, "\n");
       /*
       printf("%s: ", file_name);
       fwrite(buffer, 1, line_length, stdout);
