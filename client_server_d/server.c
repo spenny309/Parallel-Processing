@@ -23,9 +23,9 @@ int count(int file_descriptor){
   char current_chars[MAX_RESULT_LENGTH];
 
   read(file_descriptor, current_chars, 1);
-
-  while(read(file_descriptor, current_chars, MAX_RESULT_LENGTH)){
-    for(int i = 0; i < MAX_RESULT_LENGTH; i++) {
+  int j;
+  while((j = read(file_descriptor, current_chars, MAX_RESULT_LENGTH)) != 0){
+    for(int i = 0; i < j; i++) {
       if(current_chars[i] == '\n'){
         result += 1;
       }
