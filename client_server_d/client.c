@@ -37,8 +37,6 @@ int main(int argc, char **argv){
   char file_post[PID_STRLEN];
   sprintf(file_post, "%d", this_process);
 
-  printf("client's file_p: %s\n", file_post);
-
   write(client_to_server, argv[1], MAX_RESULT_LENGTH);
   write(client_to_server, file_post, PID_STRLEN);
   close(client_to_server);
@@ -47,8 +45,6 @@ int main(int argc, char **argv){
   char server_to_client_ID[PID_STRLEN + PATH_SIZE];
   strcat(server_to_client_ID, FILE_PRE);
   strcat(server_to_client_ID, file_post);
-
-  printf("client's s_t_c: %s\n", server_to_client_ID);
 
   fifo_check = mkfifo(server_to_client_ID, S_IRWXU);
   if (fifo_check == -1 && errno != EEXIST){
@@ -63,7 +59,7 @@ int main(int argc, char **argv){
 
   char result[MAX_RESULT_LENGTH];
   read(server_to_client, result, MAX_RESULT_LENGTH);
-  printf("OUTPUT: %s\n", result);
+  printf("%s\n", result);
 
   close(server_to_client);
 

@@ -21,8 +21,6 @@ int find_word(char word_buffer[], int file, int word_in_file){
   char temp_buffer[MAX_RESULT_LENGTH];
   int words_encountered = 0;
 
-  printf("word_in_file num: %d\n", word_in_file);
-
   while(words_encountered < word_in_file){
     int j = read(file, temp_buffer, 1);
     if (j == 0){
@@ -45,7 +43,6 @@ int find_word(char word_buffer[], int file, int word_in_file){
   }
 
   strcpy(word_buffer, temp_buffer);
-  printf("selected word: %s", word_buffer);
   lseek(file, 0, SEEK_SET);
   return 0;
 }
@@ -63,7 +60,6 @@ int count(int file_descriptor){
     }
   }
   lseek(file_descriptor, 0, SEEK_SET);
-  printf("word count: %d\n", result);
   return result;
 }
 
@@ -75,7 +71,6 @@ int open_word_files(int file_array[], int file_word_counts[]){
     perror("failed to open verb.txt\n");
     return 1;
   }else{
-    printf("verb.txt ");
     file_array[0] = valid_open;
     file_word_counts[0] = count(valid_open);
   }
@@ -85,7 +80,6 @@ int open_word_files(int file_array[], int file_word_counts[]){
     perror("failed to open preposition.txt\n");
     return 1;
   }else{
-    printf("preposition.txt ");
     file_array[1] = valid_open;
     file_word_counts[1] = count(valid_open);
   }
@@ -95,7 +89,6 @@ int open_word_files(int file_array[], int file_word_counts[]){
     perror("failed to open adjective.txt\n");
     return 1;
   }else{
-    printf("adjective.txt ");
     file_array[2] = valid_open;
     file_word_counts[2] = count(valid_open);
   }
@@ -105,7 +98,6 @@ int open_word_files(int file_array[], int file_word_counts[]){
     perror("failed to open noun.txt\n");
     return 1;
   }else{
-    printf("noun.txt ");
     file_array[3] = valid_open;
     file_word_counts[3] = count(valid_open);
   }
@@ -115,25 +107,21 @@ int open_word_files(int file_array[], int file_word_counts[]){
 
 int main(int argc, char **argv){
   int spot = 0;
-  printf("%d\n", ++spot);
   if(argc != 1){
     perror("invalid input. to run: ./server");
     exit(1);
   }
-  printf("%d\n", ++spot);
   int fifo_check = mkfifo("client_to_server_fifo", S_IRWXU);
   if (fifo_check == -1 && errno != EEXIST){
     perror("failed to create new fifo");
     exit(1);
   }
-  printf("%d\n", ++spot);
   int client_to_server = open("client_to_server_fifo", O_RDONLY);
   if(client_to_server == -1){
     perror("could not open or create fifo\n");
     exit(1);
   }
 
-  printf("%d\n", ++spot);
   int word_files[4];
   int word_counts[4];
   if (open_word_files(word_files, word_counts) != 0){
@@ -141,7 +129,6 @@ int main(int argc, char **argv){
     exit(1);
   }
 
-  printf("%d\n", ++spot);
   char result[MAX_RESULT_LENGTH];
   char child_ID_str[PID_STRLEN];
   srand(time(0));
@@ -150,21 +137,14 @@ int main(int argc, char **argv){
     if (read(client_to_server, result, MAX_RESULT_LENGTH) == 0){
       break;
     } else if (read(client_to_server, child_ID_str, PID_STRLEN) == 0){
-      printf("breaking\n");
-      printf("result : %s\n", result);
-      printf("childID: %s\n", child_ID_str);
       break;
     }
-
-    printf("child_ID_str: %s\n", child_ID_str);
 
     //fifo name: server_to_client_{PROCESS_ID}
     char server_to_client_ID[PID_STRLEN + PATH_SIZE];
     server_to_client_ID[0] = '\0';
     strcat(server_to_client_ID, FILE_PRE);
     strcat(server_to_client_ID, child_ID_str);
-
-    printf("server_t_c ID: %s\n", server_to_client_ID);
 
     fifo_check = mkfifo(server_to_client_ID, S_IRWXU);
     if (fifo_check == -1 && errno != EEXIST){
@@ -183,11 +163,6 @@ int main(int argc, char **argv){
     int num_prep = rand() % word_counts[1];
     int num_adjc = rand() % word_counts[2];
     int num_noun = rand() % word_counts[3];
-
-    printf("word_files[0]:  %d\n", word_files[0]);
-    printf("word_files[1]:  %d\n", word_files[1]);
-    printf("word_files[2]:  %d\n", word_files[2]);
-    printf("word_files[3]:  %d\n", word_files[3]);
 
     find_word(output_words[0], word_files[0], num_verb);
     find_word(output_words[1], word_files[1], num_prep);
