@@ -30,8 +30,10 @@ int find_word(char word_buffer[], int file, int word_in_file){
       return 1;
     } else if (temp_buffer[0] == '\n'){
       words_encountered += 1;
+      printf("words enc: %d", words_encountered);
     }
   }
+
 
   int final_read = read(file, temp_buffer, MAX_RESULT_LENGTH);
   for(int i = 0; i < final_read; i++){
