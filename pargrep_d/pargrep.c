@@ -21,9 +21,9 @@ void search_in_file(FILE *fp, char* search_term, char* file_name){
       exit(1);
     }
     if (strstr(buffer, search_term) != NULL){
-      while(strlen(output) + line_length > buff_size){
+      while((strlen(output) + line_length) > buff_size){
         buff_size *= 2;
-        realloc(output, buff_size);
+        output = (char*)realloc(output, buff_size);
       }
 
       strcat(output, file_name);
