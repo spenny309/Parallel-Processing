@@ -184,6 +184,11 @@ int main(int argc, char **argv){
     int num_adjc = rand() % word_counts[2];
     int num_noun = rand() % word_counts[3];
 
+    printf("word_files[0]:  %d\n", word_files[0]);
+    printf("word_files[1]:  %d\n", word_files[1]);
+    printf("word_files[2]:  %d\n", word_files[2]);
+    printf("word_files[3]:  %d\n", word_files[3]);
+
     find_word(output_words[0], word_files[0], num_verb);
     find_word(output_words[1], word_files[1], num_prep);
     find_word(output_words[2], word_files[2], num_adjc);
