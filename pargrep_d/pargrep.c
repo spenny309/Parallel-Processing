@@ -8,7 +8,7 @@
 
 #define BUFFER_SIZE 16383
 
-void search_in_file(FILE *fp, char* search_term, char* file_name, char* result){
+void search_in_file(FILE *fp, char* search_term, char* file_name, char* print_this){
   int current_line = 0;
   char* output = (char*)malloc(sizeof(char) * BUFFER_SIZE);
   output[0] = '\0';
@@ -28,19 +28,19 @@ void search_in_file(FILE *fp, char* search_term, char* file_name, char* result){
       strcat(output, buffer);
     }
   }
-  strcat(result, output);
+  strcat(print_this, output);
   //printf("%s", output);
   free(output);
 }
 
 int main(int argc, char **argv){
-  char* output = (char*)malloc(sizeof(char) * BUFFER_SIZE);
-  output[0] = '\0';
+  char* print_this = (char*)malloc(sizeof(char) * BUFFER_SIZE);
+  print_this[0] = '\0';
   switch(argc) {
     case 0:
     case 1:
     printf("to use: ./pargrep term file_1 file_2 ...\n");
-    free(output);
+    free(print_this);
     exit(1);
     default:
     //fork once per file specified in argument
@@ -53,7 +53,7 @@ int main(int argc, char **argv){
           perror("cannot find/open file");
           exit(1);
         }
-        search_in_file(fp, argv[1], argv[i], output);
+        search_in_file(fp, argv[1], argv[i], print_this);
         fclose(fp);
         exit(0);
       }
@@ -63,7 +63,7 @@ int main(int argc, char **argv){
   for (int i = 2; i < argc; i++) {
     wait(NULL);
   }
-  printf("%s", output);
-  free(output);
+  printf("%s", print_this);
+  free(print_this);
   exit(0);
 }
