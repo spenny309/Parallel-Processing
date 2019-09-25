@@ -62,7 +62,7 @@ int count(int file_descriptor){
       }
     }
   }
-  lseek(file_descriptor, 0);
+  lseek(file_descriptor, 0, SEEK_DATA);
   printf("word count: %d\n", result);
   return result;
 }
