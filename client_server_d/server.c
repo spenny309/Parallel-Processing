@@ -20,19 +20,16 @@ extern int errno;
 int count(int file_descriptor){
   printf("trying to count\n");
   int result = 1;
-  char current_char[1];
+  char current_chars[MAX_RESULT_LENGTH];
 
-  read(file_descriptor, current_char, 1);
-  printf("char: %c\n", current_char[0]);
-  read(file_descriptor, current_char, 1);
-  printf("char: %c\n", current_char[0]);
-  
-  while(current_char[0] != EOF){
-    if(current_char[0] == '\n'){
-      result += 1;
+  read(file_descriptor, current_chars, 1);
+
+  while(read(file_descriptor, current_chars, MAX_RESULT_LENGTH)){
+    for(int i = 0; i < MAX_RESULT_LENGTH; i++) {
+      if(current_chars[i] == '\n'){
+        result += 1;
+      }
     }
-    read(file_descriptor, current_char, 1);
-    printf("char: %c", current_char[0]);
   }
   printf("word count:  %d\n", result);
   return result;
@@ -41,7 +38,7 @@ int count(int file_descriptor){
 int open_word_files(int file_array[], int file_word_counts[]){
   int valid_open;
   printf("begin open\n");
-  
+
   valid_open = open("verb.txt", O_RDONLY);
   printf("opened verb: %d\n", valid_open);
   if(valid_open == -1){
@@ -65,7 +62,7 @@ int open_word_files(int file_array[], int file_word_counts[]){
     file_word_counts[1] = count(valid_open);
   }
   printf("finished prep count\n\n");
-  
+
   valid_open = open("adjective.txt", O_RDONLY);
   printf("opened adj:  %d\n", valid_open);
   if(valid_open == -1){
@@ -119,7 +116,7 @@ int main(int argc, char **argv){
 
   close(client_to_server);
 
-  
+
 
   return 0;
 }
