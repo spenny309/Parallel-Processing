@@ -30,7 +30,6 @@ int find_word(char word_buffer[], int file, int word_in_file){
       return 1;
     }
     for (int i = 0; i < j; i++){
-      printf("tb[i]: %c  |\n", temp_buffer[i]);
       if(temp_buffer[i] == '\n'){
         words_encountered += 1;
       }
@@ -194,11 +193,15 @@ int main(int argc, char **argv){
     find_word(output_words[2], word_files[2], num_adjc);
     find_word(output_words[3], word_files[3], num_noun);
 
+    strcat(result, " ");
     strcat(result, output_words[0]);
+    strcat(result, " ");
     strcat(result, output_words[1]);
     strcat(result, " the ");
     strcat(result, output_words[2]);
+    strcat(result, " ");
     strcat(result, output_words[3]);
+    strcat(result, "!");
 
     write(server_to_client, result, MAX_RESULT_LENGTH);
     close(server_to_client);
