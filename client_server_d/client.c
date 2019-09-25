@@ -16,7 +16,7 @@ extern int errno;
 
 int main(int argc, char **argv){
   if(argc != 2){
-    perror("invalid input. to run: ./client {noun}");
+    perror("invalid input. to run: ./client {proper noun}");
     exit(1);
   }
   int fifo_check = mkfifo("client_to_server_fifo", S_IRWXU);
