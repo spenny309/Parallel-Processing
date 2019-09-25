@@ -144,6 +144,7 @@ int main(int argc, char **argv){
     if (read(client_to_server, result, MAX_RESULT_LENGTH) == 0){
       break;
     } else if (read(client_to_server, child_ID_str, PID_STRLEN) == 0){
+      printf("breaking\n");
       break;
     }
 
