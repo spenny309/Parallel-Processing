@@ -9,6 +9,7 @@
 void search_in_file(FILE *fp, char* search_term, char* file_name){
   int current_line = 0;
   int buff_size = 2;
+  int curr_size;
   char* output = (char*)malloc(sizeof(char) * buff_size);
   output[0] = '\0';
 //search file line by line, looking for strstr match
@@ -16,12 +17,14 @@ void search_in_file(FILE *fp, char* search_term, char* file_name){
     char* buffer = NULL;
     size_t n = 0;
     ssize_t line_length = getline(&buffer, &n, fp);
+    curr_size += line_length;
+
     if (ferror(fp)){
       perror("error reading");
       exit(1);
     }
     if (strstr(buffer, search_term) != NULL){
-      while((strlen(output) + line_length) > buff_size){
+      while(curr_size > buff_size){
         buff_size *= 2;
         output = (char*)realloc(output, buff_size);
       }
