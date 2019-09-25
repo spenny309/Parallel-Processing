@@ -207,7 +207,7 @@ int main(int argc, char **argv){
     write(server_to_client, result, MAX_RESULT_LENGTH);
     close(server_to_client);
 
-    sleep(1);
+    sleep(5);
   }
   close(client_to_server);
 
