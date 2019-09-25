@@ -46,7 +46,7 @@ int find_word(char word_buffer[], int file, int word_in_file){
 
   strcpy(word_buffer, temp_buffer);
   printf("selected word: %s", word_buffer);
-  lseek(file_descriptor, 0, SEEK_SET);
+  lseek(file, 0, SEEK_SET);
   return 0;
 }
 
