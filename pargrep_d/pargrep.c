@@ -41,8 +41,8 @@ int main(int argc, char **argv){
     exit(1);
     default:
     //fork once per file specified in argument
-    char* result = (char*)malloc(sizeof(char) * BUFFER_SIZE);
-    result[0] = '\0';
+    char* output = (char*)malloc(sizeof(char) * BUFFER_SIZE);
+    output[0] = '\0';
     for (int i = 2; i < argc; i++){
       pid_t pid = fork();
       if (pid == 0){
@@ -52,7 +52,7 @@ int main(int argc, char **argv){
           perror("cannot find/open file");
           exit(1);
         }
-        search_in_file(fp, argv[1], argv[i], result);
+        search_in_file(fp, argv[1], argv[i], output);
         fclose(fp);
         exit(0);
       }
@@ -62,7 +62,7 @@ int main(int argc, char **argv){
   for (int i = 2; i < argc; i++) {
     wait(NULL);
   }
-  printf("%s", result);
-  free(result);
+  printf("%s", output);
+  free(output);
   exit(0);
 }
