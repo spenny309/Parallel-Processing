@@ -15,6 +15,64 @@
 
 extern int errno;
 
+int count(int file_descriptor){
+  int result = 1;
+  char current_char;
+  while(read(file_descriptor, current_char, 1) != EOF){
+    if(current_char == ' ' || current_char == "\n"){
+      result += 1;
+    }
+  }
+  printf("word count:  %d\n", result);
+  return result;
+}
+
+int open_word_files(int file_array[], int file_word_counts[]){
+  int valid_open;
+
+  valid_open = open("verb.txt", O_RDONLY);
+  if(valid_open == -1){
+    perror("failed to open verb.txt\n");
+    return 1;
+  }else{
+    printf("verb.txt ");
+    file_array[0] = valid_open;
+    file_word_counts[0] = count(valid_open);
+  }
+
+  valid_open = open("preposition.txt", O_RDONLY);
+  if(valid_open == -1){
+    perror("failed to open preposition.txt\n");
+    return 1;
+  }else{
+    printf("preposition.txt ");
+    file_array[1] = valid_open;
+    file_word_counts[1] = count(valid_open);
+  }
+
+  valid_open = open("adjective.txt", O_RDONLY);
+  if(valid_open == -1){
+    perror("failed to open adjective.txt\n");
+    return 1;
+  }else{
+    printf("adjective.txt ");
+    file_array[2] = valid_open;
+    file_word_counts[2] = count(valid_open);
+  }
+
+  valid_open = open("noun.txt", O_RDONLY);
+  if(valid_open == -1){
+    perror("failed to open noun.txt\n");
+    return 1;
+  }else{
+    printf("noun.txt ");
+    file_array[3] = valid_open;
+    file_word_counts[3] = count(valid_open);
+  }
+
+  return 0;
+}
+
 int main(int argc, char **argv){
   if(argc != 1){
     perror("invalid input. to run: ./server");
@@ -31,6 +89,18 @@ int main(int argc, char **argv){
     exit(1);
   }
 
+  close(client_to_server);
+
+  int word_files[4];
+  int word_counts[4];
+  if (open_word_files(word_files, word_counts) != 0){
+    perror("could not open word files\n");
+    exit(1);
+  }
+
+  return 0;
+}
+/*
   char result[MAX_RESULT_LENGTH];
   char child_ID_str[PID_STRLEN];
   srand(time(0));
@@ -76,4 +146,4 @@ int main(int argc, char **argv){
 
   close(server_to_client);
   exit(0);
-}
+} */
