@@ -6,11 +6,17 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+//predefined max size of internal string buffer
 #define BUFFER_SIZE 16383
 
 void search_in_file(FILE *fp, char* search_term, char* file_name){
   int current_line = 0;
   char* output = (char*)malloc(sizeof(char) * BUFFER_SIZE);
+  if(!output){
+    perror("failed to malloc internal buffer\n");
+    exit(1);
+  }
+  if (output)
   output[0] = '\0';
 
   //search file line by line, looking for strstr match
