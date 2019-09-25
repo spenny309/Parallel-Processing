@@ -153,7 +153,9 @@ int main(int argc, char **argv){
     printf("child_ID_str: %s\n", child_ID_str);
 
     //fifo name: server_to_client_{PROCESS_ID}
-    char server_to_client_ID[PID_STRLEN + PATH_SIZE] = FILE_PRE;
+    char server_to_client_ID[PID_STRLEN + PATH_SIZE];
+    server_to_client_ID[0] = '\0';
+    strcat(server_to_client_ID, FILE_PRE);
     strcat(server_to_client_ID, child_ID_str);
 
     printf("server_t_c ID: %s\n", server_to_client_ID);
