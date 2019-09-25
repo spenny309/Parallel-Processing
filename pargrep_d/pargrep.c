@@ -6,44 +6,30 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#define BUFFER_SIZE 16383
+
 void search_in_file(FILE *fp, char* search_term, char* file_name){
   int current_line = 0;
-  int buff_size = 2;
-  int curr_size;
-  char* output = (char*)malloc(sizeof(char) * buff_size);
+  char* output = (char*)malloc(sizeof(char) * BUFFER_SIZE);
   output[0] = '\0';
+
   //search file line by line, looking for strstr match
   while(!feof(fp)){
     char* buffer = NULL;
     size_t n = 0;
     ssize_t line_length = getline(&buffer, &n, fp);
-    curr_size += line_length;
-
     if (ferror(fp)){
       perror("error reading");
       exit(1);
     }
     if (strstr(buffer, search_term) != NULL){
-      while(curr_size > buff_size){
-        buff_size *= 2;
-        printf("trying to realloc\n");
-        output = (char*)realloc(output, buff_size);
-      }
-
       strcat(output, file_name);
       strcat(output, ": ");
       strcat(output, buffer);
     }
-    printf("freeing buff\n");
-    /*if(buffer != NULL){
-      free(buffer);
-    }*/
   }
   printf("%s", output);
-  printf("freeing output\n");
-  if(output != NULL){
-    free(output);
-  }
+  free(output);
 }
 
 int main(int argc, char **argv){
