@@ -41,7 +41,7 @@ int main(int argc, char **argv){
 
   write(client_to_server, argv[1], strlen(argv[1]) + 1);
   write(client_to_server, file_post, strlen(file_post) + 1);
-  close(client_to_server);
+
 
   //fifo name: server_to_client_{PROCESS_ID}
   char server_to_client_ID[PID_STRLEN + PATH_SIZE];
@@ -66,5 +66,6 @@ int main(int argc, char **argv){
   printf("%s", result);
 
   close(server_to_client);
+  close(client_to_server);
   exit(0);
 }
