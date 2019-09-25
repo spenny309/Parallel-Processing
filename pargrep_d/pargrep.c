@@ -12,7 +12,7 @@ void search_in_file(FILE *fp, char* search_term, char* file_name){
   int curr_size;
   char* output = (char*)malloc(sizeof(char) * buff_size);
   output[0] = '\0';
-//search file line by line, looking for strstr match
+  //search file line by line, looking for strstr match
   while(!feof(fp)){
     char* buffer = NULL;
     size_t n = 0;
@@ -33,19 +33,17 @@ void search_in_file(FILE *fp, char* search_term, char* file_name){
       strcat(output, file_name);
       strcat(output, ": ");
       strcat(output, buffer);
-      /*
-      printf("%s: ", file_name);
-      fwrite(buffer, 1, line_length, stdout);
-      if(line_length > 0 && buffer[line_length - 1] != '\n') {
-        printf("\n");
-      }*/
     }
     printf("freeing buff\n");
-    free(buffer);
+    if(buffer != NULL){
+      free(buffer);
+    }
   }
   printf("%s", output);
   printf("freeing output\n");
-  free(output);
+  if(output != NULL){
+    free(output);
+  }
 }
 
 int main(int argc, char **argv){
