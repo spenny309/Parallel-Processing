@@ -34,15 +34,16 @@ void search_in_file(FILE *fp, char* search_term, char* file_name, char* result){
 }
 
 int main(int argc, char **argv){
+  char* output = (char*)malloc(sizeof(char) * BUFFER_SIZE);
+  output[0] = '\0';
   switch(argc) {
     case 0:
     case 1:
     printf("to use: ./pargrep term file_1 file_2 ...\n");
+    free(output);
     exit(1);
     default:
     //fork once per file specified in argument
-    char* output = (char*)malloc(sizeof(char) * BUFFER_SIZE);
-    output[0] = '\0';
     for (int i = 2; i < argc; i++){
       pid_t pid = fork();
       if (pid == 0){
