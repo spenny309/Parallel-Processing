@@ -209,7 +209,11 @@ int main(int argc, char **argv){
 
     sleep(5);
 
-    system("rm %s", server_to_client);
+    char remove_fifo[strlen(server_to_client) + 4];
+    remove_fifo[0] = '\0';
+    strcat(remove_fifo, "rm ");
+    strcat(remove_fifo, server_to_client)
+    system(remove_fifo);
   }
   close(client_to_server);
 
