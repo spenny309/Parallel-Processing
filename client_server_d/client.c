@@ -38,7 +38,7 @@ int main(int argc, char **argv){
   sprintf(file_post, "%d", this_process);
 
   write(client_to_server, argv[1], strlen(argv[1]) + 1);
-  write(client_to_server, process_as_str, strlen(process_as_str) + 1);
+  write(client_to_server, file_post, strlen(file_post) + 1);
   close(client_to_server);
 
   //fifo name: server_to_client_{PROCESS_ID}
