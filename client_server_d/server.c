@@ -18,29 +18,28 @@
 extern int errno;
 
 int count(int file_descriptor){
-  printf("trying to count\n");
   int result = 1;
   char current_chars[MAX_RESULT_LENGTH];
 
   read(file_descriptor, current_chars, 1);
   int j;
-  while((j = read(file_descriptor, current_chars, MAX_RESULT_LENGTH)) != 0){
+  
+  while(j = read(file_descriptor, current_chars, MAX_RESULT_LENGTH)){
     for(int i = 0; i < j; i++) {
       if(current_chars[i] == '\n'){
         result += 1;
       }
     }
   }
-  printf("word count:  %d\n", result);
+  
+  printf("word count: %d\n", result);
   return result;
 }
 
 int open_word_files(int file_array[], int file_word_counts[]){
   int valid_open;
-  printf("begin open\n");
 
   valid_open = open("verb.txt", O_RDONLY);
-  printf("opened verb: %d\n", valid_open);
   if(valid_open == -1){
     perror("failed to open verb.txt\n");
     return 1;
@@ -49,10 +48,8 @@ int open_word_files(int file_array[], int file_word_counts[]){
     file_array[0] = valid_open;
     file_word_counts[0] = count(valid_open);
   }
-  printf("finished verb count\n\n");
 
   valid_open = open("preposition.txt", O_RDONLY);
-  printf("opened prep: %d\n", valid_open);
   if(valid_open == -1){
     perror("failed to open preposition.txt\n");
     return 1;
@@ -61,10 +58,8 @@ int open_word_files(int file_array[], int file_word_counts[]){
     file_array[1] = valid_open;
     file_word_counts[1] = count(valid_open);
   }
-  printf("finished prep count\n\n");
 
   valid_open = open("adjective.txt", O_RDONLY);
-  printf("opened adj:  %d\n", valid_open);
   if(valid_open == -1){
     perror("failed to open adjective.txt\n");
     return 1;
@@ -73,10 +68,8 @@ int open_word_files(int file_array[], int file_word_counts[]){
     file_array[2] = valid_open;
     file_word_counts[2] = count(valid_open);
   }
-  printf("finished adj  count\n\n");
 
   valid_open = open("noun.txt", O_RDONLY);
-  printf("opened noun: %d\n", valid_open);
   if(valid_open == -1){
     perror("failed to open noun.txt\n");
     return 1;
@@ -85,13 +78,31 @@ int open_word_files(int file_array[], int file_word_counts[]){
     file_array[3] = valid_open;
     file_word_counts[3] = count(valid_open);
   }
-  printf("finished noun count\n\n");
 
   return 0;
 }
 
 int main(int argc, char **argv){
-  printf("start\n");
+  int spot = 0;
+printf("%d\n", ++spot);
+  if(argc != 1){
+    perror("invalid input. to run: ./server");
+    exit(1);
+  }
+printf("%d\n", ++spot);
+  int fifo_check = mkfifo("client_to_server_fifo", S_IRWXU);
+  if (fifo_check == -1 && errno != EEXIST){
+    perror("failed to create new fifo");
+    exit(1);
+  }
+printf("%d\n", ++spot);
+  int client_to_server = open("client_to_server_fifo", O_RDONLY);
+  if(client_to_server == -1){
+    perror("could not open or create fifo\n");
+    exit(1);
+  }
+
+printf("%d\n", ++spot);
   int word_files[4];
   int word_counts[4];
   if (open_word_files(word_files, word_counts) != 0){
@@ -99,28 +110,7 @@ int main(int argc, char **argv){
     exit(1);
   }
 
-  if(argc != 1){
-    perror("invalid input. to run: ./server");
-    exit(1);
-  }
-  int fifo_check = mkfifo("client_to_server_fifo", S_IRWXU);
-  if (fifo_check == -1 && errno != EEXIST){
-    perror("failed to create new fifo");
-    exit(1);
-  }
-  int client_to_server = open("client_to_server_fifo", O_RDONLY);
-  if(client_to_server == -1){
-    perror("could not open or create fifo\n");
-    exit(1);
-  }
-
-  close(client_to_server);
-
-
-
-  return 0;
-}
-/*
+printf("%d\n", ++spot);
   char result[MAX_RESULT_LENGTH];
   char child_ID_str[PID_STRLEN];
   srand(time(0));
@@ -143,27 +133,20 @@ int main(int argc, char **argv){
       exit(1);
     }
     int server_to_client = open(server_to_client_ID, O_WRONLY);
-    if(fd == -1){
+    if(server_to_client == -1){
       perror("could not open or create fifo\n");
       exit(1);
     }
 
-    int num = rand() % //# of words in file;
+    int num = rand(); //# of words in file;
 
     //RNG
     //build result
     //write result to s_t_c fifo
 
 
-  }
+      }
   close(client_to_server);
-
-
-
-  char result[MAX_RESULT_LENGTH];
-  read(server_to_client, result, MAX_RESULT_LENGTH);
-  printf("%s", result);
-
-  close(server_to_client);
+  //close(server_to_client);
   exit(0);
-} */
+}
