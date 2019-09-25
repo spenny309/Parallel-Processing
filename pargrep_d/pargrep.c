@@ -35,9 +35,9 @@ void search_in_file(FILE *fp, char* search_term, char* file_name){
       strcat(output, buffer);
     }
     printf("freeing buff\n");
-    if(buffer != NULL){
+    /*if(buffer != NULL){
       free(buffer);
-    }
+    }*/
   }
   printf("%s", output);
   printf("freeing output\n");
