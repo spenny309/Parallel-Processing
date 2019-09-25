@@ -26,6 +26,7 @@ void search_in_file(FILE *fp, char* search_term, char* file_name){
     if (strstr(buffer, search_term) != NULL){
       while(curr_size > buff_size){
         buff_size *= 2;
+        printf("trying to realloc\n");
         output = (char*)realloc(output, buff_size);
       }
 
@@ -39,9 +40,11 @@ void search_in_file(FILE *fp, char* search_term, char* file_name){
         printf("\n");
       }*/
     }
+    printf("freeing buff\n");
     free(buffer);
   }
   printf("%s", output);
+  printf("freeing output\n");
   free(output);
 }
 
