@@ -1,7 +1,7 @@
 /* A program to recursively sum the numbers 1...n
    ./recurse {n}
    Example command-line:
-   
+
     Input : ./recurse 10
     Output: sum to n: 55
 */
@@ -31,7 +31,7 @@ void recurse(int read_from_parent, int write_to_parent){
   if(n_as_num == 1){
     write(write_to_parent, n_as_str, INT_STRING);
     close(write_to_parent);
-    return 0;
+    return;
   } else { //otherwise recursively create child and pass {n-1}
     int this_to_child[2];
     int child_to_this[2];
@@ -60,7 +60,7 @@ void recurse(int read_from_parent, int write_to_parent){
       close(this_to_child[1]);
       close(child_to_this[0]);
       recurse(this_to_child[0], child_to_this[1]);
-      return 0;
+      return;
     } else {
       close(this_to_child[0]);
       close(child_to_this[1]);
@@ -83,7 +83,7 @@ void recurse(int read_from_parent, int write_to_parent){
       write(write_to_parent, sum_as_str, INT_STRING);
       close(write_to_parent);
 
-      return 0;
+      return;
     }
   }
 }
