@@ -26,11 +26,11 @@ OBJ = client.o server.o
 
 all: client server
 
-client: $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $(OBJ)
+client: client.c
+	gcc -o client client.c -g -Wall
 
-server: $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $(OBJ)
+server: server.c
+	gcc -o server server.c -g -Wall
 
 #-----Other stuff----------------------------
 depend:
