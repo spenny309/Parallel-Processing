@@ -78,7 +78,7 @@ int count(int file_descriptor){
   int j;
 
   //Until EOF, count number of new line chars (= word-count)
-  while(j = read(file_descriptor, current_chars, MAX_RESULT_LENGTH)){
+  while((j = read(file_descriptor, current_chars, MAX_RESULT_LENGTH))){
     for(int i = 0; i < j; i++) {
       if(current_chars[i] == '\n'){
         result += 1;
