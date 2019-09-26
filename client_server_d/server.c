@@ -220,5 +220,17 @@ int main(int argc, char **argv){
 
   close(client_to_server);
 
+  //close files
+  for(int i = 0; i < 4; i++){
+    close(word_files[i]);
+  }
+
+  //remove client to server fifo
+  char remove_fifo[strlen(client_to_server) + 4];
+  remove_fifo[0] = '\0';
+  strcat(remove_fifo, "rm ");
+  strcat(remove_fifo, client_to_server);
+  system(remove_fifo);
+
   exit(0);
 }
