@@ -10,14 +10,14 @@
 #define INT_STRING (sizeof(int)*8 + 1)
 
 void recurse(int read_from_parent, int write_to_parent){
-  char n_as_str[33];
+  char n_as_str[INT_STRING];
   int n_as_num;
-  read(read_from_parent, n_as_str, 33);
+  read(read_from_parent, n_as_str, INT_STRING);
   close(read_from_parent);
   n_as_num = atoi(n_as_str);
 
   if(n_as_num == 1){
-    write(write_to_parent, n_as_str, 33);
+    write(write_to_parent, n_as_str, INT_STRING);
     close(write_to_parent);
     exit(0);
   } else {
@@ -51,21 +51,21 @@ void recurse(int read_from_parent, int write_to_parent){
       close(this_to_child[0]);
       close(child_to_this[1]);
 
-      char decr_n[33];
+      char decr_n[INT_STRING];
       sprintf(decr_n, "%d", n_as_num-1);
 
-      write(this_to_child[1], decr_n, 33);
+      write(this_to_child[1], decr_n, INT_STRING);
       close(this_to_child[1]);
 
-      char sum_as_str[33];
+      char sum_as_str[INT_STRING];
       int sum_as_int;
 
-      read(child_to_this[0], sum_as_str, 33);
+      read(child_to_this[0], sum_as_str, INT_STRING);
       sum_as_int = atoi(sum_as_str);
       sum_as_int += n_as_num;
 
       sprintf(sum_as_str, "%d", sum_as_int);
-      write(write_to_parent, sum_as_str, 33);
+      write(write_to_parent, sum_as_str, INT_STRING);
       close(write_to_parent);
 
       exit(0);
@@ -121,13 +121,13 @@ int main(int argc, char **argv){
       close(recurse_to_parent[1]);
       close(parent_to_recurse[0]);
 
-      write(parent_to_recurse[1], input, 33);
+      write(parent_to_recurse[1], input, INT_STRING);
       close(parent_to_recurse[1]);
 
-      char result[33];
+      char result[INT_STRING];
       int sum;
 
-      read(recurse_to_parent[0], result, 33);
+      read(recurse_to_parent[0], result, INT_STRING);
       close(recurse_to_parent[0]);
 
       sum = atoi(result);
