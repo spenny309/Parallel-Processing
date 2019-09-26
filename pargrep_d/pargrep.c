@@ -1,7 +1,7 @@
 /* A program to print lines containing {search-term} in {files...}
    ./pargrep {search-term} {file_1} {file_2} ...
    Example command-line:
-   
+
     Input : ./pargrep file test1.txt
     Output:
           test1.txt: file
@@ -23,7 +23,6 @@
 #define BUFFER_SIZE 16383
 
 void search_in_file(FILE *fp, char* search_term, char* file_name){
-  int current_line = 0;
   char* output = (char*)malloc(sizeof(char) * BUFFER_SIZE);
   if(!output){
     perror("failed to malloc internal buffer\n");
@@ -35,7 +34,7 @@ void search_in_file(FILE *fp, char* search_term, char* file_name){
   while(!feof(fp)){
     char* buffer = NULL;
     size_t n = 0;
-    ssize_t line_length = getline(&buffer, &n, fp);
+    /*ssize_t line_length = */getline(&buffer, &n, fp);
     if (ferror(fp)){
       perror("error reading");
       exit(1);
