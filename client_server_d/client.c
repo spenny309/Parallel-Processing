@@ -1,3 +1,10 @@
+/* A client program which provides {Proper-noun} to a server
+   Receives a randomly generated sentence from server, of the form:
+    {Proper-noun} {verb} {preposition} the {adjective} {noun}!
+
+   ./client {Proper-noun}
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -10,14 +17,18 @@
 #include <ctype.h>
 #include <time.h>
 
+//used to build private server_to_client fifo
 #define FILE_PRE "server_to_client_"
 #define PATH_SIZE (strlen("server_to_client_") + 1)
 #define PID_STRLEN (sizeof(pid_t)*8 + 1)
+
+//assume result is shorter than 255 chars
 #define MAX_RESULT_LENGTH 255
 
 extern int errno;
 
 int main(int argc, char **argv){
+  //error checking, fifo generation, etc.
   if(argc != 2){
     perror("invalid input. to run: ./client {proper noun}");
     exit(1);
@@ -33,10 +44,12 @@ int main(int argc, char **argv){
     exit(1);
   }
 
+  //get ID, for client and server to create private return fifo
   pid_t this_process = getpid();
   char file_post[PID_STRLEN];
   sprintf(file_post, "%d", this_process);
 
+  //write {Proper-noun} and ID to server
   write(client_to_server, argv[1], MAX_RESULT_LENGTH);
   write(client_to_server, file_post, PID_STRLEN);
   close(client_to_server);
@@ -46,6 +59,7 @@ int main(int argc, char **argv){
   strcat(server_to_client_ID, FILE_PRE);
   strcat(server_to_client_ID, file_post);
 
+  //Create/open private return fifo
   fifo_check = mkfifo(server_to_client_ID, S_IRWXU);
   if (fifo_check == -1 && errno != EEXIST){
     perror("failed to create new fifo");
@@ -57,12 +71,14 @@ int main(int argc, char **argv){
     exit(1);
   }
 
+  //read and print result from server
   char result[MAX_RESULT_LENGTH];
   read(server_to_client, result, MAX_RESULT_LENGTH);
   printf("%s\n", result);
 
   close(server_to_client);
 
+  //remove private fifo from system before exiting
   char remove_fifo[strlen(server_to_client_ID) + 4];
   remove_fifo[0] = '\0';
   strcat(remove_fifo, "rm ");

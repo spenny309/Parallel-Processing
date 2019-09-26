@@ -1,3 +1,15 @@
+/* A server program which waits for {Proper-noun} from a client
+   Returns a randomly generated sentence to client, of the form:
+    {Proper-noun} {verb} {preposition} the {adjective} {noun}!
+
+   ./server
+*/
+
+/* Server will close 3 seconds after its first communication with client
+   if no other clients contact within that time. Can change delay by updating
+   IDLE_TIME.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -10,17 +22,25 @@
 #include <ctype.h>
 #include <time.h>
 
+//used to build private server_to_client fifo
 #define FILE_PRE "server_to_client_"
 #define PATH_SIZE (strlen("server_to_client_") + 1)
 #define PID_STRLEN (sizeof(pid_t)*8 + 1)
+
+//assume result is shorter than 255 chars
 #define MAX_RESULT_LENGTH 255
+
+//amount of time server will wait after most recent client contact to shut-down
+#define IDLE_TIME 3
 
 extern int errno;
 
+//write word_in_fileth word from file to word_buffer
 int find_word(char word_buffer[], int file, int word_in_file){
   char temp_buffer[MAX_RESULT_LENGTH];
   int words_encountered = 0;
 
+  //iterate through and ignore the first {word_in_file - 1} words
   while(words_encountered < word_in_file){
     int j = read(file, temp_buffer, 1);
     if (j == 0){
@@ -34,6 +54,7 @@ int find_word(char word_buffer[], int file, int word_in_file){
     }
   }
 
+  //store the word_in_fileth word char-by-char
   int final_read = read(file, temp_buffer, MAX_RESULT_LENGTH);
   for(int i = 0; i < final_read; i++){
     if(temp_buffer[i] == '\n'){
@@ -42,16 +63,19 @@ int find_word(char word_buffer[], int file, int word_in_file){
     }
   }
 
+  //copy word to buffer and reset file pointer
   strcpy(word_buffer, temp_buffer);
   lseek(file, 0, SEEK_SET);
   return 0;
 }
 
+//Counts number of words in file
 int count(int file_descriptor){
   int result = 1;
   char current_chars[MAX_RESULT_LENGTH];
   int j;
 
+  //Until EOF, count number of new line chars (= word-count)
   while(j = read(file_descriptor, current_chars, MAX_RESULT_LENGTH)){
     for(int i = 0; i < j; i++) {
       if(current_chars[i] == '\n'){
@@ -59,10 +83,12 @@ int count(int file_descriptor){
       }
     }
   }
+  //reset pointer to start of file
   lseek(file_descriptor, 0, SEEK_SET);
   return result;
 }
 
+//open files and set word counts
 int open_word_files(int file_array[], int file_word_counts[]){
   int valid_open;
 
@@ -106,7 +132,7 @@ int open_word_files(int file_array[], int file_word_counts[]){
 }
 
 int main(int argc, char **argv){
-  int spot = 0;
+  //error checking, fifo generation, etc.
   if(argc != 1){
     perror("invalid input. to run: ./server");
     exit(1);
@@ -122,6 +148,7 @@ int main(int argc, char **argv){
     exit(1);
   }
 
+  //open 4 word files (e.g. noun.txt), and count the number of words in each
   int word_files[4];
   int word_counts[4];
   if (open_word_files(word_files, word_counts) != 0){
@@ -129,14 +156,16 @@ int main(int argc, char **argv){
     exit(1);
   }
 
+  //fill output into result, collect client_ID to create private return fifo
   char result[MAX_RESULT_LENGTH];
-  char child_ID_str[PID_STRLEN];
-  srand(time(0));
+  char client_ID_str[PID_STRLEN];
 
+  srand(time(0));
   while(1){
+    //continue to operate until no clients are contacting server
     if (read(client_to_server, result, MAX_RESULT_LENGTH) == 0){
       break;
-    } else if (read(client_to_server, child_ID_str, PID_STRLEN) == 0){
+    } else if (read(client_to_server, client_ID_str, PID_STRLEN) == 0){
       break;
     }
 
@@ -144,8 +173,9 @@ int main(int argc, char **argv){
     char server_to_client_ID[PID_STRLEN + PATH_SIZE];
     server_to_client_ID[0] = '\0';
     strcat(server_to_client_ID, FILE_PRE);
-    strcat(server_to_client_ID, child_ID_str);
+    strcat(server_to_client_ID, client_ID_str);
 
+    //generate fifo named above
     fifo_check = mkfifo(server_to_client_ID, S_IRWXU);
     if (fifo_check == -1 && errno != EEXIST){
       perror("failed to create new fifo");
@@ -157,18 +187,19 @@ int main(int argc, char **argv){
       exit(1);
     }
 
+    //fill output_words with random verb, preposition, adjective, noun
     char output_words[4][MAX_RESULT_LENGTH];
 
     int num_verb = rand() % word_counts[0]; //# of words in file;
     int num_prep = rand() % word_counts[1];
     int num_adjc = rand() % word_counts[2];
     int num_noun = rand() % word_counts[3];
-
     find_word(output_words[0], word_files[0], num_verb);
     find_word(output_words[1], word_files[1], num_prep);
     find_word(output_words[2], word_files[2], num_adjc);
     find_word(output_words[3], word_files[3], num_noun);
 
+    //Generate result sentence
     strcat(result, " ");
     strcat(result, output_words[0]);
     strcat(result, " ");
@@ -179,10 +210,12 @@ int main(int argc, char **argv){
     strcat(result, output_words[3]);
     strcat(result, "!");
 
+    //Write result to client
     write(server_to_client, result, MAX_RESULT_LENGTH);
     close(server_to_client);
 
-    sleep(3);
+    //Wait IDLE_TIME
+    sleep(IDLE_TIME);
   }
 
   close(client_to_server);

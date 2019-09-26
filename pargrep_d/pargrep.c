@@ -1,3 +1,16 @@
+/* A program to print lines containing {search-term} in {files...}
+   ./pargrep {search-term} {file_1} {file_2} ...
+   Example command-line:
+   
+    Input : ./pargrep file test1.txt
+    Output:
+          test1.txt: file
+          test1.txt: wait just kidding im adding morefilestuff here
+          test1.txt: a long line with the word file in it
+          test1.txt: end of file
+          test1.txt: wow so many files!
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
