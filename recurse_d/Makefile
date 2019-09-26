@@ -20,16 +20,13 @@ CFLAGS = -g -Wall $(INCLUDES)
 
 #-----File Dependencies----------------------
 
-SRC = client.c server.c
+SRC = recurse.c
 
-OBJ = client.o server.o
+OBJ = recurse.o
 
-all: client server
+all: recurse
 
-client: $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $(OBJ)
-
-server: $(OBJ)
+recurse: $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $(OBJ)
 
 #-----Other stuff----------------------------
@@ -37,5 +34,4 @@ depend:
 	makedepend $(CFLAGS) -Y $(SRC)
 
 clean:
-	rm -f $(OBJ) client
-	rm -f $(OBJ) server
+	rm -f $(OBJ) recurse

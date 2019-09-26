@@ -34,7 +34,7 @@ void search_in_file(FILE *fp, char* search_term, char* file_name){
   while(!feof(fp)){
     char* buffer = NULL;
     size_t n = 0;
-    /*ssize_t line_length = */getline(&buffer, &n, fp);
+    getline(&buffer, &n, fp);
     if (ferror(fp)){
       perror("error reading");
       exit(1);

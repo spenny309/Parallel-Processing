@@ -20,16 +20,13 @@ CFLAGS = -g -Wall $(INCLUDES)
 
 #-----File Dependencies----------------------
 
-SRC = client.c server.c
+SRC = count.c
 
-OBJ = client.o server.o
+OBJ = count.o
 
-all: client server
+all: count
 
-client: $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $(OBJ)
-
-server: $(OBJ)
+count: $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $(OBJ)
 
 #-----Other stuff----------------------------
@@ -37,5 +34,4 @@ depend:
 	makedepend $(CFLAGS) -Y $(SRC)
 
 clean:
-	rm -f $(OBJ) client
-	rm -f $(OBJ) server
+	rm -f $(OBJ) count
