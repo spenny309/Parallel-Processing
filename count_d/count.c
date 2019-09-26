@@ -1,7 +1,7 @@
 /* A program to count exact occurences of {search-term} in {file}
    ./count {search-term} {file}
    Example command-line:
-   
+
     Input : ./count file test1.txt
     Output: count: 3
 */
@@ -38,7 +38,7 @@ void compare(int read_pipe, char* match_me, int return_pipe){
   sprintf(return_string, "%d", return_count);
   write(return_pipe, return_string, INT_STRING);
 
-  return 0;
+  return;
 }
 
 
@@ -63,7 +63,7 @@ void strip_punctuation(int read_pipe, char* match_me, int return_pipe){
     close(child2_to_child3[1]);
     compare(child2_to_child3[0], match_me, return_pipe);
     close(child2_to_child3[0]);
-    exit(0);
+    return;
   } else { //parent strips punctuation and writes to child
     close(child2_to_child3[0]);
     char current_word[MAX_WORD_SIZE];
@@ -86,7 +86,7 @@ void strip_punctuation(int read_pipe, char* match_me, int return_pipe){
     }
     close(child2_to_child3[1]);
     wait(NULL);
-    return 0;
+    return;
   }
 }
 
@@ -131,7 +131,7 @@ void to_lower(int read_pipe, char* match_me, int return_pipe){
     }
     close(child1_to_child2[1]);
     wait(NULL);
-    return 0;
+    return;
   }
 }
 
