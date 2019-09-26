@@ -3,7 +3,7 @@
    Example command-line:
 
     Input : ./recurse 10
-    Output: sum to n: 55
+    Output: The sum of 1 to 10 is 55
 */
 
 #include <stdio.h>
@@ -152,7 +152,7 @@ int main(int argc, char **argv){
       close(recurse_to_parent[0]);
 
       sum = atoi(result);
-      printf("sum to n: %d\n", sum);
+      printf("The sum of 1 to %s is %d\n", input, sum);
 
       exit(0);
     }
