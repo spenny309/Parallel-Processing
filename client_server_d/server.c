@@ -27,6 +27,8 @@
 #define PATH_SIZE (strlen("server_to_client_") + 1)
 #define PID_STRLEN (sizeof(pid_t)*8 + 1)
 
+#define CLIENT_SERVER_FIFO "client_to_server_fifo"
+
 //assume result is shorter than 255 chars
 #define MAX_RESULT_LENGTH 255
 
@@ -137,12 +139,12 @@ int main(int argc, char **argv){
     perror("invalid input. to run: ./server");
     exit(1);
   }
-  int fifo_check = mkfifo("client_to_server_fifo", S_IRWXU);
+  int fifo_check = mkfifo(CLIENT_SERVER_FIFO, S_IRWXU);
   if (fifo_check == -1 && errno != EEXIST){
     perror("failed to create new fifo");
     exit(1);
   }
-  int client_to_server = open("client_to_server_fifo", O_RDONLY);
+  int client_to_server = open(CLIENT_SERVER_FIFO, O_RDONLY);
   if(client_to_server == -1){
     perror("could not open or create fifo\n");
     exit(1);
@@ -229,7 +231,7 @@ int main(int argc, char **argv){
   char remove_fifo[strlen(client_to_server) + 4];
   remove_fifo[0] = '\0';
   strcat(remove_fifo, "rm ");
-  strcat(remove_fifo, client_to_server);
+  strcat(remove_fifo, CLIENT_SERVER_FIFO);
   system(remove_fifo);
 
   exit(0);
