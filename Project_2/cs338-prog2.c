@@ -66,6 +66,8 @@
 	#define RUNS_PROCS		0
 #endif
 
+#define BLUR_PCT .05
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -134,22 +136,66 @@ void destroy_frame(frame_ptr kill_me);
  * new code should be located here (or in another file, if it's large).
  */
 
+// TODO: Create a version in column-major order
+// TODO: Take an input parameter, sect
+	// Use parameter: 0-sect, sect+1-2sect, 2sect+1-3sect, etc.
+	// Use parameter: {0, sect, 2sect}, {1, sect+1, 2sect+1}, etc.
 void CS338_function()
 {
-	/* Dumb loop just copies input to output, unmodified */
 	/* Add your image modification & analysis code here! */
 	int i, j, k;
+	int neighbor_radius_rows, neighbor_radius_cols;
+	int neighbors_x, neighbors_y;
+	int neighbor_count;
 	frame_ptr from, to;
-	
+
 	from = input_frames[0];
 	to = output_frames[0] = allocate_frame(from->image_height,
 		from->image_width, from->num_components);
-	for (i=0; i < from->image_height; i++)
-		for (j=0; j < from->image_width; j++)
-			for (k=0; k < from->num_components; k++)
-				to->row_pointers[i][(from->num_components)*j+k] =
-					from->row_pointers[i][(from->num_components)*j+k];
-	
+
+	//The pixels from image[neighbor_radius_rows][neighbor_radius_cols]
+	//to image[image_height - neighbor_radius_rows - 1][image_width - neighbor_radius_cols - 1]
+	//are those with the maximum number of neighbors.
+  neighbor_radius_rows = from->image_height * BLUR_PCT;
+	neighbor_radius_cols = from->image_width * BLUR_PCT;
+	int RGB_values[from->num_components];
+
+	//for all height and width...
+	for(i=0; i < from->image_height; i++){
+		for(j=0; j < from->image_width; j++){
+			neighbor_count = 0;
+			//...find valid neighbors...
+			for(neighbors_y = (i - neighbor_radius_rows); neighbors_y < (i + neighbor_radius_rows); neighbors_y++){
+				for(neighbors_x = (i - neighbor_radius_cols); neighbors_x < (j + neighbor_radius_cols); neighbors_x++){
+					//...that are in bounds...
+					if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
+						//...count neighbors and gather values
+						neighbor_count += 1;
+						for(k=0; k < from->num_components; k++){
+							// TODO: Update formula?
+							RGB_values[k] += from->row_pointers[i][(from->num_components) * j + k];
+						}
+					}
+				}
+			}
+			for(k=0; k < from->num_components; k++){
+				//normalize values
+				RGB_values[k] /= neighbor_count;
+				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
+			}
+		}
+	}
+
+	// //for the first rows*BLUE_PCT rows, calculate.
+	// for(i = 0; i < neighbor_radius_rows; i++){
+	// 	for(j = 0; j < image_width; j++){
+	// 		for(k = 0; k < from->num_components; k++){
+	// 			//for each neighbor, sum value and count neighbors
+	// 			//formula sum with count
+	// 		}
+	// 	}
+	// }
+
 	/* Note that you could also have done it this way . . . */
 	/* output_frames[0] = input_frames[0]; */
 }
@@ -196,7 +242,7 @@ void write_JPEG_file (char * filename, frame_ptr p_info, int quality)
   else {
     fprintf(stderr, "ERROR: Non-standard colorspace for compressing!\n");
     exit(1);
-  } 
+  }
   /* Fill in the defaults for everything else, then override quality */
   jpeg_set_defaults(&cinfo);
   jpeg_set_quality(&cinfo, quality, TRUE /* limit to baseline-JPEG values */);
@@ -239,7 +285,7 @@ frame_ptr read_JPEG_file (char * filename)
   JSAMPLE *realBuffer;
   JSAMPLE **buffer;		/* Output row buffer */
   int row_stride;		/* physical row width in output buffer */
-  
+
   /* Step 1: allocate and initialize JPEG decompression object */
   cinfo.err = jpeg_std_error(&jerr);
   jpeg_create_decompress(&cinfo);
@@ -258,7 +304,7 @@ frame_ptr read_JPEG_file (char * filename)
 
   /* Step 5: Start decompressor */
   (void) jpeg_start_decompress(&cinfo);
-  
+
   /* Step X: Create a frame struct & buffers and fill in the blanks */
   fprintf(stderr, "  Opened %s: height = %d, width = %d, c = %d\n",
       filename, cinfo.output_height, cinfo.output_width, cinfo.output_components);
@@ -299,7 +345,7 @@ frame_ptr allocate_frame(int height, int width, int num_components)
 
   /* JSAMPLEs per row in output buffer */
   row_stride = width * num_components;
-  
+
   /* Basic struct and information */
   if ((p_info = malloc(sizeof(frame_struct_t))) == NULL) {
     fprintf(stderr, "ERROR: Memory allocation failure\n");
@@ -320,7 +366,7 @@ frame_ptr allocate_frame(int height, int width, int num_components)
   }
   for (i=0; i < height; i++)
   	p_info->row_pointers[i] = & (p_info->image_buffer[i * row_stride]);
-  
+
   /* And send it back! */
   return p_info;
 }
@@ -340,19 +386,19 @@ double get_correction(int initial)
 	static double cpu_time;
 	double real_time, correction;
 	volatile int i, sum;
-	
+
 	/* Record start times */
 	start_clock = clock();
 	gettimeofday(&start_time, NULL);
-	
+
 	/* Delay awhile while holding the CPU */
 	for (i=0; i < TEST_DELAY; i++)
 		sum += 1;
-	
+
 	/* Get end times */
 	end_clock = clock();
 	gettimeofday(&end_time, NULL);
-	
+
 	/* Calculate the correction factor */
 	if (initial)	/* Assume that CPU time doesn't change for later calls */
 		cpu_time = ((double) (end_clock-start_clock)) / CLOCKS_PER_SEC;
@@ -380,7 +426,7 @@ int main(int argc, char *argv[])
 	double run_time, total_time; /* Amount of time we've run */
 	double correction, new_correction; /* CPU-vs.-real time correction */
 	struct timeval start_time, end_time;	/* Time before/after user code */
-	
+
 	/* Step 0A: Check & process command line */
 	if (NUM_INPUTS > 0)
 	{
@@ -401,7 +447,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	num_inputs = argc - 1 - NUM_OUTPUTS - RUNS_COMMAND - RUNS_PROCS;
-	
+
 	#ifdef USE_NUM_RUNS
 		num_runs = atoi(argv[1]);
 		if (num_runs < 1) num_runs = 1;
@@ -414,11 +460,11 @@ int main(int argc, char *argv[])
 		if (num_procs > 16) num_procs = 16;
 		fprintf(stderr, "Using %d processors . . .\n", num_procs);
 	#endif
-	
+
 	/* Step 1: Get some JPEGs into memory, uncompressed */
 	for (i=0; i < num_inputs; i++)
 		input_frames[i] = read_JPEG_file(argv[i+1+RUNS_COMMAND+RUNS_PROCS]);
-		
+
 	/* Loop over multiple runs, if desired */
 	total_time = 0.0;
 	correction = get_correction(1);	/* Extra one at start to warm up */
@@ -431,16 +477,16 @@ int main(int argc, char *argv[])
 		/* Step 2: Record elapsed time */
 		start_clock = clock();
 		gettimeofday(&start_time, NULL);
-		
+
 		/* Step 3: Call a user function! */
 		CS338_function();
-		
+
 		/* Step 4: Check & print elapsed time */
 		gettimeofday(&end_time, NULL);
 		end_clock = clock();
 		run_time = ((double)(end_time.tv_sec) + (double)(end_time.tv_usec)/1000000.0)
 			- ((double)(start_time.tv_sec) + (double)(start_time.tv_usec)/1000000.0);
-			
+
 		/* Measure correction factor (parallel threads must be blocked) */
 		new_correction = get_correction(0);
 		if ((new_correction > (1.0-TOLERANCE)*correction) &&
@@ -468,7 +514,7 @@ int main(int argc, char *argv[])
 			((double) (end_clock-start_clock)) / CLOCKS_PER_SEC);
 		correction = new_correction;
 	}
-	
+
 	/* Print out final, average time, if desired */
 	#ifdef USE_NUM_RUNS
 		#ifdef NO_FIRST
@@ -479,7 +525,7 @@ int main(int argc, char *argv[])
 				total_time / ((double)run));
 		#endif
 	#endif
-	
+
 	/* Step 5: Write JPEGs out from memory buffers */
 	for (i=0; i < NUM_OUTPUTS; i++)
 		write_JPEG_file(argv[argc - NUM_OUTPUTS + i], output_frames[i], OUT_QUALITY);
