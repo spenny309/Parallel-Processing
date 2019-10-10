@@ -198,7 +198,7 @@ printf("perimeter 1\n");
 			i = 1 + (from->image_height) - radius;
 		}
 		for(j=0; j < from->image_width; j++){
-			prtinf("new j\n");
+			printf("new j\n");
 			perimeter_pixel_weight = 0;
 			//neighbor_count = 0;
 			//...find valid neighbors...
