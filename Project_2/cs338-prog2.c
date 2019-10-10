@@ -185,7 +185,7 @@ void CS338_function()
 		}
 		printf("\n");
 	}
-/*
+
 //Calculate the perimeters first.
 	for(i=0; i < from->image_height; i++){
 		printf("new i\n");
@@ -248,7 +248,7 @@ printf("perimeter 2\n");
 			}
 		}
 	}
-*/
+
 	//for all height and width from radius...
 	for(i=radius; i <= from->image_height - radius; i++){
 		for(j=radius; j <= from->image_width - radius; j++){
