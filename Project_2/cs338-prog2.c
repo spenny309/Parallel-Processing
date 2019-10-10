@@ -115,7 +115,7 @@ frame_ptr input_frames[MAX_INPUTS];	/* Pointers to input frames */
 frame_ptr output_frames[NUM_OUTPUTS];	/* Pointers to output frames */
 int num_procs;		/* Number of processors, for parallel use */
 int radius;
-int *pixel_distance_matrix;
+int **pixel_distance_matrix;
 int radius_weight_sum;
 
 /* Function prototypes */
@@ -149,7 +149,7 @@ void CS338_function()
 	int i, j, k;
 	int neighbors_x, neighbors_y;
 	int neighbor_count;
-	int RGB_values[from->num_components];
+
 	frame_ptr from, to;
 
 	from = input_frames[0];
@@ -163,6 +163,8 @@ void CS338_function()
 	//to image[image_height - neighbor_radius_rows - 1][image_width - neighbor_radius_cols - 1]
 	//are those with the maximum number of neighbors.
 
+	int RGB_values[from->num_components];
+
 	if(from->image_height > from ->image_width){
 		radius = from->image_height * BLUR_PCT;
 	} else {
@@ -175,8 +177,8 @@ void CS338_function()
 	for (i = 0; i < radius; i++){
 		pixel_distance_matrix[i] = (int *)malloc(sizeof(int) * radius);
 		for (j = 0; j < radius; j++){
-			pixel_distance_matrix[i][j] = (r - i) * (r - j);
-			radius_weight_sum += (r - i) * (r - j);
+			pixel_distance_matrix[i][j] = (radius - i) * (radius - j);
+			radius_weight_sum += (radius - i) * (radius - j);
 		}
 	}
 
