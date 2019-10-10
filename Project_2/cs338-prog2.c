@@ -202,8 +202,8 @@ printf("perimeter 1\n");
 			perimeter_pixel_weight = 0;
 			//neighbor_count = 0;
 			//...find valid neighbors...
-			for(neighbors_y = (i - radius); neighbors_y <= (i + radius); neighbors_y++){
-				for(neighbors_x = (i - radius); neighbors_x <= (j + radius); neighbors_x++){
+			for(neighbors_y = (i - radius); neighbors_y < (i + radius); neighbors_y++){
+				for(neighbors_x = (i - radius); neighbors_x < (j + radius); neighbors_x++){
 					printf("finding neighbor\n");
 					//...that are in bounds...
 					if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
