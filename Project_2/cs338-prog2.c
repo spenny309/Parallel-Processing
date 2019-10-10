@@ -175,7 +175,7 @@ void CS338_function()
 	printf("building matrix\n");
 	pixel_distance_matrix = malloc(sizeof(int) * radius);
 	for (i = 0; i < radius; i++){
-		pixel_distance_matrix[i] = (int *)malloc(sizeof(int) * radius);
+		pixel_distance_matrix[i] = malloc(sizeof(int) * radius);
 		for (j = 0; j < radius; j++){
 			pixel_distance_matrix[i][j] = (radius - i) * (radius - j);
 			radius_weight_sum += (radius - i) * (radius - j);
