@@ -280,6 +280,7 @@ printf("inside pixels\n");
 			for(k=0; k < from->num_components; k++){
 				//normalize values
 				RGB_values[k] /= radius_weight_sum;
+				printf("pixel %d value: %d", k, RGB_values[k]);
 				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
 			}
 		}
