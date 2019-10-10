@@ -145,6 +145,7 @@ void destroy_frame(frame_ptr kill_me);
 	// Use parameter: {0, sect, 2sect}, {1, sect+1, 2sect+1}, etc.
 void CS338_function()
 {
+	printf("entering function\n");
 	int i, j, k;
 	int neighbors_x, neighbors_y;
 	//int neighbor_count;
@@ -162,6 +163,7 @@ void CS338_function()
 	//are those with the maximum number of neighbors.
 	int RGB_values[from->num_components];
 
+	printf("finding radii\n");
 	if(from->image_height > from ->image_width){
 		radius = from->image_height * BLUR_PCT;
 	} else {
@@ -170,6 +172,7 @@ void CS338_function()
 
 	//array to store distance-from-pixel values
 	//from (0,0) to (radius, radius)
+	printf("building matrix\n");
 	*pixel_distance_matrix = (int *)malloc(sizeof(int) * radius);
 	for (i = 0; i < radius; i++){
 		pixel_distance_matrix[i] = (int *)malloc(sizeof(int) * radius);
@@ -179,6 +182,7 @@ void CS338_function()
 		}
 	}
 
+printf("perimeter 1\n");
 //Calculate the perimeters first.
 	for(i=0; i < from->image_height; i++){
 		if(i == radius){
@@ -210,6 +214,7 @@ void CS338_function()
 		}
 	}
 
+printf("perimeter 2\n");
 	for(i=radius; i <= from->image_height - radius; i++){
 		for(j=0; j < from->image_width; j++){
 			if(j == radius){
@@ -240,6 +245,7 @@ void CS338_function()
 		}
 	}
 
+printf("inside pixels\n");
 	//for all height and width from radius...
 	for(i=radius; i <= from->image_height - radius; i++){
 		for(j=radius; j <= from->image_width - radius; j++){
