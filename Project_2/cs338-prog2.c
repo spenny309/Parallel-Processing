@@ -269,6 +269,11 @@ printf("inside pixels\n");
 	for(i=radius; i <= from->image_height - radius; i++){
 		for(j=radius; j <= from->image_width - radius; j++){
 			//...find neighbors...
+
+			for(k = 0; k < from->num_components; k++){
+				RGB_values[k] = 0;
+			}
+
 			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
 				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius); neighbors_x++){
 						for(k=0; k < from->num_components; k++){
@@ -280,12 +285,12 @@ printf("inside pixels\n");
 			for(k=0; k < from->num_components; k++){
 				//normalize values
 				RGB_values[k] /= radius_weight_sum;
-				printf("pixel %d value: %d\n", k, RGB_values[k]);
+				printf("pixel %d value: %l\n", k, RGB_values[k]);
 				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
 			}
 		}
 	}
-	printf("radius_weight_sum: %d\n", radius_weight_sum);
+	printf("radius_weight_sum: %l\n", radius_weight_sum);
 
 	// //for all height and width from radius...
 	// for(i=radius; i < from->image_height - radius; i++){
