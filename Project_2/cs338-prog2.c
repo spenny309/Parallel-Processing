@@ -187,39 +187,39 @@ void CS338_function()
 	}
 
 //Calculate the perimeters first.
-	for(i=0; i < from->image_height; i++){
-		printf("new i\n");
-		if(i == radius){
-			printf("update radius\n");
-			i = 1 + (from->image_height) - radius;
+for(i=0; i < from->image_height; i++){
+	printf("new i\n");
+	if(i == radius){
+		printf("update radius\n");
+		i = 1 + (from->image_height) - radius;
+	}
+	for(j=0; j < from->image_width; j++){
+		for(k = 0; k < from->num_components; k++){
+			RGB_values[k] = 0;
 		}
-		for(j=0; j < from->image_width; j++){
-			for(k = 0; k < from->num_components; k++){
-				RGB_values[k] = 0;
-			}
-			perimeter_pixel_weight = 0;
-			//neighbor_count = 0;
-			//...find valid neighbors...
-			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
-				for(neighbors_x = (1 + i - radius); neighbors_x < (j + radius); neighbors_x++){
-					//...that are in bounds...
-					if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
-						perimeter_pixel_weight += pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-						for(k=0; k < from->num_components; k++){
-							RGB_values[k] += from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k] * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-						}
+		perimeter_pixel_weight = 0;
+		//neighbor_count = 0;
+		//...find valid neighbors...
+		for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
+			for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius); neighbors_x++){
+				//...that are in bounds...
+				if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
+					perimeter_pixel_weight += pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
+					for(k=0; k < from->num_components; k++){
+						RGB_values[k] += from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k] * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
 					}
 				}
 			}
-			for(k=0; k < from->num_components; k++){
-				//normalize values
-				if(perimeter_pixel_weight > 0){
-					RGB_values[k] /= (perimeter_pixel_weight);
-				}
-				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
+		}
+		for(k=0; k < from->num_components; k++){
+			//normalize values
+			if(perimeter_pixel_weight > 0){
+				RGB_values[k] /= (perimeter_pixel_weight);
 			}
+			to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
 		}
 	}
+}
 
 printf("perimeter 2\n");
 	for(i=radius; i <= from->image_height - radius; i++){
@@ -234,7 +234,7 @@ printf("perimeter 2\n");
 			//neighbor_count = 0;
 			//...find valid neighbors...
 			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
-				for(neighbors_x = (1 + i - radius); neighbors_x < (j + radius); neighbors_x++){
+				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius); neighbors_x++){
 					//...that are in bounds...
 					if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
 						//...count neighbors and gather values
