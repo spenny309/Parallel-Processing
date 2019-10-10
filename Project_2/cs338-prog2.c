@@ -173,7 +173,7 @@ void CS338_function()
 	//array to store distance-from-pixel values
 	//from (0,0) to (radius, radius)
 	printf("building matrix\n");
-	*pixel_distance_matrix = (int *)malloc(sizeof(int) * radius);
+	pixel_distance_matrix = malloc(sizeof(int) * radius);
 	for (i = 0; i < radius; i++){
 		pixel_distance_matrix[i] = (int *)malloc(sizeof(int) * radius);
 		for (j = 0; j < radius; j++){
