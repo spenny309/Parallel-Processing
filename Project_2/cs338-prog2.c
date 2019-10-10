@@ -229,7 +229,7 @@ printf("perimeter 2\n");
 			printf("break2\n");
 			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
 				printf("break3\n");
-				for(neighbors_x = (1 + i - radius); neighbors_x < (j + radius); neighbors_x++){4
+				for(neighbors_x = (1 + i - radius); neighbors_x < (j + radius); neighbors_x++){
 					printf("break4\n");
 					//...that are in bounds...
 					if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
