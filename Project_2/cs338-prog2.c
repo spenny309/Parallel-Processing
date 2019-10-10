@@ -161,7 +161,7 @@ void CS338_function()
 	//The pixels from image[radius][radius]
 	//to image[image_height - radius - 1][image_width - radius - 1]
 	//are those with the maximum number of neighbors.
-	int RGB_values[from->num_components];
+	long RGB_values[from->num_components];
 
 	printf("finding radii\n");
 	if(from->image_height > from ->image_width){
