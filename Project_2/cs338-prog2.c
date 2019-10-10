@@ -178,7 +178,7 @@ void CS338_function()
 		pixel_distance_matrix[i] = malloc(sizeof(int) * radius);
 		for (j = 0; j < radius; j++){
 			pixel_distance_matrix[i][j] = (radius - i) * (radius - j);
-			radius_weight_sum += (radius - i) * (radius - j);
+			radius_weight_sum += 4 * ((radius - i) * (radius - j));
 		}
 	}
 
