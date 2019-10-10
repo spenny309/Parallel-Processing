@@ -182,6 +182,13 @@ void CS338_function()
 		}
 	}
 
+	for(i = 0; i < radius; i++){
+		for(j = 0; j < radius; j++){
+			printf("%d ", pixel_distance_matrix[i][j]);
+		}
+		printf("\n");
+	}
+
 printf("perimeter 1\n");
 //Calculate the perimeters first.
 	for(i=0; i < from->image_height; i++){
