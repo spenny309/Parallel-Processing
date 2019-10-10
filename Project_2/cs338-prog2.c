@@ -182,10 +182,9 @@ void CS338_function()
 	radius_weight_sum *= radius_weight_sum;
 
 //Calculate the perimeters first.
+//Top and bottom perimeters
 for(i=0; i < from->image_height; i++){
-	printf("new i\n");
 	if(i == radius){
-		printf("update radius\n");
 		i = 1 + (from->image_height) - radius;
 	}
 	for(j=0; j < from->image_width; j++){
@@ -216,7 +215,7 @@ for(i=0; i < from->image_height; i++){
 	}
 }
 
-printf("perimeter 2\n");
+//left and right perimeter of image
 	for(i=radius; i <= from->image_height - radius; i++){
 		for(j=0; j < from->image_width; j++){
 			if(j == radius){
