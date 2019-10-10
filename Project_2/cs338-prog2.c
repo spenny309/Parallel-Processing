@@ -181,6 +181,7 @@ void CS338_function()
 	radius_weight_sum = radius*radius;
 	radius_weight_sum *= radius_weight_sum;
 
+/*
 //Calculate the perimeters first.
 //Top and bottom perimeters
 for(i=0; i < from->image_height; i++){
@@ -250,7 +251,7 @@ for(i=0; i < from->image_height; i++){
 			}
 		}
 	}
-
+*/
 	//for all height and width from radius...
 	for(i=radius; i <= from->image_height - radius; i++){
 		for(j=radius; j <= from->image_width - radius; j++){
