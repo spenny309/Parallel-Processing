@@ -175,16 +175,11 @@ void CS338_function()
 		pixel_distance_matrix[i] = malloc(sizeof(int) * radius);
 		for (j = 0; j < radius; j++){
 			pixel_distance_matrix[i][j] = (radius - i) * (radius - j);
-			radius_weight_sum += 4 * ((radius - i) * (radius - j));
 		}
 	}
 
-	for(i = 0; i < radius; i++){
-		for(j = 0; j < radius; j++){
-			printf("%d ", pixel_distance_matrix[i][j]);
-		}
-		printf("\n");
-	}
+	radius_weight_sum = radius*radius;
+	radius_weight_sum *= radius_weight_sum;
 
 //Calculate the perimeters first.
 for(i=0; i < from->image_height; i++){
@@ -214,7 +209,7 @@ for(i=0; i < from->image_height; i++){
 		for(k=0; k < from->num_components; k++){
 			//normalize values
 			if(perimeter_pixel_weight > 0){
-				RGB_values[k] /= (4*perimeter_pixel_weight);
+				RGB_values[k] /= (perimeter_pixel_weight);
 			}
 			to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
 		}
@@ -250,7 +245,7 @@ printf("perimeter 2\n");
 			for(k=0; k < from->num_components; k++){
 				//normalize values
 				if(perimeter_pixel_weight > 0){
-					RGB_values[k] /= (4*perimeter_pixel_weight);
+					RGB_values[k] /= (perimeter_pixel_weight);
 				}
 				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
 			}
