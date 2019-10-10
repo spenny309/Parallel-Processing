@@ -214,10 +214,10 @@ printf("perimeter 1\n");
 							printf("working with components\n");
 							// TODO: Update formula?
 							printf("matrix lookup values:\n");
-							printf("i:  %d", i);
-							printf("y:  %d", neighbors_y);
-							printf("j:  %d", j);
-							printf("x:  %d", neighbors_x);
+							printf("i:  %d\n", i);
+							printf("y:  %d\n", neighbors_y);
+							printf("j:  %d\n", j);
+							printf("x:  %d\n", neighbors_x);
 							RGB_values[k] += from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k] * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
 							perimeter_pixel_weight += pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
 						}
