@@ -157,8 +157,8 @@ void CS338_function()
 
 	// TODO: Create threads
 
-	//The pixels from image[neighbor_radius_rows][neighbor_radius_cols]
-	//to image[image_height - neighbor_radius_rows - 1][image_width - neighbor_radius_cols - 1]
+	//The pixels from image[radius][radius]
+	//to image[image_height - radius - 1][image_width - radius - 1]
 	//are those with the maximum number of neighbors.
 	int RGB_values[from->num_components];
 
@@ -169,8 +169,8 @@ void CS338_function()
 	}
 
 	//array to store distance-from-pixel values
-	//from (0,0) to (neighbor_radius_rows, neighbor_radius_cols)
-	pixel_distance_matrix = (int *)malloc(sizeof(int) * radius);
+	//from (0,0) to (radius, radius)
+	*pixel_distance_matrix = (int *)malloc(sizeof(int) * radius);
 	for (i = 0; i < radius; i++){
 		pixel_distance_matrix[i] = (int *)malloc(sizeof(int) * radius);
 		for (j = 0; j < radius; j++){
@@ -188,8 +188,8 @@ void CS338_function()
 			perimeter_pixel_weight = 0;
 			//neighbor_count = 0;
 			//...find valid neighbors...
-			for(neighbors_y = (i - neighbor_radius_rows); neighbors_y <= (i + neighbor_radius_rows); neighbors_y++){
-				for(neighbors_x = (i - neighbor_radius_cols); neighbors_x <= (j + neighbor_radius_cols); neighbors_x++){
+			for(neighbors_y = (i - radius); neighbors_y <= (i + radius); neighbors_y++){
+				for(neighbors_x = (i - radius); neighbors_x <= (j + radius); neighbors_x++){
 					//...that are in bounds...
 					if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
 						//...count neighbors and gather values
@@ -218,8 +218,8 @@ void CS338_function()
 			perimeter_pixel_weight = 0;
 			//neighbor_count = 0;
 			//...find valid neighbors...
-			for(neighbors_y = (i - neighbor_radius_rows); neighbors_y <= (i + neighbor_radius_rows); neighbors_y++){
-				for(neighbors_x = (i - neighbor_radius_cols); neighbors_x <= (j + neighbor_radius_cols); neighbors_x++){
+			for(neighbors_y = (i - radius); neighbors_y <= (i + radius); neighbors_y++){
+				for(neighbors_x = (i - radius); neighbors_x <= (j + radius); neighbors_x++){
 					//...that are in bounds...
 					if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
 						//...count neighbors and gather values
@@ -265,8 +265,8 @@ void CS338_function()
 	// 	for(j=radius; j < from->image_width - radius; j++){
 	// 		neighbor_count = 0;
 	// 		//...find valid neighbors...
-	// 		for(neighbors_y = (i - neighbor_radius_rows); neighbors_y <= (i + neighbor_radius_rows); neighbors_y++){
-	// 			for(neighbors_x = (i - neighbor_radius_cols); neighbors_x <= (j + neighbor_radius_cols); neighbors_x++){
+	// 		for(neighbors_y = (i - radius); neighbors_y <= (i + radius); neighbors_y++){
+	// 			for(neighbors_x = (i - radius); neighbors_x <= (j + radius); neighbors_x++){
 	// 				//...that are in bounds...
 	// 				if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
 	// 					//...count neighbors and gather values
@@ -287,7 +287,7 @@ void CS338_function()
 	// }
 
 	// //for the first rows*BLUE_PCT rows, calculate.
-	// for(i = 0; i < neighbor_radius_rows; i++){
+	// for(i = 0; i < radius; i++){
 	// 	for(j = 0; j < image_width; j++){
 	// 		for(k = 0; k < from->num_components; k++){
 	// 			//for each neighbor, sum value and count neighbors
