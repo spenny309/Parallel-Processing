@@ -267,7 +267,7 @@ printf("perimeter 2\n");
 			}
 			for(k=0; k < from->num_components; k++){
 				//normalize values
-				RGB_values[k] /= perimeter_pixel_weight;
+				RGB_values[k] /= radius_weight_sum;
 				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
 			}
 		}
