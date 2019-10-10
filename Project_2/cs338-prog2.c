@@ -114,6 +114,9 @@ typedef frame_struct_t *frame_ptr;
 frame_ptr input_frames[MAX_INPUTS];	/* Pointers to input frames */
 frame_ptr output_frames[NUM_OUTPUTS];	/* Pointers to output frames */
 int num_procs;		/* Number of processors, for parallel use */
+int radius;
+int *pixel_distance_matrix;
+int radius_weight_sum;
 
 /* Function prototypes */
 
@@ -144,47 +147,84 @@ void CS338_function()
 {
 	/* Add your image modification & analysis code here! */
 	int i, j, k;
-	int neighbor_radius_rows, neighbor_radius_cols;
 	int neighbors_x, neighbors_y;
 	int neighbor_count;
+	int RGB_values[from->num_components];
 	frame_ptr from, to;
 
 	from = input_frames[0];
 	to = output_frames[0] = allocate_frame(from->image_height,
 		from->image_width, from->num_components);
 
+		// TODO: Create threads
+		// TODO: Create matrix of r*c neighbor weights
+
 	//The pixels from image[neighbor_radius_rows][neighbor_radius_cols]
 	//to image[image_height - neighbor_radius_rows - 1][image_width - neighbor_radius_cols - 1]
 	//are those with the maximum number of neighbors.
-  neighbor_radius_rows = from->image_height * BLUR_PCT;
-	neighbor_radius_cols = from->image_width * BLUR_PCT;
-	int RGB_values[from->num_components];
 
-	//for all height and width...
-	for(i=0; i < from->image_height; i++){
-		for(j=0; j < from->image_width; j++){
-			neighbor_count = 0;
-			//...find valid neighbors...
-			for(neighbors_y = (i - neighbor_radius_rows); neighbors_y < (i + neighbor_radius_rows); neighbors_y++){
-				for(neighbors_x = (i - neighbor_radius_cols); neighbors_x < (j + neighbor_radius_cols); neighbors_x++){
-					//...that are in bounds...
-					if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
-						//...count neighbors and gather values
-						neighbor_count += 1;
+	if(from->image_height > from ->image_width){
+		radius = from->image_height * BLUR_PCT;
+	} else {
+		radius = from->image_width * BLUR_PCT;
+	}
+
+	//array to store distance-from-pixel values
+	//from (0,0) to (neighbor_radius_rows, neighbor_radius_cols)
+	pixel_distance_matrix = (int *)malloc(sizeof(int) * radius);
+	for (i = 0; i < radius; i++){
+		pixel_distance_matrix[i] = (int *)malloc(sizeof(int) * radius);
+		for (j = 0; j < radius; j++){
+			pixel_distance_matrix[i][j] = (r - i) * (r - j);
+			radius_weight_sum += (r - i) * (r - j);
+		}
+	}
+
+	//for all height and width from radius...
+	for(i=radius; i < from->image_height - radius; i++){
+		for(j=radius; j < from->image_width - radius; j++){
+			//...find neighbors...
+			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
+				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius); neighbors_x++){
 						for(k=0; k < from->num_components; k++){
-							// TODO: Update formula?
-							RGB_values[k] += from->row_pointers[i][(from->num_components) * j + k];
+							//Sum value * weight
+							RGB_values[k] += (from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k]) * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
 						}
-					}
 				}
 			}
 			for(k=0; k < from->num_components; k++){
 				//normalize values
-				RGB_values[k] /= neighbor_count;
+				RGB_values[k] /= radius_weight_sum;
 				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
 			}
 		}
 	}
+
+	// //for all height and width from radius...
+	// for(i=radius; i < from->image_height - radius; i++){
+	// 	for(j=radius; j < from->image_width - radius; j++){
+	// 		neighbor_count = 0;
+	// 		//...find valid neighbors...
+	// 		for(neighbors_y = (i - neighbor_radius_rows); neighbors_y <= (i + neighbor_radius_rows); neighbors_y++){
+	// 			for(neighbors_x = (i - neighbor_radius_cols); neighbors_x <= (j + neighbor_radius_cols); neighbors_x++){
+	// 				//...that are in bounds...
+	// 				if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
+	// 					//...count neighbors and gather values
+	// 					neighbor_count += 1;
+	// 					for(k=0; k < from->num_components; k++){
+	// 						// TODO: Update formula?
+	// 						RGB_values[k] += from->row_pointers[i][(from->num_components) * j + k];
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 		for(k=0; k < from->num_components; k++){
+	// 			//normalize values
+	// 			RGB_values[k] /= neighbor_count;
+	// 			to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
+	// 		}
+	// 	}
+	// }
 
 	// //for the first rows*BLUE_PCT rows, calculate.
 	// for(i = 0; i < neighbor_radius_rows; i++){
