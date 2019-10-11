@@ -162,7 +162,7 @@ void *CS338_row_seq(void *proc_num){
 	long thread_num = (long)proc_num;
 
 	//for all height and width from radius...
-	for(i = radius + (thread_num * row_chunk_size); i < radius + ((thread_num+1) * row_chunk_size); i++){
+	for(i = radius + (thread_num * row_chunk_size); i <= radius + ((thread_num+1) * row_chunk_size); i++){
 		for(j=radius; j <= from->image_width - radius; j++){
 			//...find neighbors...
 			for(k = 0; k < from->num_components; k++){
