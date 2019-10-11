@@ -319,8 +319,8 @@ void CS338_function()
 		}
 	}
 
-	row_chunk_size = (from->image_height - 2*radius)/num_procs;
-	col_chunk_size = (from->image_width - 2*radius)/num_procs;
+	row_chunk_size = 1+(from->image_height - 2*radius)/num_procs;
+	col_chunk_size = 1+(from->image_width - 2*radius)/num_procs;
 
 	long RGB_values[from->num_components];
 	//Calculate the perimeters first.
