@@ -396,28 +396,28 @@ void CS338_function()
 	pthread_t thread_IDs[num_procs];
 
 	#if defined(ROW_OR_COL) && defined(SEQ_OR_INT)
-	printf("callinng row_seq\n");
+	printf("calling row_seq\n");
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_row_seq, (void*)thread);
 	}
 	#endif
 
 	#if !defined(ROW_OR_COL) && defined(SEQ_OR_INT)
-	printf("callinng col_seq\n");
+	printf("calling col_seq\n");
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_col_seq, (void*)thread);
 	}
 	#endif
 
 	#if defined(ROW_OR_COL) && !defined(SEQ_OR_INT)
-	printf("callinng row_int\n");
+	printf("calling row_int\n");
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_row_int, (void*)thread);
 	}
 	#endif
 
 	#if !defined(ROW_OR_COL) && !defined(SEQ_OR_INT)
-	printf("callinng col_int\n");
+	printf("calling col_int\n");
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_col_int, (void*)thread);
 	}
