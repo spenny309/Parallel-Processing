@@ -54,7 +54,7 @@
 
 #define ROW_OR_COL 1 //1 = ROW, 0 = COL
 #define SEQ_OR_INT 1 //1 = sequential, 0 = interleaved
-#define USE_NUM_PROCS
+#define USE_NUM_PROCS 1
 
 /************************* END OF PARAMETERS *******************/
 
