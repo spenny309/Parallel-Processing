@@ -266,7 +266,7 @@ void *CS338_col_int(void *proc_num){
 
 	//for all height and width from radius...
 	for(j = radius + thread_num; j <= from->image_width - radius; j + num_procs){
-		printf("new j\n");
+		printf("new j: %d\n", j);
 		for(i=radius; i <= from->image_height - radius; i++){
 			//...find neighbors...
 			for(k = 0; k < from->num_components; k++){
