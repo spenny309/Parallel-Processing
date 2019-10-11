@@ -121,7 +121,7 @@ int num_procs;		/* Number of processors, for parallel use */
 int radius;
 int **pixel_distance_matrix;
 int row_chunk_size;
-int col_chunk_size
+int col_chunk_size;
 long radius_weight_sum;
 
 /* Function prototypes */
