@@ -76,6 +76,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
+#include <pthread.h>
 #include "jpeglib.h"
 
 /*
@@ -285,6 +286,7 @@ void *CS338_col_int(void *proc_num){
 				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
 			}
 		}
+	}
 }
 
 void CS338_function()
