@@ -158,7 +158,7 @@ void *CS338_row_seq(void *proc_num){
 	from = input_frames[0];
 	to = output_frames[0];
 	long RGB_values[from->num_components];
-	int thread_num = (int)proc_num;
+	long thread_num = (long)proc_num;
 
 	//for all height and width from radius...
 	for(i = radius + (thread_num * row_chunk_size); i < radius + ((thread_num+1) * row_chunk_size); i++){
@@ -193,7 +193,7 @@ void *CS338_col_seq(void *proc_num){
 	from = input_frames[0];
 	to = output_frames[0];
 	long RGB_values[from->num_components];
-	int thread_num = (int)proc_num;
+	long thread_num = (long)proc_num;
 
 	//for all height and width from radius...
 	for(j = radius + (thread_num * col_chunk_size); j < radius + ((thread_num+1) * col_chunk_size); j++){
@@ -227,7 +227,7 @@ void *CS338_row_int(void *proc_num){
 	from = input_frames[0];
 	to = output_frames[0];
 	long RGB_values[from->num_components];
-	int thread_num = (int)proc_num;
+	long thread_num = (long)proc_num;
 
 	//for all height and width from radius...
 	for(i = radius + thread_num; i <= from->image_height - radius; i + num_procs){
@@ -261,7 +261,7 @@ void *CS338_col_int(void *proc_num){
 	from = input_frames[0];
 	to = output_frames[0];
 	long RGB_values[from->num_components];
-	int thread_num = (int)proc_num;
+	long thread_num = (long)proc_num;
 
 	//for all height and width from radius...
 	for(j = radius + thread_num; j <= from->image_width - radius; j + num_procs){
