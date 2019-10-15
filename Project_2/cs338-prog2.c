@@ -197,6 +197,8 @@ void *CS338_row_seq(void *proc_num){
 		}
 	}
 
+	printf("finished top and bottom border for processor: %d", thread_num);
+
 	//left and right perimeter of image
 	for(i = radius + (thread_num * row_chunk_size); i < radius + ((thread_num+1) * row_chunk_size); i++){
 		for(j=0; j < from->image_width; j++){
