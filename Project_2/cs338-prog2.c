@@ -169,7 +169,7 @@ void *CS338_row_seq(void *proc_num){
 		if(i == radius){
 			i = 1 + (from->image_height) - radius;
 		}
-		for(j = thread_num * border_col_chunk_size; j <= (thread_num+1) * border_col_chunk_size; j++){
+		for(j = thread_num * border_col_chunk_size; j < (thread_num+1) * border_col_chunk_size; j++){
 			for(k = 0; k < from->num_components; k++){
 				RGB_values[k] = 0;
 			}
@@ -198,7 +198,7 @@ void *CS338_row_seq(void *proc_num){
 	}
 
 	//left and right perimeter of image
-	for(i = radius + (thread_num * row_chunk_size); i <= radius + ((thread_num+1) * row_chunk_size); i++){
+	for(i = radius + (thread_num * row_chunk_size); i < radius + ((thread_num+1) * row_chunk_size); i++){
 		for(j=0; j < from->image_width; j++){
 			if(j == radius){
 				j = 1 + from->image_width - radius;
