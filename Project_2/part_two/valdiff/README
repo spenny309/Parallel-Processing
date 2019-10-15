@@ -1,0 +1,19 @@
+valdiff
+Written by Kelly Shaw
+4/12/04
+
+Usage:
+	perl valdiff.pl --file1=<hist1> --file2=<hist2> [--output=<out>
+		--start-index=<num> --end-index=<num> ]
+
+Input:
+	--file1, --file2: Files with histograms to compare
+	--start-index, --end-index: You can specify which specific part of 
+		the histogram you'd like to see where R values go from
+		0-255, G from 256-511, etc.
+
+Output:
+	stdout: Total error and percent error values
+	out: (default is valdiff.output)
+             Contains text output of differences
+
