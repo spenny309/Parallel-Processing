@@ -164,6 +164,7 @@ void *CS338_row_seq(void *proc_num){
 	//for all height and width from radius...
 	for(i = radius + (thread_num * row_chunk_size); i < radius + ((thread_num+1) * row_chunk_size); i++){
 		for(j=radius; j <= from->image_width - radius; j++){
+			printf("valid i: %d\ncurr i : %d\ncalid j: %d\n curr j: %d", from->image_height, i, from->image_width, j);
 			//...find neighbors...
 			for(k = 0; k < from->num_components; k++){
 				RGB_values[k] = 0;
