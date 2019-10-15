@@ -52,8 +52,6 @@
  */
 #define OUT_QUALITY		75
 
-#define ROW_OR_COL 1 //defined = ROW, undef = COL
-#define SEQ_OR_INT 1 //defined = chunk, undef = interleaved
 #define USE_NUM_PROCS 1
 
 /************************* END OF PARAMETERS *******************/
@@ -119,11 +117,10 @@ typedef frame_struct_t *frame_ptr;
 frame_ptr input_frames[MAX_INPUTS];	/* Pointers to input frames */
 frame_ptr output_frames[NUM_OUTPUTS];	/* Pointers to output frames */
 int num_procs;		/* Number of processors, for parallel use */
-int radius;
-int **pixel_distance_matrix;
-int row_chunk_size;
-int col_chunk_size;
-long radius_weight_sum;
+int rHist[256];
+int gHist[256];
+int bHist[256];
+int sHist[768];
 
 /* Function prototypes */
 
@@ -154,420 +151,43 @@ void destroy_frame(frame_ptr kill_me);
 //row-major order
 void *CS338_row_seq(void *proc_num){
 	int i, j, k;
-	int neighbors_x, neighbors_y;
-	frame_ptr from, to;
+	frame_ptr from;
 	from = input_frames[0];
-	to = output_frames[0];
-	long RGB_values[from->num_components];
 	long thread_num = (long)proc_num;
+	int r, g, b;
 
 	//for all height and width from radius...
-	for(i = radius + (thread_num * row_chunk_size); i < radius + ((thread_num+1) * row_chunk_size); i++){
-		for(j=radius; j <= from->image_width - radius; j++){
-			//...find neighbors...
-			for(k = 0; k < from->num_components; k++){
-				RGB_values[k] = 0;
-			}
-
-			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius - 1); neighbors_y++){
-				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius - 1); neighbors_x++){
-					for(k=0; k < from->num_components; k++){
-						//Sum value * weight
-						RGB_values[k] += (from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k]) * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-					}
-				}
-			}
-			for(k=0; k < from->num_components; k++){
-				//normalize values
-				RGB_values[k] /= radius_weight_sum;
-				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
-			}
+	for(i = 0; i < from->image_height; i++){
+		for(j = 0; j < from->image_width; j++){
+			r = from->row_pointers[i][j*3];
+			g = from->row_pointers[i][1 + j*3];
+			b = from->row_pointers[i][2 + j*3];
+			rHist[r]++;
+			gHist[g]++;
+			bHist[b]++;
+			sHist[r+g+b]++;
 		}
 	}
 }
 
-//column-major order
-void *CS338_col_seq(void *proc_num){
-	int i, j, k;
-	int neighbors_x, neighbors_y;
-	frame_ptr from, to;
-	from = input_frames[0];
-	to = output_frames[0];
-	long RGB_values[from->num_components];
-	long thread_num = (long)proc_num;
-
-	//for all height and width from radius...
-	for(j = radius + (thread_num * col_chunk_size); j < radius + ((thread_num+1) * col_chunk_size); j++){
-		for(i=radius; i <= from->image_height - radius; i++){
-			//...find neighbors...
-			for(k = 0; k < from->num_components; k++){
-				RGB_values[k] = 0;
-			}
-
-			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius - 1); neighbors_y++){
-				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius - 1); neighbors_x++){
-					for(k=0; k < from->num_components; k++){
-						//Sum value * weight
-						RGB_values[k] += (from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k]) * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-					}
-				}
-			}
-			for(k=0; k < from->num_components; k++){
-				//normalize values
-				RGB_values[k] /= radius_weight_sum;
-				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
-			}
-		}
-	}
-}
-
-void *CS338_row_int(void *proc_num){
-	int i, j, k;
-	int neighbors_x, neighbors_y;
-	frame_ptr from, to;
-	from = input_frames[0];
-	to = output_frames[0];
-	long RGB_values[from->num_components];
-	long thread_num = (long)proc_num;
-
-	//for all height and width from radius...
-	for(i = radius + thread_num; i <= from->image_height - radius; i += num_procs){
-		for(j=radius; j <= from->image_width - radius; j++){
-			//...find neighbors...
-			for(k = 0; k < from->num_components; k++){
-				RGB_values[k] = 0;
-			}
-
-			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
-				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius); neighbors_x++){
-					for(k=0; k < from->num_components; k++){
-						//Sum value * weight
-						RGB_values[k] += (from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k]) * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-					}
-				}
-			}
-			for(k=0; k < from->num_components; k++){
-				//normalize values
-				RGB_values[k] /= radius_weight_sum;
-				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
-			}
-		}
-	}
-}
-
-void *CS338_col_int(void *proc_num){
-	int i, j, k;
-	int neighbors_x, neighbors_y;
-	frame_ptr from, to;
-	from = input_frames[0];
-	to = output_frames[0];
-	long RGB_values[from->num_components];
-	long thread_num = (long)proc_num;
-
-	//for all height and width from radius...
-	for(j = radius + thread_num; j <= from->image_width - radius; j += num_procs){
-		for(i=radius; i <= from->image_height - radius; i++){
-			//...find neighbors...
-			for(k = 0; k < from->num_components; k++){
-				RGB_values[k] = 0;
-			}
-
-			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
-				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius); neighbors_x++){
-					for(k=0; k < from->num_components; k++){
-						//Sum value * weight
-						RGB_values[k] += (from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k]) * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-					}
-				}
-			}
-			for(k=0; k < from->num_components; k++){
-				//normalize values
-				RGB_values[k] /= radius_weight_sum;
-				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
-			}
-		}
-	}
-}
-
-void CS338_function()
-{
-	int i, j, k;
-	int neighbors_x, neighbors_y;
-	int perimeter_pixel_weight;
-	frame_ptr from, to;
-
-	from = input_frames[0];
-	to = output_frames[0] = allocate_frame(from->image_height, from->image_width, from->num_components);
-
-	if(from->image_height > from ->image_width){
-		radius = from->image_height * BLUR_PCT;
-	} else {
-		radius = from->image_width * BLUR_PCT;
-	}
-
-	radius_weight_sum = radius*radius;
-	radius_weight_sum *= radius_weight_sum;
-
-	//array to store distance-from-pixel values
-	//from (0,0) to (radius, radius)
-	pixel_distance_matrix = malloc(sizeof(int*) * radius);
-	for (i = 0; i < radius; i++){
-		pixel_distance_matrix[i] = malloc(sizeof(int) * radius);
-		for (j = 0; j < radius; j++){
-			pixel_distance_matrix[i][j] = (radius - i) * (radius - j);
-		}
-	}
-
-	row_chunk_size = 1+(from->image_height - 2*radius)/num_procs;
-	col_chunk_size = 1+(from->image_width - 2*radius)/num_procs;
-
-	long RGB_values[from->num_components];
-	//Calculate the perimeters first.
-	//Top and bottom perimeters
-	for(i=0; i < from->image_height; i++){
-		if(i == radius){
-			i = 1 + (from->image_height) - radius;
-		}
-		for(j=0; j < from->image_width; j++){
-			for(k = 0; k < from->num_components; k++){
-				RGB_values[k] = 0;
-			}
-			perimeter_pixel_weight = 0;
-			//neighbor_count = 0;
-			//...find valid neighbors...
-			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
-				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius); neighbors_x++){
-					//...that are in bounds...
-					if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
-						perimeter_pixel_weight += pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-						for(k=0; k < from->num_components; k++){
-							RGB_values[k] += from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k] * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-						}
-					}
-				}
-			}
-			for(k=0; k < from->num_components; k++){
-				//normalize values
-				if(perimeter_pixel_weight > 0){
-					RGB_values[k] /= (perimeter_pixel_weight);
-				}
-				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
-			}
-		}
-	}
-
-	//left and right perimeter of image
-	for(i=radius; i <= from->image_height - radius; i++){
-		for(j=0; j < from->image_width; j++){
-			if(j == radius){
-				j = 1 + from->image_width - radius;
-			}
-			for(k = 0; k < from->num_components; k++){
-				RGB_values[k] = 0;
-			}
-			perimeter_pixel_weight = 0;
-			//neighbor_count = 0;
-			//...find valid neighbors...
-			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
-				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius); neighbors_x++){
-					//...that are in bounds...
-					if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
-						//...count neighbors and gather values
-						//neighbor_count += 1;
-						perimeter_pixel_weight += pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-						for(k=0; k < from->num_components; k++){
-							// TODO: Update formula?
-							RGB_values[k] += from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k] * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-						}
-					}
-				}
-			}
-			for(k=0; k < from->num_components; k++){
-				//normalize values
-				if(perimeter_pixel_weight > 0){
-					RGB_values[k] /= (perimeter_pixel_weight);
-				}
-				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
-			}
-		}
-	}
-
+void CS338_function(){
 	long pthread;
 	pthread_t thread_IDs[num_procs];
 
-	#if defined(ROW_OR_COL) && defined(SEQ_OR_INT)
-	printf("calling row_seq\n");
+	printf("calling row major order\n");
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_row_seq, (void*)thread);
 	}
-	#endif
-
-	#if !defined(ROW_OR_COL) && defined(SEQ_OR_INT)
-	printf("calling col_seq\n");
-	for(long thread = 0; thread < num_procs; thread++){
-		pthread_create(&thread_IDs[thread], NULL, CS338_col_seq, (void*)thread);
-	}
-	#endif
-
-	#if defined(ROW_OR_COL) && !defined(SEQ_OR_INT)
-	printf("calling row_int\n");
-	for(long thread = 0; thread < num_procs; thread++){
-		pthread_create(&thread_IDs[thread], NULL, CS338_row_int, (void*)thread);
-	}
-	#endif
-
-	#if !defined(ROW_OR_COL) && !defined(SEQ_OR_INT)
-	printf("calling col_int\n");
-	for(long thread = 0; thread < num_procs; thread++){
-		pthread_create(&thread_IDs[thread], NULL, CS338_col_int, (void*)thread);
-	}
-	#endif
 
 	for(int come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], NULL);
 	}
 
-	for(i = 0; i < radius; i++){
-		free(pixel_distance_matrix[i]);
+	for (i=0; i < 256; i++){
+		fprintf(outputFile, "%3u: R:%8u G:%8u B:%8u S0:%8u S1:%8u S2:%8u\n", i, rHist[i], gHist[i], bHist[i], sHist[i], sHist[i+256], sHist[i+512]);
 	}
-	free(pixel_distance_matrix);
 
 	return;
-
-/*
-	long RGB_values[from->num_components];
-	//Calculate the perimeters first.
-	//Top and bottom perimeters
-	for(i=0; i < from->image_height; i++){
-		if(i == radius){
-			i = 1 + (from->image_height) - radius;
-		}
-		for(j=0; j < from->image_width; j++){
-			for(k = 0; k < from->num_components; k++){
-				RGB_values[k] = 0;
-			}
-			perimeter_pixel_weight = 0;
-			//neighbor_count = 0;
-			//...find valid neighbors...
-			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
-				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius); neighbors_x++){
-					//...that are in bounds...
-					if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
-						perimeter_pixel_weight += pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-						for(k=0; k < from->num_components; k++){
-							RGB_values[k] += from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k] * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-						}
-					}
-				}
-			}
-			for(k=0; k < from->num_components; k++){
-				//normalize values
-				if(perimeter_pixel_weight > 0){
-					RGB_values[k] /= (perimeter_pixel_weight);
-				}
-				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
-			}
-		}
-	}
-
-	//left and right perimeter of image
-	for(i=radius; i <= from->image_height - radius; i++){
-		for(j=0; j < from->image_width; j++){
-			if(j == radius){
-				j = 1 + from->image_width - radius;
-			}
-			for(k = 0; k < from->num_components; k++){
-				RGB_values[k] = 0;
-			}
-			perimeter_pixel_weight = 0;
-			//neighbor_count = 0;
-			//...find valid neighbors...
-			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
-				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius); neighbors_x++){
-					//...that are in bounds...
-					if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
-						//...count neighbors and gather values
-						//neighbor_count += 1;
-						perimeter_pixel_weight += pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-						for(k=0; k < from->num_components; k++){
-							// TODO: Update formula?
-							RGB_values[k] += from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k] * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-						}
-					}
-				}
-			}
-			for(k=0; k < from->num_components; k++){
-				//normalize values
-				if(perimeter_pixel_weight > 0){
-					RGB_values[k] /= (perimeter_pixel_weight);
-				}
-				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
-			}
-		}
-	}
-
-	//for all height and width from radius...
-	for(i=radius; i <= from->image_height - radius; i++){
-		for(j=radius; j <= from->image_width - radius; j++){
-			//...find neighbors...
-			for(k = 0; k < from->num_components; k++){
-				RGB_values[k] = 0;
-			}
-
-			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
-				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius); neighbors_x++){
-					for(k=0; k < from->num_components; k++){
-						//Sum value * weight
-						RGB_values[k] += (from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k]) * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
-					}
-				}
-			}
-			for(k=0; k < from->num_components; k++){
-				//normalize values
-				RGB_values[k] /= radius_weight_sum;
-				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
-			}
-		}
-	}
-*/
-	// //for all height and width from radius...
-	// for(i=radius; i < from->image_height - radius; i++){
-	// 	for(j=radius; j < from->image_width - radius; j++){
-	// 		neighbor_count = 0;
-	// 		//...find valid neighbors...
-	// 		for(neighbors_y = (i - radius); neighbors_y <= (i + radius); neighbors_y++){
-	// 			for(neighbors_x = (i - radius); neighbors_x <= (j + radius); neighbors_x++){
-	// 				//...that are in bounds...
-	// 				if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
-	// 					//...count neighbors and gather values
-	// 					neighbor_count += 1;
-	// 					for(k=0; k < from->num_components; k++){
-	// 						// TODO: Update formula?
-	// 						RGB_values[k] += from->row_pointers[i][(from->num_components) * j + k];
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 		for(k=0; k < from->num_components; k++){
-	// 			//normalize values
-	// 			RGB_values[k] /= neighbor_count;
-	// 			to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
-	// 		}
-	// 	}
-	// }
-
-	// //for the first rows*BLUE_PCT rows, calculate.
-	// for(i = 0; i < radius; i++){
-	// 	for(j = 0; j < image_width; j++){
-	// 		for(k = 0; k < from->num_components; k++){
-	// 			//for each neighbor, sum value and count neighbors
-	// 			//formula sum with count
-	// 		}
-	// 	}
-	// }
-
-	/* Note that you could also have done it this way . . . */
-	/* output_frames[0] = input_frames[0]; */
 }
 
 /******************** END OF ASSIGNMENT SECTION *******************/
