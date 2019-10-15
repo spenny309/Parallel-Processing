@@ -53,7 +53,7 @@
 #define OUT_QUALITY		75
 
 #define ROW_OR_COL 1 //defined = ROW, undef = COL
-//#define SEQ_OR_INT 1 //defined = chunk, undef = interleaved
+#define SEQ_OR_INT 1 //defined = chunk, undef = interleaved
 #define USE_NUM_PROCS 1
 
 /************************* END OF PARAMETERS *******************/
