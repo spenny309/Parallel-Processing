@@ -206,8 +206,8 @@ void *CS338_col_seq(void *proc_num){
 				RGB_values[k] = 0;
 			}
 
-			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
-				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius); neighbors_x++){
+			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius - 1); neighbors_y++){
+				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius - 1); neighbors_x++){
 					for(k=0; k < from->num_components; k++){
 						//Sum value * weight
 						RGB_values[k] += (from->row_pointers[neighbors_y][(from->num_components) * neighbors_x + k]) * pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
