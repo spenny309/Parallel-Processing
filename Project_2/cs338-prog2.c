@@ -123,7 +123,6 @@ int radius;
 int **pixel_distance_matrix;
 int row_chunk_size;
 int col_chunk_size;
-int border_col_chunk_size;
 long radius_weight_sum;
 
 /* Function prototypes */
@@ -322,7 +321,6 @@ void CS338_function()
 
 	row_chunk_size = 1+(from->image_height - 2*radius)/num_procs;
 	col_chunk_size = 1+(from->image_width - 2*radius)/num_procs;
-	border_col_chunk_size = 1+(from->image_width)/num_procs;
 
 	long RGB_values[from->num_components];
 	//Calculate the perimeters first.
