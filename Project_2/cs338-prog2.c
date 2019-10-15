@@ -179,7 +179,7 @@ void *CS338_row_seq(void *proc_num){
 			}
 			for(k=0; k < from->num_components; k++){
 				//normalize values
-				printf("rad sum: %d\n", radius_weight_sum);
+				printf("rad sum: %ld\n", radius_weight_sum);
 				RGB_values[k] /= radius_weight_sum;
 				to->row_pointers[i][(from->num_components) * j + k] = RGB_values[k];
 			}
