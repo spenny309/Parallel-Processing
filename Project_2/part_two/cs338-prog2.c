@@ -76,6 +76,8 @@
 #include <sys/time.h>
 #include <pthread.h>
 #include "jpeglib.h"
+#include <string.h>
+#include <errno.h>
 
 /*
  * IMAGE DATA FORMATS:
