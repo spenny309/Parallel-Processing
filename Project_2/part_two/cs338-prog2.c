@@ -195,6 +195,7 @@ void CS338_function(){
 
 //memset histograms to 0
 	printf("sizeof rHist: %lu\nexpected size: 256", sizeof(rHist));
+	printf("\nChar: %uc\n", 97);
 	memset(rHist, 0, sizeof(rHist));
 	memset(gHist, 0, sizeof(gHist));
 	memset(bHist, 0, sizeof(bHist));
