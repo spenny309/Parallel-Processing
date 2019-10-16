@@ -194,7 +194,7 @@ void CS338_function(){
 	pthread_t thread_IDs[num_procs];
 
 //memset histograms to 0
-	printf("sizeof rHist: %d\nexpected size: 256", sizeof(rHist));
+	printf("sizeof rHist: %lu\nexpected size: 256", sizeof(rHist));
 	memset(rHist, 0, sizeof(rHist));
 	memset(gHist, 0, sizeof(gHist));
 	memset(bHist, 0, sizeof(bHist));
