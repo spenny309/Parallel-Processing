@@ -189,6 +189,7 @@ void *CS338_row_seq(void *proc_num){
 }
 
 void CS338_function(){
+	int i = 0;
 	long pthread;
 	pthread_t thread_IDs[num_procs];
 
@@ -200,7 +201,7 @@ void CS338_function(){
 	memset(sHist, 0, sizeof(sHist));
 
 //initialize locks
-	for(int i = 0; i < 256; i++){
+	for(i = 0; i < 256; i++){
 		if (pthread_mutex_init(&redLock[i], NULL) != 0){
 			perror("failed to initialize a red lock");
 			exit(1);
@@ -219,7 +220,7 @@ void CS338_function(){
 		}
 	}
 
-	for(int i = 256; i < 768; i++){
+	for(; i < 768; i++){
 		if (pthread_mutex_init(&sumLock[i], NULL) != 0){
 			perror("failed to initialize a sum lock");
 			exit(1);
@@ -236,7 +237,7 @@ void CS338_function(){
 	}
 
 	for (i=0; i < 256; i++){
-		fprintf(outputFile, "%3u: R:%8u G:%8u B:%8u S0:%8u S1:%8u S2:%8u\n", i, rHist[i], gHist[i], bHist[i], sHist[i], sHist[i+256], sHist[i+512]);
+		//fprintf(outputFile, "%3u: R:%8u G:%8u B:%8u S0:%8u S1:%8u S2:%8u\n", i, rHist[i], gHist[i], bHist[i], sHist[i], sHist[i+256], sHist[i+512]);
 		printf("R: %d : G: %d : B: %d : S: %d\n", rHist[i], gHist[i], bHist[i], sHist[i]);
 	}
 
