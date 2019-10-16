@@ -121,6 +121,10 @@ int rHist[256];
 int gHist[256];
 int bHist[256];
 int sHist[768];
+pthread_mutex_t redLock[256];
+pthread_mutex_t greenLock[256];
+pthread_mutex_t blueLock[256];
+pthread_mutex_t sumLock[768];
 
 /* Function prototypes */
 
@@ -157,15 +161,27 @@ void *CS338_row_seq(void *proc_num){
 	int r, g, b;
 
 	//for all height and width from radius...
-	for(i = 0; i < from->image_height; i++){
+	for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
 		for(j = 0; j < from->image_width; j++){
+
 			r = from->row_pointers[i][j*3];
-			g = from->row_pointers[i][1 + j*3];
-			b = from->row_pointers[i][2 + j*3];
+			pthread_mutex_lock(&redLock[r]);
 			rHist[r]++;
+			pthread_mutex_unlock(&redLock[r]);
+
+			g = from->row_pointers[i][1 + j*3];
+			pthread_mutex_lock(&greenLock[g]);
 			gHist[g]++;
+			pthread_mutex_unlock(&greenLock[g]);
+
+			b = from->row_pointers[i][2 + j*3];
+			pthread_mutex_lock(&blueLock[b]);
 			bHist[b]++;
+			pthread_mutex_unlock(&blueLock[b]);
+
+			pthread_mutex_lock(&sumLock[r+g+b]);
 			sHist[r+g+b]++;
+			pthread_mutex_unlock(&sumLock[r+g+b]);
 		}
 	}
 }
@@ -173,6 +189,40 @@ void *CS338_row_seq(void *proc_num){
 void CS338_function(){
 	long pthread;
 	pthread_t thread_IDs[num_procs];
+
+//memset histograms to 0
+	printf("sizeof rHist: %d\nexpected size: 256", sizeof(rHist));
+	memset(rHist, 0, sizeof(rHist));
+	memset(gHist, 0, sizeof(gHist));
+	memset(bHist, 0, sizeof(bHist));
+	memset(sHist, 0, sizeof(sHist));
+
+//initialize locks
+	for(int i = 0; i < 256; i++){
+		if (pthread_mutex_init(&redLock[i], NULL) != 0){
+			perror("failed to initialize red lock num %d", i);
+			exit(1);
+		}
+		if (pthread_mutex_init(&greenLock[i], NULL) != 0){
+			perror("failed to initialize green lock num %d", i);
+			exit(1);
+		}
+		if (pthread_mutex_init(&blueLock[i], NULL) != 0){
+			perror("failed to initialize blue lock num %d", i);
+			exit(1);
+		}
+		if (pthread_mutex_init(&sumLock[i], NULL) != 0){
+			perror("failed to initialize sum lock num %d", i);
+			exit(1);
+		}
+	}
+
+	for(int i = 256; i < 768; i++){
+		if (pthread_mutex_init(&sumLock[i], NULL) != 0){
+			perror("failed to initialize sum lock num %d", i);
+			exit(1);
+		}
+	}
 
 	printf("calling row major order\n");
 	for(long thread = 0; thread < num_procs; thread++){
@@ -185,6 +235,7 @@ void CS338_function(){
 
 	for (i=0; i < 256; i++){
 		fprintf(outputFile, "%3u: R:%8u G:%8u B:%8u S0:%8u S1:%8u S2:%8u\n", i, rHist[i], gHist[i], bHist[i], sHist[i], sHist[i+256], sHist[i+512]);
+		printf("R: %d : G: %d : B: %d : S: %d\n", rHist[i], gHist[i], bHist[i], sHist[i]);
 	}
 
 	return;
