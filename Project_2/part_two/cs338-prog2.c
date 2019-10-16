@@ -202,26 +202,26 @@ void CS338_function(){
 //initialize locks
 	for(int i = 0; i < 256; i++){
 		if (pthread_mutex_init(&redLock[i], NULL) != 0){
-			perror("failed to initialize red lock num %d", i);
+			perror("failed to initialize a red lock");
 			exit(1);
 		}
 		if (pthread_mutex_init(&greenLock[i], NULL) != 0){
-			perror("failed to initialize green lock num %d", i);
+			perror("failed to initialize a green lock");
 			exit(1);
 		}
 		if (pthread_mutex_init(&blueLock[i], NULL) != 0){
-			perror("failed to initialize blue lock num %d", i);
+			perror("failed to initialize a blue lock");
 			exit(1);
 		}
 		if (pthread_mutex_init(&sumLock[i], NULL) != 0){
-			perror("failed to initialize sum lock num %d", i);
+			perror("failed to initialize a sum lock");
 			exit(1);
 		}
 	}
 
 	for(int i = 256; i < 768; i++){
 		if (pthread_mutex_init(&sumLock[i], NULL) != 0){
-			perror("failed to initialize sum lock num %d", i);
+			perror("failed to initialize a sum lock");
 			exit(1);
 		}
 	}
