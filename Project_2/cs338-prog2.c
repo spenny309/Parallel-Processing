@@ -155,6 +155,8 @@ void *CS338_row_seq(void *proc_num){
 	long RGB_values[from->num_components];
 	long thread_num = (long)proc_num;
 
+	printf("this is thread %ld\n", thread_num);
+
 	//for all height and width from radius...
 	for(i = radius + (thread_num * row_chunk_size); i < radius + ((thread_num+1) * row_chunk_size); i++){
 		for(j=radius; j <= from->image_width - radius; j++){
@@ -391,6 +393,7 @@ void CS338_function()
 
 	#if defined(ROW_OR_COL) && defined(SEQ_OR_INT)
 	printf("calling row_seq\n");
+	printf("thread nums: %d\n", num_procs);
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_row_seq, (void*)thread);
 	}
