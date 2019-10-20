@@ -156,6 +156,8 @@ void *CS338_row_seq(void *proc_num){
 	long thread_num = (long)proc_num;
 
 	printf("this is thread %ld\n", thread_num);
+	printf("row chunk size: %d\n", row_chunk_size);
+	printf("radius: %d\n", radius);
 
 	//for all height and width from radius...
 	for(i = radius + (thread_num * row_chunk_size); i < radius + ((thread_num+1) * row_chunk_size); i++){
