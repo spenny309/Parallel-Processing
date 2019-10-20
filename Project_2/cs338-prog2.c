@@ -16,14 +16,14 @@
  * Also, feel free to define NO_FIRST if you want to discard the performance
  * of the first run (most likely).
  */
-/* #define USE_NUM_RUNS */
+#define USE_NUM_RUNS
 /* #define NO_FIRST */
 
 /* Define this if you want to set the # of processors from the command line.
  * This will be a numerical argument, either right after the command or
  * right after the # of runs.
  */
-/* #define USE_NUM_PROCS */
+#define USE_NUM_PROCS
 
 /* The following parameters adjust the tolerance of the timing-correction
  * code (0.1 = 10% tolerance, etc.) and the number of out-of-tolerance
@@ -54,7 +54,6 @@
 
 #define ROW_OR_COL 1 //defined = ROW, undef = COL
 #define SEQ_OR_INT 1 //defined = chunk, undef = interleaved
-#define USE_NUM_PROCS 1
 
 /************************* END OF PARAMETERS *******************/
 
@@ -145,11 +144,6 @@ void destroy_frame(frame_ptr kill_me);
 /* While you're free to tweak other parts of this file, most of your
  * new code should be located here (or in another file, if it's large).
  */
-
-// TODO: Create a version in column-major order?
-// TODO: Take an input parameter, sect?
-	// Use parameter: 0-sect, sect+1-2sect, 2sect+1-3sect, etc.
-	// Use parameter: {0, sect, 2sect}, {1, sect+1, 2sect+1}, etc.
 
 //row-major order
 void *CS338_row_seq(void *proc_num){

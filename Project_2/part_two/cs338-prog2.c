@@ -188,6 +188,11 @@ void *CS338_row_seq(void *proc_num){
 	}
 }
 
+/*
+Initialize locks for our histograms, then
+call a method to count pixel colours, then
+output this data to an OutputFile
+*/
 void CS338_function(){
 	int i = 0;
 	long pthread;
@@ -220,23 +225,24 @@ void CS338_function(){
 			exit(1);
 		}
 	}
-
-	for(; i < 768; i++){
+	for( ; i < 768; i++){
 		if (pthread_mutex_init(&sumLock[i], NULL) != 0){
 			perror("failed to initialize a sum lock");
 			exit(1);
 		}
 	}
 
-	printf("calling row major order\n");
+	//Create num_procs threads to count pixels in row-major order
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_row_seq, (void*)thread);
 	}
 
+	//Recall threads
 	for(int come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], NULL);
 	}
 
+	//Output histogram results
 	for (i=0; i < 256; i++){
 		//fprintf(outputFile, "%3u: R:%8u G:%8u B:%8u S0:%8u S1:%8u S2:%8u\n", i, rHist[i], gHist[i], bHist[i], sHist[i], sHist[i+256], sHist[i+512]);
 		printf("R: %d : G: %d : B: %d : S: %d\n", rHist[i], gHist[i], bHist[i], sHist[i]);
