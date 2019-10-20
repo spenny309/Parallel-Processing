@@ -324,7 +324,7 @@ void CS338_function()
 	//Top and bottom perimeters
 	for(i=0; i < from->image_height; i++){
 		if(i == radius){
-			i = 1 + (from->image_height) - radius;
+			i = (from->image_height) - radius - num_procs;
 		}
 		for(j=0; j < from->image_width; j++){
 			for(k = 0; k < from->num_components; k++){
@@ -358,7 +358,7 @@ void CS338_function()
 	for(i=radius; i <= from->image_height - radius; i++){
 		for(j=0; j < from->image_width; j++){
 			if(j == radius){
-				j = 1 + from->image_width - radius;
+				j = from->image_width - radius - num_procs;
 			}
 			for(k = 0; k < from->num_components; k++){
 				RGB_values[k] = 0;
