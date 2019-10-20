@@ -11,7 +11,7 @@ SRCS = cs338-prog2.c
 CFLAGS = -I.
 LDLIBS = -L.
 
-PROG = prog2
+PROG = prog2_rb
 
 .PHONY: default clean
 
