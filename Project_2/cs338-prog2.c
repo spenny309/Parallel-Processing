@@ -128,6 +128,7 @@ long radius_weight_sum;
 
 /* Your code */
 void CS338_function();
+void blur_borders(long process_number);
 
 /* Read/write JPEGs, for program startup & shutdown */
 /* YOU SHOULD NOT NEED TO USE THESE AT ALL */
