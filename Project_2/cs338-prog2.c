@@ -159,6 +159,8 @@ void *CS338_row_seq(void *proc_num){
 	printf("row chunk size: %d\n", row_chunk_size);
 	printf("radius: %d\n", radius);
 
+	blur_borders(thread_num);
+
 	//for all height and width from radius...
 	for(i = radius + (thread_num * row_chunk_size); i < radius + ((thread_num+1) * row_chunk_size); i++){
 		for(j=radius; j <= from->image_width - radius; j++){
@@ -295,6 +297,7 @@ void blur_borders(long process_number){
 	frame_ptr from, to;
 	from = input_frames[0];
 	to = output_frames[0];
+	long RGB_values[from->num_components];
 
 	//blur top and bottom of image
 	for(i = process_number; i < from->image_height; i += num_procs){
@@ -398,7 +401,7 @@ void CS338_function()
 	row_chunk_size = (from->image_height - 2*radius)/num_procs;
 	col_chunk_size = (from->image_width - 2*radius)/num_procs;
 
-	long RGB_values[from->num_components];
+	// long RGB_values[from->num_components];
 	//Calculate the perimeters first.
 	//Top and bottom perimeters
 	// for(i=0; i < from->image_height; i++){
