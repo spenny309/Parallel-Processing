@@ -17,13 +17,11 @@ PROG = prog2
 
 default: $(PROG)
 
-$(PROG): $(SRCS) 
-	gcc $(CFLAGS) $(LDLIBS) -o $@ $^  -lpthread -ljpeg
+$(PROG): $(SRCS)
+	gcc $(CFLAGS) $(LDLIBS) -o -O3 $@ $^  -lpthread -ljpeg
 
-$(PROG).o: 
+$(PROG).o:
 	gcc $(CFLAGS) -o $@ -c $^
 
 clean:
 	rm -f *~ $(DRIVER).o $(PROG) $(PROG).o $(PROGEX)
-
-
