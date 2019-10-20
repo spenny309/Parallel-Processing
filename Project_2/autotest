@@ -38,78 +38,78 @@ touch outputs/output16_large.txt
 
 #test on small image
 
-./prog2 2 1 pictures/testimg.jpg test1.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output1_small.txt
-./prog2 2 2 pictures/testimg.jpg test1.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output2_small.txt
-./prog2 2 4 pictures/testimg.jpg test1.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output4_small.txt
-./prog2 2 8 pictures/testimg.jpg test1.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output8_small.txt
-./prog2 2 16 pictures/testimg.jpg test1.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output16_small.txt
+./prog2 2 1 pictures/testimg.jpg test1.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output1_small.txt 2>&1
+./prog2 2 2 pictures/testimg.jpg test1.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output2_small.txt 2>&1
+./prog2 2 4 pictures/testimg.jpg test1.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output4_small.txt 2>&1
+./prog2 2 8 pictures/testimg.jpg test1.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output8_small.txt 2>&1
+./prog2 2 16 pictures/testimg.jpg test1.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output16_small.txt 2>&1
 
-./prog2 2 1 pictures/testimg.jpg test1.jpg -DBLOCK_ORDER >> outputs/output1_small.txt
-./prog2 2 2 pictures/testimg.jpg test1.jpg -DBLOCK_ORDER >> outputs/output2_small.txt
-./prog2 2 4 pictures/testimg.jpg test1.jpg -DBLOCK_ORDER >> outputs/output4_small.txt
-./prog2 2 8 pictures/testimg.jpg test1.jpg -DBLOCK_ORDER >> outputs/output8_small.txt
-./prog2 2 16 pictures/testimg.jpg test1.jpg -DBLOCK_ORDER >> outputs/output16_small.txt
+./prog2 2 1 pictures/testimg.jpg test1.jpg -DBLOCK_ORDER >> outputs/output1_small.txt 2>&1
+./prog2 2 2 pictures/testimg.jpg test1.jpg -DBLOCK_ORDER >> outputs/output2_small.txt 2>&1
+./prog2 2 4 pictures/testimg.jpg test1.jpg -DBLOCK_ORDER >> outputs/output4_small.txt 2>&1
+./prog2 2 8 pictures/testimg.jpg test1.jpg -DBLOCK_ORDER >> outputs/output8_small.txt 2>&1
+./prog2 2 16 pictures/testimg.jpg test1.jpg -DBLOCK_ORDER >> outputs/output16_small.txt 2>&1
 
-./prog2 2 1 pictures/testimg.jpg test1.jpg -DROW_MAJOR >> outputs/output1_small.txt
-./prog2 2 2 pictures/testimg.jpg test1.jpg -DROW_MAJOR >> outputs/output2_small.txt
-./prog2 2 4 pictures/testimg.jpg test1.jpg -DROW_MAJOR >> outputs/output4_small.txt
-./prog2 2 8 pictures/testimg.jpg test1.jpg -DROW_MAJOR >> outputs/output8_small.txt
-./prog2 2 16 pictures/testimg.jpg test1.jpg -DROW_MAJOR >> outputs/output16_small.txt
+./prog2 2 1 pictures/testimg.jpg test1.jpg -DROW_MAJOR >> outputs/output1_small.txt 2>&1
+./prog2 2 2 pictures/testimg.jpg test1.jpg -DROW_MAJOR >> outputs/output2_small.txt 2>&1
+./prog2 2 4 pictures/testimg.jpg test1.jpg -DROW_MAJOR >> outputs/output4_small.txt 2>&1
+./prog2 2 8 pictures/testimg.jpg test1.jpg -DROW_MAJOR >> outputs/output8_small.txt 2>&1
+./prog2 2 16 pictures/testimg.jpg test1.jpg -DROW_MAJOR >> outputs/output16_small.txt 2>&1
 
-./prog2 2 1 pictures/testimg.jpg test1.jpg >> outputs/output1_small.txt
-./prog2 2 2 pictures/testimg.jpg test1.jpg >> outputs/output2_small.txt
-./prog2 2 4 pictures/testimg.jpg test1.jpg >> outputs/output4_small.txt
-./prog2 2 8 pictures/testimg.jpg test1.jpg >> outputs/output8_small.txt
-./prog2 2 16 pictures/testimg.jpg test1.jpg >> outputs/output16_small.txt
+./prog2 2 1 pictures/testimg.jpg test1.jpg >> outputs/output1_small.txt 2>&1
+./prog2 2 2 pictures/testimg.jpg test1.jpg >> outputs/output2_small.txt 2>&1
+./prog2 2 4 pictures/testimg.jpg test1.jpg >> outputs/output4_small.txt 2>&1
+./prog2 2 8 pictures/testimg.jpg test1.jpg >> outputs/output8_small.txt 2>&1
+./prog2 2 16 pictures/testimg.jpg test1.jpg >> outputs/output16_small.txt 2>&1
 
 #test on medium image
 
-./prog2 2 1 pictures/leaf.jpg test2.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output1_med.txt
-./prog2 2 2 pictures/leaf.jpg test2.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output2_med.txt
-./prog2 2 4 pictures/leaf.jpg test2.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output4_med.txt
-./prog2 2 8 pictures/leaf.jpg test2.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output8_med.txt
-./prog2 2 16 pictures/leaf.jpg test2.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output16_med.txt
+./prog2 2 1 pictures/leaf.jpg test2.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output1_med.txt 2>&1
+./prog2 2 2 pictures/leaf.jpg test2.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output2_med.txt 2>&1
+./prog2 2 4 pictures/leaf.jpg test2.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output4_med.txt 2>&1
+./prog2 2 8 pictures/leaf.jpg test2.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output8_med.txt 2>&1
+./prog2 2 16 pictures/leaf.jpg test2.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output16_med.txt 2>&1
 
-./prog2 2 1 pictures/leaf.jpg test2.jpg -DBLOCK_ORDER >> outputs/output1_med.txt
-./prog2 2 2 pictures/leaf.jpg test2.jpg -DBLOCK_ORDER >> outputs/output2_med.txt
-./prog2 2 4 pictures/leaf.jpg test2.jpg -DBLOCK_ORDER >> outputs/output4_med.txt
-./prog2 2 8 pictures/leaf.jpg test2.jpg -DBLOCK_ORDER >> outputs/output8_med.txt
-./prog2 2 16 pictures/leaf.jpg test2.jpg -DBLOCK_ORDER >> outputs/output16_med.txt
+./prog2 2 1 pictures/leaf.jpg test2.jpg -DBLOCK_ORDER >> outputs/output1_med.txt 2>&1
+./prog2 2 2 pictures/leaf.jpg test2.jpg -DBLOCK_ORDER >> outputs/output2_med.txt 2>&1
+./prog2 2 4 pictures/leaf.jpg test2.jpg -DBLOCK_ORDER >> outputs/output4_med.txt 2>&1
+./prog2 2 8 pictures/leaf.jpg test2.jpg -DBLOCK_ORDER >> outputs/output8_med.txt 2>&1
+./prog2 2 16 pictures/leaf.jpg test2.jpg -DBLOCK_ORDER >> outputs/output16_med.txt 2>&1
 
-./prog2 2 1 pictures/leaf.jpg test2.jpg -DROW_MAJOR >> outputs/output1_med.txt
-./prog2 2 2 pictures/leaf.jpg test2.jpg -DROW_MAJOR >> outputs/output2_med.txt
-./prog2 2 4 pictures/leaf.jpg test2.jpg -DROW_MAJOR >> outputs/output4_med.txt
-./prog2 2 8 pictures/leaf.jpg test2.jpg -DROW_MAJOR >> outputs/output8_med.txt
-./prog2 2 16 pictures/leaf.jpg test2.jpg -DROW_MAJOR >> outputs/output16_med.txt
+./prog2 2 1 pictures/leaf.jpg test2.jpg -DROW_MAJOR >> outputs/output1_med.txt 2>&1
+./prog2 2 2 pictures/leaf.jpg test2.jpg -DROW_MAJOR >> outputs/output2_med.txt 2>&1
+./prog2 2 4 pictures/leaf.jpg test2.jpg -DROW_MAJOR >> outputs/output4_med.txt 2>&1
+./prog2 2 8 pictures/leaf.jpg test2.jpg -DROW_MAJOR >> outputs/output8_med.txt 2>&1
+./prog2 2 16 pictures/leaf.jpg test2.jpg -DROW_MAJOR >> outputs/output16_med.txt 2>&1
 
-./prog2 2 1 pictures/leaf.jpg test2.jpg >> outputs/output1_med.txt
-./prog2 2 2 pictures/leaf.jpg test2.jpg >> outputs/output2_med.txt
-./prog2 2 4 pictures/leaf.jpg test2.jpg >> outputs/output4_med.txt
-./prog2 2 8 pictures/leaf.jpg test2.jpg >> outputs/output8_med.txt
-./prog2 2 16 pictures/leaf.jpg test2.jpg >> outputs/output16_med.txt
+./prog2 2 1 pictures/leaf.jpg test2.jpg >> outputs/output1_med.txt 2>&1
+./prog2 2 2 pictures/leaf.jpg test2.jpg >> outputs/output2_med.txt 2>&1
+./prog2 2 4 pictures/leaf.jpg test2.jpg >> outputs/output4_med.txt 2>&1
+./prog2 2 8 pictures/leaf.jpg test2.jpg >> outputs/output8_med.txt 2>&1
+./prog2 2 16 pictures/leaf.jpg test2.jpg >> outputs/output16_med.txt 2>&1
 
 #test on large image
 
-./prog2 2 1 pictures/peacock.jpg test3.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output1_large.txt
-./prog2 2 2 pictures/peacock.jpg test3.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output2_large.txt
-./prog2 2 4 pictures/peacock.jpg test3.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output4_large.txt
-./prog2 2 8 pictures/peacock.jpg test3.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output8_large.txt
-./prog2 2 16 pictures/peacock.jpg test3.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output16_large.txt
+./prog2 2 1 pictures/peacock.jpg test3.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output1_large.txt 2>&1
+./prog2 2 2 pictures/peacock.jpg test3.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output2_large.txt 2>&1
+./prog2 2 4 pictures/peacock.jpg test3.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output4_large.txt 2>&1
+./prog2 2 8 pictures/peacock.jpg test3.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output8_large.txt 2>&1
+./prog2 2 16 pictures/peacock.jpg test3.jpg -DROW_MAJOR -DBLOCK_ORDER >> outputs/output16_large.txt 2>&1
 
-./prog2 2 1 pictures/peacock.jpg test3.jpg -DBLOCK_ORDER >> outputs/output1_large.txt
-./prog2 2 2 pictures/peacock.jpg test3.jpg -DBLOCK_ORDER >> outputs/output2_large.txt
-./prog2 2 4 pictures/peacock.jpg test3.jpg -DBLOCK_ORDER >> outputs/output4_large.txt
-./prog2 2 8 pictures/peacock.jpg test3.jpg -DBLOCK_ORDER >> outputs/output8_large.txt
-./prog2 2 16 pictures/peacock.jpg test3.jpg -DBLOCK_ORDER >> outputs/output16_large.txt
+./prog2 2 1 pictures/peacock.jpg test3.jpg -DBLOCK_ORDER >> outputs/output1_large.txt 2>&1
+./prog2 2 2 pictures/peacock.jpg test3.jpg -DBLOCK_ORDER >> outputs/output2_large.txt 2>&1
+./prog2 2 4 pictures/peacock.jpg test3.jpg -DBLOCK_ORDER >> outputs/output4_large.txt 2>&1
+./prog2 2 8 pictures/peacock.jpg test3.jpg -DBLOCK_ORDER >> outputs/output8_large.txt 2>&1
+./prog2 2 16 pictures/peacock.jpg test3.jpg -DBLOCK_ORDER >> outputs/output16_large.txt 2>&1
 
-./prog2 2 1 pictures/peacock.jpg test3.jpg -DROW_MAJOR >> outputs/output1_large.txt
-./prog2 2 2 pictures/peacock.jpg test3.jpg -DROW_MAJOR >> outputs/output2_large.txt
-./prog2 2 4 pictures/peacock.jpg test3.jpg -DROW_MAJOR >> outputs/output4_large.txt
-./prog2 2 8 pictures/peacock.jpg test3.jpg -DROW_MAJOR >> outputs/output8_large.txt
-./prog2 2 16 pictures/peacock.jpg test3.jpg -DROW_MAJOR >> outputs/output16_large.txt
+./prog2 2 1 pictures/peacock.jpg test3.jpg -DROW_MAJOR >> outputs/output1_large.txt 2>&1
+./prog2 2 2 pictures/peacock.jpg test3.jpg -DROW_MAJOR >> outputs/output2_large.txt 2>&1
+./prog2 2 4 pictures/peacock.jpg test3.jpg -DROW_MAJOR >> outputs/output4_large.txt 2>&1
+./prog2 2 8 pictures/peacock.jpg test3.jpg -DROW_MAJOR >> outputs/output8_large.txt 2>&1
+./prog2 2 16 pictures/peacock.jpg test3.jpg -DROW_MAJOR >> outputs/output16_large.txt 2>&1
 
-./prog2 2 1 pictures/peacock.jpg test3.jpg >> outputs/output1_large.txt
-./prog2 2 2 pictures/peacock.jpg test3.jpg >> outputs/output2_large.txt
-./prog2 2 4 pictures/peacock.jpg test3.jpg >> outputs/output4_large.txt
-./prog2 2 8 pictures/peacock.jpg test3.jpg >> outputs/output8_large.txt
-./prog2 2 16 pictures/peacock.jpg test3.jpg >> outputs/output16_large.txt
+./prog2 2 1 pictures/peacock.jpg test3.jpg >> outputs/output1_large.txt 2>&1
+./prog2 2 2 pictures/peacock.jpg test3.jpg >> outputs/output2_large.txt 2>&1
+./prog2 2 4 pictures/peacock.jpg test3.jpg >> outputs/output4_large.txt 2>&1
+./prog2 2 8 pictures/peacock.jpg test3.jpg >> outputs/output8_large.txt 2>&1
+./prog2 2 16 pictures/peacock.jpg test3.jpg >> outputs/output16_large.txt 2>&1
