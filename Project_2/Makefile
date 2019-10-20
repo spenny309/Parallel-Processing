@@ -18,7 +18,7 @@ PROG = prog2
 default: $(PROG)
 
 $(PROG): $(SRCS)
-	gcc $(CFLAGS) $(LDLIBS) -o -O3 $@ $^  -lpthread -ljpeg
+	gcc $(CFLAGS) $(LDLIBS) -O3 -o $@ $^  -lpthread -ljpeg
 
 $(PROG).o:
 	gcc $(CFLAGS) -o $@ -c $^
