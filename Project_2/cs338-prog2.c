@@ -53,7 +53,7 @@
 #define OUT_QUALITY		75
 
 #define ROW_OR_COL 1 //defined = ROW, undef = COL
-#define SEQ_OR_INT 1 //defined = chunk, undef = interleaved
+#define BLOCK_OR_INT 1 //defined = chunk, undef = interleaved
 
 /************************* END OF PARAMETERS *******************/
 
@@ -146,8 +146,8 @@ void destroy_frame(frame_ptr kill_me);
  * new code should be located here (or in another file, if it's large).
  */
 
-//row-major order
-void *CS338_row_seq(void *proc_num){
+//row-major order blurring
+void *CS338_row_block(void *proc_num){
 	int i, j, k;
 	int neighbors_x, neighbors_y;
 	frame_ptr from, to;
@@ -155,10 +155,6 @@ void *CS338_row_seq(void *proc_num){
 	to = output_frames[0];
 	long RGB_values[from->num_components];
 	long thread_num = (long)proc_num;
-
-	printf("this is thread %ld\n", thread_num);
-	printf("row chunk size: %d\n", row_chunk_size);
-	printf("radius: %d\n", radius);
 
 	blur_borders(thread_num);
 
@@ -187,8 +183,8 @@ void *CS338_row_seq(void *proc_num){
 	}
 }
 
-//column-major order
-void *CS338_col_seq(void *proc_num){
+//column-major order blurring
+void *CS338_col_block(void *proc_num){
 	int i, j, k;
 	int neighbors_x, neighbors_y;
 	frame_ptr from, to;
@@ -196,6 +192,8 @@ void *CS338_col_seq(void *proc_num){
 	to = output_frames[0];
 	long RGB_values[from->num_components];
 	long thread_num = (long)proc_num;
+
+	blur_borders(thread_num);
 
 	//for all height and width from radius...
 	for(j = radius + (thread_num * col_chunk_size); j < radius + ((thread_num+1) * col_chunk_size); j++){
@@ -222,6 +220,7 @@ void *CS338_col_seq(void *proc_num){
 	}
 }
 
+//row-interleaved blurring
 void *CS338_row_int(void *proc_num){
 	int i, j, k;
 	int neighbors_x, neighbors_y;
@@ -230,6 +229,8 @@ void *CS338_row_int(void *proc_num){
 	to = output_frames[0];
 	long RGB_values[from->num_components];
 	long thread_num = (long)proc_num;
+
+	blur_borders(thread_num);
 
 	//for all height and width from radius...
 	for(i = radius + thread_num; i <= from->image_height - radius; i += num_procs){
@@ -256,6 +257,7 @@ void *CS338_row_int(void *proc_num){
 	}
 }
 
+//column-interleaved blurring
 void *CS338_col_int(void *proc_num){
 	int i, j, k;
 	int neighbors_x, neighbors_y;
@@ -264,6 +266,8 @@ void *CS338_col_int(void *proc_num){
 	to = output_frames[0];
 	long RGB_values[from->num_components];
 	long thread_num = (long)proc_num;
+
+	blur_borders(thread_num);
 
 	//for all height and width from radius...
 	for(j = radius + thread_num; j <= from->image_width - radius; j += num_procs){
@@ -290,6 +294,12 @@ void *CS338_col_int(void *proc_num){
 	}
 }
 
+/*
+	Blurs borders of image. For simplicity of code, we have created one
+	parallelized method to blur the borders of an image, as this could be
+	considered independent of whether we're blurring the majority of the image
+	through row/col block/interleaved orderings
+*/
 void blur_borders(long process_number){
 	long i;
 	int j, k;
@@ -300,8 +310,7 @@ void blur_borders(long process_number){
 	to = output_frames[0];
 	long RGB_values[from->num_components];
 
-	//blur top and bottom of image
-	printf("num procs: %d", num_procs);
+	//blur top and bottom perimeter of image
 	for(i = process_number; i < from->image_height; i += num_procs){
 		if(i >= radius && i < (from->image_height) - radius - num_procs){
 			i = process_number + (from->image_height) - radius - num_procs;
@@ -334,7 +343,7 @@ void blur_borders(long process_number){
 		}
 	}
 
-	//left and right perimeter of image
+	//blur left and right perimeter of image
 	for(i = radius + process_number; i <= from->image_height - radius; i += num_procs){
 		for(j=0; j < from->image_width; j++){
 			if(j == radius){
@@ -477,29 +486,28 @@ void CS338_function()
 	long pthread;
 	pthread_t thread_IDs[num_procs];
 
-	#if defined(ROW_OR_COL) && defined(SEQ_OR_INT)
-	printf("calling row_seq\n");
-	printf("thread nums: %d\n", num_procs);
+	#if defined(ROW_OR_COL) && defined(BLOCK_OR_INT)
+	printf("calling row_block\n");
 	for(long thread = 0; thread < num_procs; thread++){
-		pthread_create(&thread_IDs[thread], NULL, CS338_row_seq, (void*)thread);
+		pthread_create(&thread_IDs[thread], NULL, CS338_row_block, (void*)thread);
 	}
 	#endif
 
-	#if !defined(ROW_OR_COL) && defined(SEQ_OR_INT)
-	printf("calling col_seq\n");
+	#if !defined(ROW_OR_COL) && defined(BLOCK_OR_INT)
+	printf("calling col_block\n");
 	for(long thread = 0; thread < num_procs; thread++){
-		pthread_create(&thread_IDs[thread], NULL, CS338_col_seq, (void*)thread);
+		pthread_create(&thread_IDs[thread], NULL, CS338_col_block, (void*)thread);
 	}
 	#endif
 
-	#if defined(ROW_OR_COL) && !defined(SEQ_OR_INT)
+	#if defined(ROW_OR_COL) && !defined(BLOCK_OR_INT)
 	printf("calling row_int\n");
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_row_int, (void*)thread);
 	}
 	#endif
 
-	#if !defined(ROW_OR_COL) && !defined(SEQ_OR_INT)
+	#if !defined(ROW_OR_COL) && !defined(BLOCK_OR_INT)
 	printf("calling col_int\n");
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_col_int, (void*)thread);
