@@ -301,9 +301,10 @@ void blur_borders(long process_number){
 	long RGB_values[from->num_components];
 
 	//blur top and bottom of image
+	printf("num procs: %d", num_procs);
 	for(i = process_number; i < from->image_height; i += num_procs){
 		if(i >= radius && i < (from->image_height) - radius - num_procs){
-			i = (from->image_height) - radius - num_procs;
+			i = process_number + (from->image_height) - radius - num_procs;
 		}
 		for(j=0; j < from->image_width; j++){
 			for(k = 0; k < from->num_components; k++){
@@ -312,8 +313,8 @@ void blur_borders(long process_number){
 			perimeter_pixel_weight = 0;
 			//neighbor_count = 0;
 			//...find valid neighbors...
-			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius); neighbors_y++){
-				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius); neighbors_x++){
+			for(neighbors_y = (1 + i - radius); neighbors_y < (i + radius - 1); neighbors_y++){
+				for(neighbors_x = (1 + j - radius); neighbors_x < (j + radius - 1); neighbors_x++){
 					//...that are in bounds...
 					if(neighbors_y >= 0 && neighbors_y < from->image_height && neighbors_x >= 0 && neighbors_x < from->image_width){
 						perimeter_pixel_weight += pixel_distance_matrix[abs(i - neighbors_y)][abs(j - neighbors_x)];
