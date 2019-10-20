@@ -302,7 +302,7 @@ void blur_borders(long process_number){
 
 	//blur top and bottom of image
 	for(i = process_number; i < from->image_height; i += num_procs){
-		if(i == radius){
+		if(i >= radius && i < (from->image_height) - radius - num_procs){
 			i = (from->image_height) - radius - num_procs;
 		}
 		for(j=0; j < from->image_width; j++){
