@@ -52,8 +52,8 @@
  */
 #define OUT_QUALITY		75
 
-#define ROW_OR_COL 1 //defined = ROW, undef = COL
-#define BLOCK_OR_INT 1 //defined = chunk, undef = interleaved
+//#define ROW_MAJOR 1 //defined = ROW, undef = COL
+//#define BLOCK_ORDER 1 //defined = block, undef = interleaved
 
 /************************* END OF PARAMETERS *******************/
 
@@ -120,8 +120,8 @@ frame_ptr output_frames[NUM_OUTPUTS];	/* Pointers to output frames */
 int num_procs;		/* Number of processors, for parallel use */
 int radius;
 int **pixel_distance_matrix;
-int row_chunk_size;
-int col_chunk_size;
+int row_block_size;
+int col_block_size;
 long radius_weight_sum;
 
 /* Function prototypes */
@@ -159,7 +159,7 @@ void *CS338_row_block(void *proc_num){
 	blur_borders(thread_num);
 
 	//for all height and width from radius...
-	for(i = radius + (thread_num * row_chunk_size); i < radius + ((thread_num+1) * row_chunk_size); i++){
+	for(i = radius + (thread_num * row_block_size); i < radius + ((thread_num+1) * row_block_size); i++){
 		for(j=radius; j <= from->image_width - radius; j++){
 			//...find neighbors...
 			for(k = 0; k < from->num_components; k++){
@@ -196,7 +196,7 @@ void *CS338_col_block(void *proc_num){
 	blur_borders(thread_num);
 
 	//for all height and width from radius...
-	for(j = radius + (thread_num * col_chunk_size); j < radius + ((thread_num+1) * col_chunk_size); j++){
+	for(j = radius + (thread_num * col_block_size); j < radius + ((thread_num+1) * col_block_size); j++){
 		for(i=radius; i <= from->image_height - radius; i++){
 			//...find neighbors...
 			for(k = 0; k < from->num_components; k++){
@@ -409,8 +409,8 @@ void CS338_function()
 		}
 	}
 
-	row_chunk_size = (from->image_height - 2*radius)/num_procs;
-	col_chunk_size = (from->image_width - 2*radius)/num_procs;
+	row_block_size = (from->image_height - 2*radius)/num_procs;
+	col_block_size = (from->image_width - 2*radius)/num_procs;
 
 	// long RGB_values[from->num_components];
 	//Calculate the perimeters first.
@@ -486,28 +486,28 @@ void CS338_function()
 	long pthread;
 	pthread_t thread_IDs[num_procs];
 
-	#if defined(ROW_OR_COL) && defined(BLOCK_OR_INT)
+	#if defined(ROW_MAJOR) && defined(BLOCK_ORDER)
 	printf("calling row_block\n");
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_row_block, (void*)thread);
 	}
 	#endif
 
-	#if !defined(ROW_OR_COL) && defined(BLOCK_OR_INT)
+	#if !defined(ROW_MAJOR) && defined(BLOCK_ORDER)
 	printf("calling col_block\n");
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_col_block, (void*)thread);
 	}
 	#endif
 
-	#if defined(ROW_OR_COL) && !defined(BLOCK_OR_INT)
+	#if defined(ROW_MAJOR) && !defined(BLOCK_ORDER)
 	printf("calling row_int\n");
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_row_int, (void*)thread);
 	}
 	#endif
 
-	#if !defined(ROW_OR_COL) && !defined(BLOCK_OR_INT)
+	#if !defined(ROW_MAJOR) && !defined(BLOCK_ORDER)
 	printf("calling col_int\n");
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_col_int, (void*)thread);
