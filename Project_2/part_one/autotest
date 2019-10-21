@@ -15,10 +15,10 @@
 # get the execution time results from those files.
 
 #make executables
-make --f row_block
-make --f row_int
-make --f col_block
-make --f col_int
+make --f row_block.txt
+make --f row_int.txt
+make --f col_block.txt
+make --f col_int.txt
 
 #create output files
 
