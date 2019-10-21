@@ -1,0 +1,56 @@
+Making 2 runs . . .
+Using 2 processors . . .
+  Opened pictures/testimg.jpg: height = 149, width = 227, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000038
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000013
+testing: CPU      0.234 vs. Real      0.239: correction factor =   0.977353
+0. ELAPSED  TIME =                0.034 sec, corrected to                0.034 sec
+   TOTAL CPU TIME =                0.065 sec
+testing: CPU      0.234 vs. Real      0.238: correction factor =   0.980398
+1. ELAPSED  TIME =                0.056 sec, corrected to                0.055 sec
+   TOTAL CPU TIME =                0.060 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.045 seconds
+calling row_block
+calling row_block
+Making 2 runs . . .
+Using 2 processors . . .
+  Opened pictures/testimg.jpg: height = 149, width = 227, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000008
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000018
+testing: CPU      0.234 vs. Real      0.236: correction factor =   0.993804
+0. ELAPSED  TIME =                0.050 sec, corrected to                0.050 sec
+   TOTAL CPU TIME =                0.064 sec
+testing: CPU      0.234 vs. Real      0.236: correction factor =   0.994707
+1. ELAPSED  TIME =                0.063 sec, corrected to                0.062 sec
+   TOTAL CPU TIME =                0.059 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.056 seconds
+calling col_block
+calling col_block
+Making 2 runs . . .
+Using 2 processors . . .
+  Opened pictures/testimg.jpg: height = 149, width = 227, c = 3
+testing: CPU      0.236 vs. Real      0.236: correction factor =   1.000004
+testing: CPU      0.236 vs. Real      0.236: correction factor =   1.000034
+testing: CPU      0.236 vs. Real      0.238: correction factor =   0.992110
+0. ELAPSED  TIME =                0.041 sec, corrected to                0.041 sec
+   TOTAL CPU TIME =                0.068 sec
+testing: CPU      0.236 vs. Real      0.237: correction factor =   0.996518
+1. ELAPSED  TIME =                0.043 sec, corrected to                0.042 sec
+   TOTAL CPU TIME =                0.074 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.041 seconds
+calling row_int
+calling row_int
+Making 2 runs . . .
+Using 2 processors . . .
+  Opened pictures/testimg.jpg: height = 149, width = 227, c = 3
+testing: CPU      0.237 vs. Real      0.237: correction factor =   1.000030
+testing: CPU      0.239 vs. Real      0.239: correction factor =   1.000033
+testing: CPU      0.239 vs. Real      0.239: correction factor =   0.997615
+0. ELAPSED  TIME =                0.039 sec, corrected to                0.039 sec
+   TOTAL CPU TIME =                0.067 sec
+testing: CPU      0.239 vs. Real      0.238: correction factor =   1.001787
+1. ELAPSED  TIME =                0.037 sec, corrected to                0.037 sec
+   TOTAL CPU TIME =                0.069 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.038 seconds
+calling col_int
+calling col_int

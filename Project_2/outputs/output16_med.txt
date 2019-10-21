@@ -1,0 +1,56 @@
+Making 2 runs . . .
+Using 16 processors . . .
+  Opened pictures/leaf.jpg: height = 768, width = 1024, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000043
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000030
+testing: CPU      0.234 vs. Real      0.239: correction factor =   0.977262
+0. ELAPSED  TIME =                3.363 sec, corrected to                3.363 sec
+   TOTAL CPU TIME =               37.358 sec
+testing: CPU      0.234 vs. Real      0.241: correction factor =   0.967920
+1. ELAPSED  TIME =                3.335 sec, corrected to                3.259 sec
+   TOTAL CPU TIME =               40.715 sec
+AVERAGE CORRECTED ELAPSED TIME =                3.311 seconds
+calling row_block
+calling row_block
+Making 2 runs . . .
+Using 16 processors . . .
+  Opened pictures/leaf.jpg: height = 768, width = 1024, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000038
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000009
+testing: CPU      0.234 vs. Real      0.236: correction factor =   0.990352
+0. ELAPSED  TIME =                2.747 sec, corrected to                2.747 sec
+   TOTAL CPU TIME =               38.558 sec
+testing: CPU      0.234 vs. Real      0.239: correction factor =   0.977913
+1. ELAPSED  TIME =                3.375 sec, corrected to                3.343 sec
+   TOTAL CPU TIME =               42.747 sec
+AVERAGE CORRECTED ELAPSED TIME =                3.045 seconds
+calling col_block
+calling col_block
+Making 2 runs . . .
+Using 16 processors . . .
+  Opened pictures/leaf.jpg: height = 768, width = 1024, c = 3
+testing: CPU      0.240 vs. Real      0.240: correction factor =   1.000024
+testing: CPU      0.233 vs. Real      0.233: correction factor =   1.000039
+testing: CPU      0.233 vs. Real      0.235: correction factor =   0.992328
+0. ELAPSED  TIME =                2.368 sec, corrected to                2.368 sec
+   TOTAL CPU TIME =               35.564 sec
+testing: CPU      0.233 vs. Real      0.234: correction factor =   0.997638
+1. ELAPSED  TIME =                2.986 sec, corrected to                2.963 sec
+   TOTAL CPU TIME =               37.621 sec
+AVERAGE CORRECTED ELAPSED TIME =                2.666 seconds
+calling row_int
+calling row_int
+Making 2 runs . . .
+Using 16 processors . . .
+  Opened pictures/leaf.jpg: height = 768, width = 1024, c = 3
+testing: CPU      0.238 vs. Real      0.238: correction factor =   1.000042
+testing: CPU      0.237 vs. Real      0.237: correction factor =   1.000034
+testing: CPU      0.237 vs. Real      0.240: correction factor =   0.989382
+0. ELAPSED  TIME =                3.035 sec, corrected to                3.035 sec
+   TOTAL CPU TIME =               40.235 sec
+testing: CPU      0.237 vs. Real      0.238: correction factor =   0.995213
+1. ELAPSED  TIME =                3.273 sec, corrected to                3.238 sec
+   TOTAL CPU TIME =               39.495 sec
+AVERAGE CORRECTED ELAPSED TIME =                3.137 seconds
+calling col_int
+calling col_int
