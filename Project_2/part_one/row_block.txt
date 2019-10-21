@@ -1,0 +1,27 @@
+######################################################################
+#
+# 'make'         : create program $(PROG)
+# 'make clean'   : clean directory
+#
+######################################################################
+
+# list your source/assembly files in SRCS
+SRCS = cs338-prog2.c
+
+CFLAGS = -I.
+LDLIBS = -L.
+
+PROG = prog2_rb
+
+.PHONY: default clean
+
+default: $(PROG)
+
+$(PROG): $(SRCS)
+	gcc $(CFLAGS) $(LDLIBS) -O3 -o $@ $^  -lpthread -ljpeg -DROW_MAJOR -DBLOCK_ORDER
+
+$(PROG).o:
+	gcc $(CFLAGS) -o $@ -c $^
+
+clean:
+	rm -f *~ $(DRIVER).o $(PROG) $(PROG).o $(PROGEX)
