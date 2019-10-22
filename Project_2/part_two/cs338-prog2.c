@@ -334,13 +334,12 @@ void CS338_function(){
 	//Create num_procs threads to count pixels in row-major order
 	for(long thread = 0; thread < num_procs; thread++){
 		printf("trying to make the boi\n");
-		struct local_histogram *this_hist, temp = { 0 };
+		struct local_histogram *this_hist;
 		this_hist = malloc(sizeof *this_hist);
-		*this_hist = temp;
 
 		printf("setting proc num\n");
 		(*this_hist).processor_number = thread;
-		printf("proc num: %d\n", (*this_hist).processor_number);
+		printf("proc num: %lu\n", (*this_hist).processor_number);
 
 		printf("pthread boi\n");
 		pthread_create(&thread_IDs[thread], NULL, CS338_row_seq, (void*)this_hist);
