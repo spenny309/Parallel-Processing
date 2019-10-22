@@ -350,12 +350,12 @@ void CS338_function(){
 	for(long come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], retval);
 		for (i=0; i < 256; i++){
-			rHist[i] += *((unsigned long*)retval[0])[i];
-			gHist[i] += *((unsigned long*)retval[1])[i];
-			bHist[i] += *((unsigned long*)retval[2])[i];
-			sHist[i] += *((unsigned long*)retval[3])[i];
-			sHist[i + 256] += *((unsigned long*)retval[3])[i + 256];
-			sHist[i + 512] += *((unsigned long*)retval[3])[i + 512];
+			rHist[i] += ((unsigned long*)retval[0])[i];
+			gHist[i] += ((unsigned long*)retval[1])[i];
+			bHist[i] += ((unsigned long*)retval[2])[i];
+			sHist[i] += ((unsigned long*)retval[3])[i];
+			sHist[i + 256] += ((unsigned long*)retval[3])[i + 256];
+			sHist[i + 512] += ((unsigned long*)retval[3])[i + 512];
 		}
 	}
 	#endif
