@@ -355,12 +355,12 @@ void CS338_function(){
 		ret_histograms[2] = &retval[2];
 		ret_histograms[3] = &retval[3];
 		for (i=0; i < 256; i++){
-			rHist[i] += (unsigned long) ret_histograms[0][i];
-			gHist[i] += (unsigned long) ret_histograms[1][i];
-			bHist[i] += (unsigned long) ret_histograms[2][i];
-			sHist[i] += (unsigned long) ret_histograms[3][i];
-			sHist[i + 256] += (unsigned long) ret_histograms[3][i + 256];
-			sHist[i + 512] += (unsigned long) ret_histograms[3][i + 512];
+			rHist[i] += (unsigned long*)ret_histograms[0][i];
+			gHist[i] += (unsigned long*)ret_histograms[1][i];
+			bHist[i] += (unsigned long*)ret_histograms[2][i];
+			sHist[i] += (unsigned long*)ret_histograms[3][i];
+			sHist[i + 256] += (unsigned long*)ret_histograms[3][i + 256];
+			sHist[i + 512] += (unsigned long*)ret_histograms[3][i + 512];
 		}
 	}
 	#endif
@@ -373,8 +373,8 @@ void CS338_function(){
 
 	//Output histogram results
 	for (i=0; i < 256; i++){
-		fprintf(txt_output, "%3u: R:%8u G:%8u B:%8u S0:%8u S1:%8u S2:%8u\n", i, rHist[i], gHist[i], bHist[i], sHist[i], sHist[i+256], sHist[i+512]);
-		fprintf(csv_output, "%8u, %8u, %8u, %8u, %8u, %8u\n", rHist[i], gHist[i], bHist[i], sHist[i], sHist[i + 256], sHist[i + 512]);
+		fprintf(txt_output, "%3ul: R:%8ul G:%8ul B:%8ul S0:%8ul S1:%8ul S2:%8ul\n", i, rHist[i], gHist[i], bHist[i], sHist[i], sHist[i+256], sHist[i+512]);
+		fprintf(csv_output, "%8ul, %8ul, %8ul, %8ul, %8ul, %8ul\n", rHist[i], gHist[i], bHist[i], sHist[i], sHist[i + 256], sHist[i + 512]);
 	}
 
 	fclose(txt_output);
