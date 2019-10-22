@@ -368,7 +368,7 @@ void CS338_function(){
 
 	//Output histogram results
 	for (i=0; i < 256; i++){
-		fprintf(txt_output, "%3lu: R:%8lu G:%8lu B:%8lu S0:%8lu S1:%8lu S2:%8lu\n", i, rHist[i], gHist[i], bHist[i], sHist[i], sHist[i+256], sHist[i+512]);
+		fprintf(txt_output, "%3d: R:%8lu G:%8lu B:%8lu S0:%8lu S1:%8lu S2:%8lu\n", i, rHist[i], gHist[i], bHist[i], sHist[i], sHist[i+256], sHist[i+512]);
 		fprintf(csv_output, "%8lu, %8lu, %8lu, %8lu, %8lu, %8lu\n", rHist[i], gHist[i], bHist[i], sHist[i], sHist[i + 256], sHist[i + 512]);
 	}
 
