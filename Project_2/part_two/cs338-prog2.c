@@ -276,8 +276,7 @@ void *CS338_row_seq(void *proc_num){
 			local_s_hist[r+g+b]++;
 		}
 	}
-
-	printf("exiting with pointer: %d\n", &local_hist_pointers);
+	
 	pthread_exit((void **) local_hist_pointers);
 
 	#endif
@@ -351,11 +350,11 @@ void CS338_function(){
 	unsigned long * ret_histograms[4];
 	for(long come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], retval);
-		printf("retval: %ul\n", (int)retval);
-		ret_histograms[0] = (int*) retval[0];
-		ret_histograms[1] = (int*) retval[1];
-		ret_histograms[2] = (int*) retval[2];
-		ret_histograms[3] = (int*) retval[3];
+		printf("retval: %ul\n", (long)retval);
+		ret_histograms[0] = (unsigned long*) retval[0];
+		ret_histograms[1] = (unsigned long*) retval[1];
+		ret_histograms[2] = (unsigned long*) retval[2];
+		ret_histograms[3] = (unsigned long*) retval[3];
 		for (i=0; i < 256; i++){
 			rHist[i] += ret_histograms[0][i];
 			gHist[i] += ret_histograms[1][i];
