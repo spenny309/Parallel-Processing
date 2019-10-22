@@ -171,7 +171,7 @@ char * output_csv = "outputs/output_local_hists.csv";
 /* Function prototypes */
 
 /* Your code */
-void CS338_row_seq(void *proc_num);
+void *CS338_row_seq(void *proc_num);
 void CS338_function();
 
 /* Read/write JPEGs, for program startup & shutdown */
@@ -224,7 +224,7 @@ void *CS338_row_seq(void *proc_num){
 		}
 	}
 
-	pthread_exit(0);
+	pthread_exit((void*)0);
 
 	#elif defined(NO_LOCKS)
 	//for all height and width from radius...
@@ -240,7 +240,7 @@ void *CS338_row_seq(void *proc_num){
 		}
 	}
 
-	pthread_exit(0);
+	pthread_exit((void*)0);
 
 	#else
 	int * local_hist_pointers[4];
@@ -274,7 +274,7 @@ void *CS338_row_seq(void *proc_num){
 
 	#endif
 
-	pthread_exit(-1);
+	pthread_exit((void*)-1);
 }
 
 /*
