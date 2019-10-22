@@ -245,11 +245,11 @@ void *CS338_row_seq(void *proc_num){
 
 	#else
 	printf("generating local histograms\n");
-	int * local_hist_pointers[4];
-	int local_r_hist[256];
-	int local_g_hist[256];
-	int local_b_hist[256];
-	int local_s_hist[768];
+	unsigned long * local_hist_pointers[4];
+	unsigned long local_r_hist[256];
+	unsigned long local_g_hist[256];
+	unsigned long local_b_hist[256];
+	unsigned long local_s_hist[768];
 
 	printf("memsetting local histograms to 0\n");
 	memset(local_r_hist, 0, sizeof(local_r_hist));
