@@ -340,6 +340,11 @@ void CS338_function(){
 		printf("setting proc num\n");
 		(*this_hist).processor_number = thread;
 		printf("proc num: %lu\n", (*this_hist).processor_number);
+		memset((*this_hist).local_r_hist, 0, 256 * sizeof(unsigned long));
+		memset((*this_hist).local_g_hist, 0, 256 * sizeof(unsigned long));
+		memset((*this_hist).local_b_hist, 0, 256 * sizeof(unsigned long));
+		memset((*this_hist).local_s_hist, 0, 768 * sizeof(unsigned long));
+
 		printf("0 val: %lu\n", (*this_hist).local_r_hist[0]);
 
 		printf("pthread boi\n");
