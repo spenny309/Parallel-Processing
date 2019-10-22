@@ -119,10 +119,10 @@ typedef frame_struct_t *frame_ptr;
 frame_ptr input_frames[MAX_INPUTS];	/* Pointers to input frames */
 frame_ptr output_frames[NUM_OUTPUTS];	/* Pointers to output frames */
 int num_procs;		/* Number of processors, for parallel use */
-int rHist[256];
-int gHist[256];
-int bHist[256];
-int sHist[768];
+unsigned int rHist[256];
+unsigned int gHist[256];
+unsigned int bHist[256];
+unsigned int sHist[768];
 pthread_mutex_t redLock[256];
 pthread_mutex_t greenLock[256];
 pthread_mutex_t blueLock[256];
@@ -197,10 +197,11 @@ void CS338_function(){
 	int i = 0;
 	long pthread;
 	pthread_t thread_IDs[num_procs];
+	FILE * txt_output;
+	FILE * csv_output;
 
 //memset histograms to 0
 	printf("sizeof rHist: %lu\nexpected size: 256", sizeof(rHist));
-	printf("\nChar: %uc\n", 97);
 	memset(rHist, 0, sizeof(rHist));
 	memset(gHist, 0, sizeof(gHist));
 	memset(bHist, 0, sizeof(bHist));
@@ -224,9 +225,11 @@ void CS338_function(){
 			perror("failed to initialize a sum lock");
 			exit(1);
 		}
-	}
-	for( ; i < 768; i++){
-		if (pthread_mutex_init(&sumLock[i], NULL) != 0){
+		if (pthread_mutex_init(&sumLock[i + 256], NULL) != 0){
+			perror("failed to initialize a sum lock");
+			exit(1);
+		}
+		if (pthread_mutex_init(&sumLock[i + 512], NULL) != 0){
 			perror("failed to initialize a sum lock");
 			exit(1);
 		}
@@ -238,15 +241,24 @@ void CS338_function(){
 	}
 
 	//Recall threads
-	for(int come_back = 0; come_back < num_procs; come_back++){
+	for(long come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], NULL);
 	}
 
+	/*
+		WARNING: fopen "w" overwrites old output files if they already exist
+	*/
+	txt_output = fopen("output.txt", "w");
+	csv_output = fopen("output.csv", "w");
+
 	//Output histogram results
 	for (i=0; i < 256; i++){
-		//fprintf(outputFile, "%3u: R:%8u G:%8u B:%8u S0:%8u S1:%8u S2:%8u\n", i, rHist[i], gHist[i], bHist[i], sHist[i], sHist[i+256], sHist[i+512]);
-		printf("R: %d : G: %d : B: %d : S: %d\n", rHist[i], gHist[i], bHist[i], sHist[i]);
+		fprintf(txt_output, "%3u: R:%8u G:%8u B:%8u S0:%8u S1:%8u S2:%8u\n", i, rHist[i], gHist[i], bHist[i], sHist[i], sHist[i+256], sHist[i+512]);
+		fprintf(csv_output, "%8u, %8u, %8u, %8u, %8u, %8u\n", rHist[i], gHist[i], bHist[i], sHist[i], sHist[i + 256], sHist[i + 512]);
 	}
+
+	fclose(txt_output);
+	fclose(csv_output);
 
 	return;
 }
