@@ -124,14 +124,13 @@ unsigned int rHist[256];
 unsigned int gHist[256];
 unsigned int bHist[256];
 unsigned int sHist[768];
-int lock_count = -1;
 
 #if defined(INDIV_LOCKS)
 pthread_mutex_t redLock[256];
 pthread_mutex_t greenLock[256];
 pthread_mutex_t blueLock[256];
 pthread_mutex_t sumLock[768];
-lock_count = 256;
+int lock_count = 256;
 char * output_txt = "outputs/output_indiv_locks.txt"
 char * output_csv = "outputs/output_indiv_locks.csv"
 
@@ -140,7 +139,7 @@ pthread_mutex_t redLock[8];
 pthread_mutex_t greenLock[8];
 pthread_mutex_t blueLock[8];
 pthread_mutex_t sumLock[24];
-lock_count = 8;
+int lock_count = 8;
 char * output_txt = "outputs/output_bucket_locks.txt"
 char * output_csv = "outputs/output_bucket_locks.csv"
 
@@ -153,17 +152,17 @@ pthread_mutex_t blueLock[1];
 	consistency/maths is more simple with num(sumLocks) == 3 * num(redLocks)
 */
 pthread_mutex_t sumLock[3];
-lock_count = 1;
+int lock_count = 1;
 char * output_txt = "outputs/output_big_lock.txt"
 char * output_csv = "outputs/output_big_lock.csv"
 
 #elif defined(NO_LOCKS)
-lock_count = 0;
+int lock_count = 0;
 char * output_txt = "outputs/output_no_locks.txt"
 char * output_csv = "outputs/output_no_locks.csv"
 
 #else
-lock_count = 0;
+int lock_count = 0;
 int ** histogram_array[4];
 histogram_array[0] = rHist;
 histogram_array[1] = gHist;
@@ -289,10 +288,6 @@ call a method to count pixel colours, then
 output this data to an OutputFile
 */
 void CS338_function(){
-	if(lock_count == -1){
-		perror("failed to define lock count");
-		exit(1);
-	}
 
 	int i = 0;
 	long pthread;
