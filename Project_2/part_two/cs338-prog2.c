@@ -131,8 +131,8 @@ pthread_mutex_t greenLock[256];
 pthread_mutex_t blueLock[256];
 pthread_mutex_t sumLock[768];
 int lock_count = 256;
-char * output_txt = "outputs/output_indiv_locks.txt"
-char * output_csv = "outputs/output_indiv_locks.csv"
+char * output_txt = "outputs/output_indiv_locks.txt";
+char * output_csv = "outputs/output_indiv_locks.csv";
 
 #elif defined(BUCKET_LOCKS)
 pthread_mutex_t redLock[8];
@@ -140,8 +140,8 @@ pthread_mutex_t greenLock[8];
 pthread_mutex_t blueLock[8];
 pthread_mutex_t sumLock[24];
 int lock_count = 8;
-char * output_txt = "outputs/output_bucket_locks.txt"
-char * output_csv = "outputs/output_bucket_locks.csv"
+char * output_txt = "outputs/output_bucket_locks.txt";
+char * output_csv = "outputs/output_bucket_locks.csv";
 
 #elif defined(UNI_LOCK)
 pthread_mutex_t redLock[1];
@@ -153,18 +153,18 @@ pthread_mutex_t blueLock[1];
 */
 pthread_mutex_t sumLock[3];
 int lock_count = 1;
-char * output_txt = "outputs/output_big_lock.txt"
-char * output_csv = "outputs/output_big_lock.csv"
+char * output_txt = "outputs/output_big_lock.txt";
+char * output_csv = "outputs/output_big_lock.csv";
 
 #elif defined(NO_LOCKS)
 int lock_count = 0;
-char * output_txt = "outputs/output_no_locks.txt"
-char * output_csv = "outputs/output_no_locks.csv"
+char * output_txt = "outputs/output_no_locks.txt";
+char * output_csv = "outputs/output_no_locks.csv";
 
 #else
 int lock_count = 0;
-char * output_txt = "outputs/output_local_hists.txt"
-char * output_csv = "outputs/output_local_hists.csv"
+char * output_txt = "outputs/output_local_hists.txt";
+char * output_csv = "outputs/output_local_hists.csv";
 
 #endif
 
