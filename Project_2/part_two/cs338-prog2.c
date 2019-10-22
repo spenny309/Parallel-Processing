@@ -132,6 +132,8 @@ pthread_mutex_t greenLock[256];
 pthread_mutex_t blueLock[256];
 pthread_mutex_t sumLock[768];
 lock_count = 256;
+char * output_txt = "outputs/output_indiv_locks.txt"
+char * output_csv = "outputs/output_indiv_locks.csv"
 
 #elif defined(BUCKET_LOCKS)
 pthread_mutex_t redLock[8];
@@ -139,6 +141,8 @@ pthread_mutex_t greenLock[8];
 pthread_mutex_t blueLock[8];
 pthread_mutex_t sumLock[24];
 lock_count = 8;
+char * output_txt = "outputs/output_bucket_locks.txt"
+char * output_csv = "outputs/output_bucket_locks.csv"
 
 #elif defined(UNI_LOCK)
 pthread_mutex_t redLock[1];
@@ -150,6 +154,13 @@ pthread_mutex_t blueLock[1];
 */
 pthread_mutex_t sumLock[3];
 lock_count = 1;
+char * output_txt = "outputs/output_big_lock.txt"
+char * output_csv = "outputs/output_big_lock.csv"
+
+#elif defined(NO_LOCKS)
+lock_count = 0;
+char * output_txt = "outputs/output_no_locks.txt"
+char * output_csv = "outputs/output_no_locks.csv"
 
 #else
 lock_count = 0;
@@ -158,6 +169,8 @@ histogram_array[0] = rHist;
 histogram_array[1] = gHist;
 histogram_array[2] = bHist;
 histogram_array[3] = sHist;
+char * output_txt = "outputs/output_local_hists.txt"
+char * output_csv = "outputs/output_local_hists.csv"
 
 #endif
 
@@ -219,6 +232,22 @@ void *CS338_row_seq(void *proc_num){
 
 	pthread_exit(0);
 
+	#elif defined(NO_LOCKS)
+	//for all height and width from radius...
+	for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
+		for(j = 0; j < from->image_width; j++){
+			r = from->row_pointers[i][j*3];
+			g = from->row_pointers[i][1 + j*3];
+			b = from->row_pointers[i][2 + j*3];
+			rHist[r]++;
+			gHist[g]++;
+			bHist[b]++;
+			sHist[r+g+b]++;
+		}
+	}
+
+	pthread_exit(0);
+
 	#else
 	int * local_hist_pointers[4];
 	int local_r_hist[256];
@@ -240,10 +269,10 @@ void *CS338_row_seq(void *proc_num){
 			r = from->row_pointers[i][j*3];
 			g = from->row_pointers[i][1 + j*3];
 			b = from->row_pointers[i][2 + j*3];
-			rHist[r]++;
-			gHist[g]++;
-			bHist[b]++;
-			sHist[r+g+b]++;
+			local_r_hist[r]++;
+			local_g_hist[g]++;
+			local_b_hist[b]++;
+			local_s_hist[r+g+b]++;
 		}
 	}
 
@@ -260,8 +289,7 @@ call a method to count pixel colours, then
 output this data to an OutputFile
 */
 void CS338_function(){
-
-	if(lock_count == -1s){
+	if(lock_count == -1){
 		perror("failed to define lock count");
 		exit(1);
 	}
@@ -313,8 +341,7 @@ void CS338_function(){
 	}
 
 	//Recall threads
-
-	#if defined(INDIV_LOCKS) || defined(BUCKET_LOCKS) || defined(UNI_LOCK)
+	#if defined(INDIV_LOCKS) || defined(BUCKET_LOCKS) || defined(UNI_LOCK) || defined(NO_LOCKS)
 	for(long come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], NULL);
 	}
@@ -342,8 +369,8 @@ void CS338_function(){
 	/*
 	WARNING: fopen "w" overwrites old output files if they already exist
 	*/
-	txt_output = fopen("output.txt", "w");
-	csv_output = fopen("output.csv", "w");
+	txt_output = fopen(output_txt, "w");
+	csv_output = fopen(output_csv, "w");
 
 	//Output histogram results
 	for (i=0; i < 256; i++){
