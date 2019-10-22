@@ -298,30 +298,32 @@ void CS338_function(){
 	memset(sHist, 0, sizeof(sHist));
 
 	//initialize locks
-	for(i = 0; i < lock_count; i++){
-		if (pthread_mutex_init(&redLock[i], NULL) != 0){
-			perror("failed to initialize a red lock");
-			exit(1);
-		}
-		if (pthread_mutex_init(&greenLock[i], NULL) != 0){
-			perror("failed to initialize a green lock");
-			exit(1);
-		}
-		if (pthread_mutex_init(&blueLock[i], NULL) != 0){
-			perror("failed to initialize a blue lock");
-			exit(1);
-		}
-		if (pthread_mutex_init(&sumLock[i], NULL) != 0){
-			perror("failed to initialize a sum lock");
-			exit(1);
-		}
-		if (pthread_mutex_init(&sumLock[i + lock_count], NULL) != 0){
-			perror("failed to initialize a sum lock");
-			exit(1);
-		}
-		if (pthread_mutex_init(&sumLock[i + 2 * lock_count], NULL) != 0){
-			perror("failed to initialize a sum lock");
-			exit(1);
+	if(defined(redLock)){
+		for(i = 0; i < lock_count; i++){
+			if (pthread_mutex_init(&redLock[i], NULL) != 0){
+				perror("failed to initialize a red lock");
+				exit(1);
+			}
+			if (pthread_mutex_init(&greenLock[i], NULL) != 0){
+				perror("failed to initialize a green lock");
+				exit(1);
+			}
+			if (pthread_mutex_init(&blueLock[i], NULL) != 0){
+				perror("failed to initialize a blue lock");
+				exit(1);
+			}
+			if (pthread_mutex_init(&sumLock[i], NULL) != 0){
+				perror("failed to initialize a sum lock");
+				exit(1);
+			}
+			if (pthread_mutex_init(&sumLock[i + lock_count], NULL) != 0){
+				perror("failed to initialize a sum lock");
+				exit(1);
+			}
+			if (pthread_mutex_init(&sumLock[i + 2 * lock_count], NULL) != 0){
+				perror("failed to initialize a sum lock");
+				exit(1);
+			}
 		}
 	}
 
