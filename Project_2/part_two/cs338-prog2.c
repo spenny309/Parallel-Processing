@@ -16,14 +16,14 @@
  * Also, feel free to define NO_FIRST if you want to discard the performance
  * of the first run (most likely).
  */
-/* #define USE_NUM_RUNS */
+#define USE_NUM_RUNS
 /* #define NO_FIRST */
 
 /* Define this if you want to set the # of processors from the command line.
  * This will be a numerical argument, either right after the command or
  * right after the # of runs.
  */
-/* #define USE_NUM_PROCS */
+#define USE_NUM_PROCS
 
 /* The following parameters adjust the tolerance of the timing-correction
  * code (0.1 = 10% tolerance, etc.) and the number of out-of-tolerance
@@ -51,8 +51,6 @@
  * compression at the output.
  */
 #define OUT_QUALITY		75
-
-#define USE_NUM_PROCS 1
 
 /************************* END OF PARAMETERS *******************/
 
