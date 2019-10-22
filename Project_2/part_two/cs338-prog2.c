@@ -119,18 +119,45 @@ typedef frame_struct_t *frame_ptr;
 frame_ptr input_frames[MAX_INPUTS];	/* Pointers to input frames */
 frame_ptr output_frames[NUM_OUTPUTS];	/* Pointers to output frames */
 int num_procs;		/* Number of processors, for parallel use */
+
+int ** histogram_array[4];
 unsigned int rHist[256];
 unsigned int gHist[256];
 unsigned int bHist[256];
 unsigned int sHist[768];
+histogram_array[0] = rHist;
+histogram_array[1] = gHist;
+histogram_array[2] = bHist;
+histogram_array[3] = sHist;
+int lock_count = 0;
+
+#if defined(INDIV_LOCKS)
 pthread_mutex_t redLock[256];
 pthread_mutex_t greenLock[256];
 pthread_mutex_t blueLock[256];
 pthread_mutex_t sumLock[768];
+lock_count = 256;
+
+#elif defined(BUCKET_LOCKS)
+pthread_mutex_t redLock[8];
+pthread_mutex_t greenLock[8];
+pthread_mutex_t blueLock[8];
+pthread_mutex_t sumLock[24];
+lock_count = 8;
+
+#else
+pthread_mutex_t redLock[1];
+pthread_mutex_t greenLock[1];
+pthread_mutex_t blueLock[1];
+pthread_mutex_t sumLock[1];
+lock_count = 1;
+
+#endif
 
 /* Function prototypes */
 
 /* Your code */
+void CS338_row_seq(void *proc_num);
 void CS338_function();
 
 /* Read/write JPEGs, for program startup & shutdown */
@@ -149,19 +176,15 @@ void destroy_frame(frame_ptr kill_me);
  * new code should be located here (or in another file, if it's large).
  */
 
-// TODO: Create a version in column-major order?
-// TODO: Take an input parameter, sect?
-	// Use parameter: 0-sect, sect+1-2sect, 2sect+1-3sect, etc.
-	// Use parameter: {0, sect, 2sect}, {1, sect+1, 2sect+1}, etc.
-
 //row-major order
 void *CS338_row_seq(void *proc_num){
 	int i, j, k;
 	frame_ptr from;
-	from = input_frames[0];
+	output_frames[0] = from = input_frames[0];
 	long thread_num = (long)proc_num;
 	int r, g, b;
 
+#if defined(INDIV_LOCKS)
 	//for all height and width from radius...
 	for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
 		for(j = 0; j < from->image_width; j++){
@@ -186,6 +209,60 @@ void *CS338_row_seq(void *proc_num){
 			pthread_mutex_unlock(&sumLock[r+g+b]);
 		}
 	}
+
+#elif defined(BUCKET_LOCKS)
+//for all height and width from radius...
+for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
+	for(j = 0; j < from->image_width; j++){
+
+		r = from->row_pointers[i][j*3];
+		pthread_mutex_lock(&redLock[r % 8]);
+		rHist[r]++;
+		pthread_mutex_unlock(&redLock[r % 8]);
+
+		g = from->row_pointers[i][1 + j*3];
+		pthread_mutex_lock(&greenLock[g % 8]);
+		gHist[g]++;
+		pthread_mutex_unlock(&greenLock[g % 8]);
+
+		b = from->row_pointers[i][2 + j*3];
+		pthread_mutex_lock(&blueLock[b % 8]);
+		bHist[b]++;
+		pthread_mutex_unlock(&blueLock[b % 8]);
+
+		pthread_mutex_lock(&sumLock[(r+g+b) % 8]);
+		sHist[r+g+b]++;
+		pthread_mutex_unlock(&sumLock[(r+g+b) % 8]);
+	}
+}
+
+#else
+//for all height and width from radius...
+for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
+	for(j = 0; j < from->image_width; j++){
+
+		r = from->row_pointers[i][j*3];
+		pthread_mutex_lock(&redLock[0]);
+		rHist[r]++;
+		pthread_mutex_unlock(&redLock[0]);
+
+		g = from->row_pointers[i][1 + j*3];
+		pthread_mutex_lock(&greenLock[0]);
+		gHist[g]++;
+		pthread_mutex_unlock(&greenLock[0]);
+
+		b = from->row_pointers[i][2 + j*3];
+		pthread_mutex_lock(&blueLock[0]);
+		bHist[b]++;
+		pthread_mutex_unlock(&blueLock[0]);
+
+		pthread_mutex_lock(&sumLock[0]);
+		sHist[r+g+b]++;
+		pthread_mutex_unlock(&sumLock[0]);
+	}
+}
+
+#endif
 }
 
 /*
