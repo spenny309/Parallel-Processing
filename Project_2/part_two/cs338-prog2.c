@@ -163,11 +163,11 @@ char * output_csv = "outputs/output_no_locks.csv"
 
 #else
 int lock_count = 0;
-int ** histogram_array[4];
-histogram_array[0] = rHist;
-histogram_array[1] = gHist;
-histogram_array[2] = bHist;
-histogram_array[3] = sHist;
+int * histogram_array[4];
+int histogram_array[0] = rHist;
+int histogram_array[1] = gHist;
+int histogram_array[2] = bHist;
+int histogram_array[3] = sHist;
 char * output_txt = "outputs/output_local_hists.txt"
 char * output_csv = "outputs/output_local_hists.csv"
 
