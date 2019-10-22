@@ -166,6 +166,13 @@ char * output_csv = "outputs/output_no_locks.csv";
 int lock_count = 0;
 char * output_txt = "outputs/output_local_hists.txt";
 char * output_csv = "outputs/output_local_hists.csv";
+struct local_histogram {
+	long processor_number;
+	unsigned long local_r_hist[256];
+	unsigned long local_g_hist[256];
+	unsigned long local_b_hist[256];
+	unsigned long local_s_hist[768];
+};
 
 #endif
 
@@ -192,12 +199,21 @@ void destroy_frame(frame_ptr kill_me);
  */
 
 //row-major order
-void *CS338_row_seq(void *proc_num){
+void *CS338_row_seq(void *local_hist_or_proc_num){
 	int i, j, k;
 	frame_ptr from;
 	output_frames[0] = from = input_frames[0];
-	long thread_num = (long)proc_num;
+	long thread_num = -1;
 	int r, g, b;
+
+	#if defined(INDIV_LOCKS) || defined(BUCKET_LOCKS) || defined(UNI_LOCK) || defined(NO_LOCKS)
+	thread_num = (long)local_hist_or_proc_num;
+
+	#else
+	struct local_histogram *local_data = (struct local_histogram*) local_hist_or_proc_num;
+	thread_num = (*local_data).processor_number;
+
+	#endif
 
 	#if defined(INDIV_LOCKS) || defined(BUCKET_LOCKS) || defined(UNI_LOCK)
 	//for all height and width from radius...
@@ -244,25 +260,6 @@ void *CS338_row_seq(void *proc_num){
 	pthread_exit((void*)0);
 
 	#else
-	printf("generating local histograms\n");
-	unsigned long * local_hist_pointers[4];
-	unsigned long local_r_hist[256];
-	unsigned long local_g_hist[256];
-	unsigned long local_b_hist[256];
-	unsigned long local_s_hist[768];
-
-	printf("memsetting local histograms to 0\n");
-	memset(local_r_hist, 0, sizeof(local_r_hist));
-	memset(local_g_hist, 0, sizeof(local_g_hist));
-	memset(local_b_hist, 0, sizeof(local_b_hist));
-	memset(local_s_hist, 0, sizeof(local_s_hist));
-
-	printf("allocating local histograms to local_hist_pointer array\n");
-	local_hist_pointers[0] = local_r_hist;
-	local_hist_pointers[1] = local_g_hist;
-	local_hist_pointers[2] = local_b_hist;
-	local_hist_pointers[3] = local_s_hist;
-
 	//for all height and width from radius...
 	printf("incrementing local histograms\n");
 	for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
@@ -270,14 +267,14 @@ void *CS338_row_seq(void *proc_num){
 			r = from->row_pointers[i][j*3];
 			g = from->row_pointers[i][1 + j*3];
 			b = from->row_pointers[i][2 + j*3];
-			local_r_hist[r]++;
-			local_g_hist[g]++;
-			local_b_hist[b]++;
-			local_s_hist[r+g+b]++;
+			(*local_data).local_r_hist[r]++;
+			(*local_data).local_g_hist[g]++;
+			(*local_data).local_b_hist[b]++;
+			(*local_data).local_s_hist[r + g + b]++;
 		}
 	}
 
-	pthread_exit((void **) local_hist_pointers);
+	pthread_exit((void *) local_data);
 
 	#endif
 
@@ -336,7 +333,13 @@ void CS338_function(){
 
 	//Create num_procs threads to count pixels in row-major order
 	for(long thread = 0; thread < num_procs; thread++){
-		pthread_create(&thread_IDs[thread], NULL, CS338_row_seq, (void*)thread);
+		struct local_histogram *this_hist;
+		(*this_hist).processor_number = thread;
+		memset((*this_hist).local_r_hist, 0, sizeof((*this_hist).local_r_hist));
+		memset((*this_hist).local_g_hist, 0, sizeof((*this_hist).local_g_hist));
+		memset((*this_hist).local_b_hist, 0, sizeof((*this_hist).local_b_hist));
+		memset((*this_hist).local_s_hist, 0, sizeof((*this_hist).local_s_hist));
+		pthread_create(&thread_IDs[thread], NULL, CS338_row_seq, (void*)this_hist);
 	}
 
 	//Recall threads
@@ -346,25 +349,20 @@ void CS338_function(){
 	}
 
 	#else
-	void ** retval;
-	unsigned long * pointer_array[4];
+	void * retval;
 	for(long come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], retval);
-
-		pointer_array[0] = (unsigned long*) &retval[0];
-		pointer_array[1] = (unsigned long*) &retval[1];
-		pointer_array[2] = (unsigned long*) &retval[2];
-		pointer_array[3] = (unsigned long*) &retval[3];
+		struct local_histogram *this_proc_data = (struct local_histogram*) retval;
 
 		for (i=0; i < 256; i++){
-			rHist[i] += pointer_array[0][i];
-			gHist[i] += pointer_array[1][i];
-			bHist[i] += pointer_array[2][i];
-			sHist[i] += pointer_array[3][i];
-			sHist[i + 256] += pointer_array[3][i + 256];
-			sHist[i + 512] += pointer_array[3][i + 512];
+			rHist[i] += (*this_proc_data).local_r_hist[i];
+			gHist[i] += (*this_proc_data).local_g_hist[i];
+			bHist[i] += (*this_proc_data).local_b_hist[i];
+			sHist[i] += (*this_proc_data).local_s_hist[i];
+			sHist[i + 256] += (*this_proc_data).local_s_hist[i + 256];
+			sHist[i + 512] += (*this_proc_data).local_s_hist[i + 512];
 		}
-
+	}
 		// for (i=0; i < 256; i++){
 		// 	rHist[i] += ((unsigned long*)retval[0])[i];
 		// 	gHist[i] += ((unsigned long*)retval[1])[i];
@@ -373,7 +371,6 @@ void CS338_function(){
 		// 	sHist[i + 256] += ((unsigned long*)retval[3])[i + 256];
 		// 	sHist[i + 512] += ((unsigned long*)retval[3])[i + 512];
 		// }
-	}
 	#endif
 
 	/*
