@@ -347,20 +347,15 @@ void CS338_function(){
 
 	#else
 	void ** retval;
-	void * ret_histograms[4];
 	for(long come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], retval);
-		ret_histograms[0] = &retval[0];
-		ret_histograms[1] = &retval[1];
-		ret_histograms[2] = &retval[2];
-		ret_histograms[3] = &retval[3];
 		for (i=0; i < 256; i++){
-			rHist[i] += *(unsigned long*)ret_histograms[0][i];
-			gHist[i] += *(unsigned long*)ret_histograms[1][i];
-			bHist[i] += *(unsigned long*)ret_histograms[2][i];
-			sHist[i] += *(unsigned long*)ret_histograms[3][i];
-			sHist[i + 256] += *(unsigned long*)ret_histograms[3][i + 256];
-			sHist[i + 512] += *(unsigned long*)ret_histograms[3][i + 512];
+			rHist[i] += *((unsigned long*)retval[0][i]);
+			gHist[i] += *((unsigned long*)retval[1][i]);
+			bHist[i] += *((unsigned long*)retval[2][i]);
+			sHist[i] += *((unsigned long*)retval[3][i]);
+			sHist[i + 256] += *((unsigned long*)retval[3][i + 256]);
+			sHist[i + 512] += *((unsigned long*)retval[3][i + 512]);
 		}
 	}
 	#endif
