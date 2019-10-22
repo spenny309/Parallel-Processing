@@ -126,6 +126,7 @@ unsigned int bHist[256];
 unsigned int sHist[768];
 
 #if defined(INDIV_LOCKS)
+#define LOCKS_ON 1
 pthread_mutex_t redLock[256];
 pthread_mutex_t greenLock[256];
 pthread_mutex_t blueLock[256];
@@ -135,6 +136,7 @@ char * output_txt = "outputs/output_indiv_locks.txt";
 char * output_csv = "outputs/output_indiv_locks.csv";
 
 #elif defined(BUCKET_LOCKS)
+#define LOCKS_ON 1
 pthread_mutex_t redLock[8];
 pthread_mutex_t greenLock[8];
 pthread_mutex_t blueLock[8];
@@ -144,6 +146,7 @@ char * output_txt = "outputs/output_bucket_locks.txt";
 char * output_csv = "outputs/output_bucket_locks.csv";
 
 #elif defined(UNI_LOCK)
+#define LOCKS_ON 1
 pthread_mutex_t redLock[1];
 pthread_mutex_t greenLock[1];
 pthread_mutex_t blueLock[1];
@@ -298,7 +301,7 @@ void CS338_function(){
 	memset(sHist, 0, sizeof(sHist));
 
 	//initialize locks
-	if(defined(redLock)){
+#ifdef LOCKS_ON
 		for(i = 0; i < lock_count; i++){
 			if (pthread_mutex_init(&redLock[i], NULL) != 0){
 				perror("failed to initialize a red lock");
@@ -325,7 +328,7 @@ void CS338_function(){
 				exit(1);
 			}
 		}
-	}
+#endif
 
 	//Create num_procs threads to count pixels in row-major order
 	for(long thread = 0; thread < num_procs; thread++){
