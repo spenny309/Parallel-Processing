@@ -318,7 +318,7 @@ void CS338_function(){
 	for(long come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], NULL);
 	}
-	
+
 	#else
 	void ** retval;
 	int * ret_histograms[4];
