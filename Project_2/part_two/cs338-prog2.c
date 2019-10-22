@@ -120,16 +120,11 @@ frame_ptr input_frames[MAX_INPUTS];	/* Pointers to input frames */
 frame_ptr output_frames[NUM_OUTPUTS];	/* Pointers to output frames */
 int num_procs;		/* Number of processors, for parallel use */
 
-int ** histogram_array[4];
 unsigned int rHist[256];
 unsigned int gHist[256];
 unsigned int bHist[256];
 unsigned int sHist[768];
-histogram_array[0] = rHist;
-histogram_array[1] = gHist;
-histogram_array[2] = bHist;
-histogram_array[3] = sHist;
-int lock_count = 0;
+int lock_count = -1;
 
 #if defined(INDIV_LOCKS)
 pthread_mutex_t redLock[256];
@@ -145,12 +140,24 @@ pthread_mutex_t blueLock[8];
 pthread_mutex_t sumLock[24];
 lock_count = 8;
 
-#else
+#elif defined(UNI_LOCK)
 pthread_mutex_t redLock[1];
 pthread_mutex_t greenLock[1];
 pthread_mutex_t blueLock[1];
-pthread_mutex_t sumLock[1];
+/*
+	As with the INDIV_LOCKS sumLock which has 2 superfluous locks, code
+	consistency/maths is more simple with num(sumLocks) == 3 * num(redLocks)
+*/
+pthread_mutex_t sumLock[3];
 lock_count = 1;
+
+#else
+lock_count = 0;
+int ** histogram_array[4];
+histogram_array[0] = rHist;
+histogram_array[1] = gHist;
+histogram_array[2] = bHist;
+histogram_array[3] = sHist;
 
 #endif
 
@@ -184,85 +191,67 @@ void *CS338_row_seq(void *proc_num){
 	long thread_num = (long)proc_num;
 	int r, g, b;
 
-#if defined(INDIV_LOCKS)
+	#if defined(INDIV_LOCKS) || defined(BUCKET_LOCKS) || defined(UNI_LOCK)
 	//for all height and width from radius...
 	for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
 		for(j = 0; j < from->image_width; j++){
 
 			r = from->row_pointers[i][j*3];
-			pthread_mutex_lock(&redLock[r]);
+			pthread_mutex_lock(&redLock[r % lock_count]);
 			rHist[r]++;
-			pthread_mutex_unlock(&redLock[r]);
+			pthread_mutex_unlock(&redLock[r % lock_count]);
 
 			g = from->row_pointers[i][1 + j*3];
-			pthread_mutex_lock(&greenLock[g]);
+			pthread_mutex_lock(&greenLock[g % lock_count]);
 			gHist[g]++;
-			pthread_mutex_unlock(&greenLock[g]);
+			pthread_mutex_unlock(&greenLock[g % lock_count]);
 
 			b = from->row_pointers[i][2 + j*3];
-			pthread_mutex_lock(&blueLock[b]);
+			pthread_mutex_lock(&blueLock[b % lock_count]);
 			bHist[b]++;
-			pthread_mutex_unlock(&blueLock[b]);
+			pthread_mutex_unlock(&blueLock[b % lock_count]);
 
-			pthread_mutex_lock(&sumLock[r+g+b]);
+			pthread_mutex_lock(&sumLock[(r+g+b) % lock_count]);
 			sHist[r+g+b]++;
-			pthread_mutex_unlock(&sumLock[r+g+b]);
+			pthread_mutex_unlock(&sumLock[(r+g+b) % lock_count]);
 		}
 	}
 
-#elif defined(BUCKET_LOCKS)
-//for all height and width from radius...
-for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
-	for(j = 0; j < from->image_width; j++){
+	pthread_exit(0);
 
-		r = from->row_pointers[i][j*3];
-		pthread_mutex_lock(&redLock[r % 8]);
-		rHist[r]++;
-		pthread_mutex_unlock(&redLock[r % 8]);
+	#else
+	int * local_hist_pointers[4];
+	int local_r_hist[256];
+	int local_g_hist[256];
+	int local_b_hist[256];
+	int local_s_hist[768];
+	memset(local_r_hist, 0, sizeof(local_r_hist));
+	memset(local_g_hist, 0, sizeof(local_g_hist));
+	memset(local_b_hist, 0, sizeof(local_b_hist));
+	memset(local_s_hist, 0, sizeof(local_s_hist));
+	local_hist_pointers[0] = local_r_hist;
+	local_hist_pointers[1] = local_g_hist;
+	local_hist_pointers[2] = local_b_hist;
+	local_hist_pointers[3] = local_s_hist;
 
-		g = from->row_pointers[i][1 + j*3];
-		pthread_mutex_lock(&greenLock[g % 8]);
-		gHist[g]++;
-		pthread_mutex_unlock(&greenLock[g % 8]);
-
-		b = from->row_pointers[i][2 + j*3];
-		pthread_mutex_lock(&blueLock[b % 8]);
-		bHist[b]++;
-		pthread_mutex_unlock(&blueLock[b % 8]);
-
-		pthread_mutex_lock(&sumLock[(r+g+b) % 8]);
-		sHist[r+g+b]++;
-		pthread_mutex_unlock(&sumLock[(r+g+b) % 8]);
+	//for all height and width from radius...
+	for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
+		for(j = 0; j < from->image_width; j++){
+			r = from->row_pointers[i][j*3];
+			g = from->row_pointers[i][1 + j*3];
+			b = from->row_pointers[i][2 + j*3];
+			rHist[r]++;
+			gHist[g]++;
+			bHist[b]++;
+			sHist[r+g+b]++;
+		}
 	}
-}
 
-#else
-//for all height and width from radius...
-for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
-	for(j = 0; j < from->image_width; j++){
+	pthread_exit((void **) local_hist_pointers);
 
-		r = from->row_pointers[i][j*3];
-		pthread_mutex_lock(&redLock[0]);
-		rHist[r]++;
-		pthread_mutex_unlock(&redLock[0]);
+	#endif
 
-		g = from->row_pointers[i][1 + j*3];
-		pthread_mutex_lock(&greenLock[0]);
-		gHist[g]++;
-		pthread_mutex_unlock(&greenLock[0]);
-
-		b = from->row_pointers[i][2 + j*3];
-		pthread_mutex_lock(&blueLock[0]);
-		bHist[b]++;
-		pthread_mutex_unlock(&blueLock[0]);
-
-		pthread_mutex_lock(&sumLock[0]);
-		sHist[r+g+b]++;
-		pthread_mutex_unlock(&sumLock[0]);
-	}
-}
-
-#endif
+	pthread_exit(-1);
 }
 
 /*
@@ -271,21 +260,27 @@ call a method to count pixel colours, then
 output this data to an OutputFile
 */
 void CS338_function(){
+
+	if(lock_count == -1s){
+		perror("failed to define lock count");
+		exit(1);
+	}
+
 	int i = 0;
 	long pthread;
 	pthread_t thread_IDs[num_procs];
 	FILE * txt_output;
 	FILE * csv_output;
 
-//memset histograms to 0
-	printf("sizeof rHist: %lu\nexpected size: 256", sizeof(rHist));
+	//memset histograms to 0
+	printf("sizeof rHist: %lu\nexpected size: 256 * sizeof(u int)\n", sizeof(rHist));
 	memset(rHist, 0, sizeof(rHist));
 	memset(gHist, 0, sizeof(gHist));
 	memset(bHist, 0, sizeof(bHist));
 	memset(sHist, 0, sizeof(sHist));
 
-//initialize locks
-	for(i = 0; i < 256; i++){
+	//initialize locks
+	for(i = 0; i < lock_count; i++){
 		if (pthread_mutex_init(&redLock[i], NULL) != 0){
 			perror("failed to initialize a red lock");
 			exit(1);
@@ -302,11 +297,11 @@ void CS338_function(){
 			perror("failed to initialize a sum lock");
 			exit(1);
 		}
-		if (pthread_mutex_init(&sumLock[i + 256], NULL) != 0){
+		if (pthread_mutex_init(&sumLock[i + lock_count], NULL) != 0){
 			perror("failed to initialize a sum lock");
 			exit(1);
 		}
-		if (pthread_mutex_init(&sumLock[i + 512], NULL) != 0){
+		if (pthread_mutex_init(&sumLock[i + 2 * lock_count], NULL) != 0){
 			perror("failed to initialize a sum lock");
 			exit(1);
 		}
@@ -318,12 +313,34 @@ void CS338_function(){
 	}
 
 	//Recall threads
+
+	#if defined(INDIV_LOCKS) || defined(BUCKET_LOCKS) || defined(UNI_LOCK)
 	for(long come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], NULL);
 	}
+	
+	#else
+	void ** retval;
+	int * ret_histograms[4];
+	for(long come_back = 0; come_back < num_procs; come_back++){
+		pthread_join(thread_IDs[come_back], retval);
+		ret_histograms[0] = (int*) retval[0];
+		ret_histograms[1] = (int*) retval[1];
+		ret_histograms[2] = (int*) retval[2];
+		ret_histograms[3] = (int*) retval[3];
+		for (i=0; i < 256; i++){
+			rHist[i] += ret_histograms[0][i];
+			gHist[i] += ret_histograms[1][i];
+			bHist[i] += ret_histograms[2][i];
+			sHist[i] += ret_histograms[3][i];
+			sHist[i + 256] += ret_histograms[3][i + 256];
+			sHist[i + 512] += ret_histograms[3][i + 512];
+		}
+	}
+	#endif
 
 	/*
-		WARNING: fopen "w" overwrites old output files if they already exist
+	WARNING: fopen "w" overwrites old output files if they already exist
 	*/
 	txt_output = fopen("output.txt", "w");
 	csv_output = fopen("output.csv", "w");
