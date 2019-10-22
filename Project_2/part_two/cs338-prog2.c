@@ -355,12 +355,12 @@ void CS338_function(){
 		ret_histograms[2] = &retval[2];
 		ret_histograms[3] = &retval[3];
 		for (i=0; i < 256; i++){
-			rHist[i] += (unsigned long*)ret_histograms[0][i];
-			gHist[i] += (unsigned long*)ret_histograms[1][i];
-			bHist[i] += (unsigned long*)ret_histograms[2][i];
-			sHist[i] += (unsigned long*)ret_histograms[3][i];
-			sHist[i + 256] += (unsigned long*)ret_histograms[3][i + 256];
-			sHist[i + 512] += (unsigned long*)ret_histograms[3][i + 512];
+			rHist[i] += *(unsigned long*)ret_histograms[0][i];
+			gHist[i] += *(unsigned long*)ret_histograms[1][i];
+			bHist[i] += *(unsigned long*)ret_histograms[2][i];
+			sHist[i] += *(unsigned long*)ret_histograms[3][i];
+			sHist[i + 256] += *(unsigned long*)ret_histograms[3][i + 256];
+			sHist[i + 512] += *(unsigned long*)ret_histograms[3][i + 512];
 		}
 	}
 	#endif
