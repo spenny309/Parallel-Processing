@@ -244,21 +244,27 @@ void *CS338_row_seq(void *proc_num){
 	pthread_exit((void*)0);
 
 	#else
+	printf("generating local histograms\n");
 	int * local_hist_pointers[4];
 	int local_r_hist[256];
 	int local_g_hist[256];
 	int local_b_hist[256];
 	int local_s_hist[768];
+
+	printf("memsetting local histograms to 0\n");
 	memset(local_r_hist, 0, sizeof(local_r_hist));
 	memset(local_g_hist, 0, sizeof(local_g_hist));
 	memset(local_b_hist, 0, sizeof(local_b_hist));
 	memset(local_s_hist, 0, sizeof(local_s_hist));
+
+	printf("allocating local histograms to local_hist_pointer array\n");
 	local_hist_pointers[0] = local_r_hist;
 	local_hist_pointers[1] = local_g_hist;
 	local_hist_pointers[2] = local_b_hist;
 	local_hist_pointers[3] = local_s_hist;
 
 	//for all height and width from radius...
+	printf("incrementing local histograms\n");
 	for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
 		for(j = 0; j < from->image_width; j++){
 			r = from->row_pointers[i][j*3];
@@ -271,6 +277,7 @@ void *CS338_row_seq(void *proc_num){
 		}
 	}
 
+	printf("exiting\n");
 	pthread_exit((void **) local_hist_pointers);
 
 	#endif
