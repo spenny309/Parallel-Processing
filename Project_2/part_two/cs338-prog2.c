@@ -118,10 +118,10 @@ frame_ptr input_frames[MAX_INPUTS];	/* Pointers to input frames */
 frame_ptr output_frames[NUM_OUTPUTS];	/* Pointers to output frames */
 int num_procs;		/* Number of processors, for parallel use */
 
-unsigned int rHist[256];
-unsigned int gHist[256];
-unsigned int bHist[256];
-unsigned int sHist[768];
+unsigned long rHist[256];
+unsigned long gHist[256];
+unsigned long bHist[256];
+unsigned long sHist[768];
 
 #if defined(INDIV_LOCKS)
 #define LOCKS_ON 1
@@ -347,20 +347,20 @@ void CS338_function(){
 
 	#else
 	void ** retval;
-	unsigned long * ret_histograms[4];
+	void * ret_histograms[4];
 	for(long come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], retval);
-		ret_histograms[0] = (unsigned long*) retval[0];
-		ret_histograms[1] = (unsigned long*) retval[1];
-		ret_histograms[2] = (unsigned long*) retval[2];
-		ret_histograms[3] = (unsigned long*) retval[3];
+		ret_histograms[0] = &retval[0];
+		ret_histograms[1] = &retval[1];
+		ret_histograms[2] = &retval[2];
+		ret_histograms[3] = &retval[3];
 		for (i=0; i < 256; i++){
-			rHist[i] += ret_histograms[0][i];
-			gHist[i] += ret_histograms[1][i];
-			bHist[i] += ret_histograms[2][i];
-			sHist[i] += ret_histograms[3][i];
-			sHist[i + 256] += ret_histograms[3][i + 256];
-			sHist[i + 512] += ret_histograms[3][i + 512];
+			rHist[i] += (unsigned long) ret_histograms[0][i];
+			gHist[i] += (unsigned long) ret_histograms[1][i];
+			bHist[i] += (unsigned long) ret_histograms[2][i];
+			sHist[i] += (unsigned long) ret_histograms[3][i];
+			sHist[i + 256] += (unsigned long) ret_histograms[3][i + 256];
+			sHist[i + 512] += (unsigned long) ret_histograms[3][i + 512];
 		}
 	}
 	#endif
