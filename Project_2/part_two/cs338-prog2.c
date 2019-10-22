@@ -347,16 +347,32 @@ void CS338_function(){
 
 	#else
 	void ** retval;
+	unsigned long * pointer_array[4];
 	for(long come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], retval);
+
+		pointer_array[0] = (unsigned long*) &retval[0];
+		pointer_array[1] = (unsigned long*) &retval[1];
+		pointer_array[2] = (unsigned long*) &retval[2];
+		pointer_array[3] = (unsigned long*) &retval[3];
+
 		for (i=0; i < 256; i++){
-			rHist[i] += ((unsigned long*)retval[0])[i];
-			gHist[i] += ((unsigned long*)retval[1])[i];
-			bHist[i] += ((unsigned long*)retval[2])[i];
-			sHist[i] += ((unsigned long*)retval[3])[i];
-			sHist[i + 256] += ((unsigned long*)retval[3])[i + 256];
-			sHist[i + 512] += ((unsigned long*)retval[3])[i + 512];
+			rHist[i] += pointer_array[0][i];
+			gHist[i] += pointer_array[1][i];
+			bHist[i] += pointer_array[2][i];
+			sHist[i] += pointer_array[3][i];
+			sHist[i + 256] += pointer_array[3][i + 256];
+			sHist[i + 512] += pointer_array[3][i + 512];
 		}
+
+		// for (i=0; i < 256; i++){
+		// 	rHist[i] += ((unsigned long*)retval[0])[i];
+		// 	gHist[i] += ((unsigned long*)retval[1])[i];
+		// 	bHist[i] += ((unsigned long*)retval[2])[i];
+		// 	sHist[i] += ((unsigned long*)retval[3])[i];
+		// 	sHist[i + 256] += ((unsigned long*)retval[3])[i + 256];
+		// 	sHist[i + 512] += ((unsigned long*)retval[3])[i + 512];
+		// }
 	}
 	#endif
 
