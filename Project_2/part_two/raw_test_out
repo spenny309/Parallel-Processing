@@ -1,0 +1,300 @@
+Making 2 runs . . .
+Using 1 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.240 vs. Real      0.240: correction factor =   1.000041
+testing: CPU      0.240 vs. Real      0.240: correction factor =   1.000034
+testing: CPU      0.240 vs. Real      0.244: correction factor =   0.985954
+0. ELAPSED  TIME =                0.409 sec, corrected to                0.409 sec
+   TOTAL CPU TIME =                0.405 sec
+testing: CPU      0.240 vs. Real      0.239: correction factor =   1.004400
+1. ELAPSED  TIME =                0.409 sec, corrected to                0.403 sec
+   TOTAL CPU TIME =                0.404 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.406 seconds
+Making 2 runs . . .
+Using 2 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.233 vs. Real      0.233: correction factor =   1.000043
+testing: CPU      0.233 vs. Real      0.233: correction factor =   1.000034
+testing: CPU      0.233 vs. Real      0.239: correction factor =   0.975378
+0. ELAPSED  TIME =                1.199 sec, corrected to                1.199 sec
+   TOTAL CPU TIME =                2.359 sec
+testing: CPU      0.233 vs. Real      0.235: correction factor =   0.994226
+1. ELAPSED  TIME =                0.317 sec, corrected to                0.309 sec
+   TOTAL CPU TIME =                0.617 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.754 seconds
+Making 2 runs . . .
+Using 4 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000008
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000031
+testing: CPU      0.234 vs. Real      0.234: correction factor =   0.999192
+0. ELAPSED  TIME =                1.116 sec, corrected to                1.116 sec
+   TOTAL CPU TIME =                4.218 sec
+testing: CPU      0.234 vs. Real      0.235: correction factor =   0.993017
+1. ELAPSED  TIME =                1.131 sec, corrected to                1.131 sec
+   TOTAL CPU TIME =                4.306 sec
+AVERAGE CORRECTED ELAPSED TIME =                1.123 seconds
+Making 2 runs . . .
+Using 8 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000033
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000030
+testing: CPU      0.234 vs. Real      0.235: correction factor =   0.994504
+0. ELAPSED  TIME =                1.970 sec, corrected to                1.970 sec
+   TOTAL CPU TIME =               11.733 sec
+testing: CPU      0.234 vs. Real      0.235: correction factor =   0.995974
+1. ELAPSED  TIME =                1.487 sec, corrected to                1.479 sec
+   TOTAL CPU TIME =                8.835 sec
+AVERAGE CORRECTED ELAPSED TIME =                1.724 seconds
+Making 2 runs . . .
+Using 16 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.235 vs. Real      0.235: correction factor =   1.000044
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000013
+testing: CPU      0.234 vs. Real      0.242: correction factor =   0.964559
+0. ELAPSED  TIME =                1.839 sec, corrected to                1.839 sec
+   TOTAL CPU TIME =               14.095 sec
+testing: CPU      0.234 vs. Real      0.238: correction factor =   0.979940
+1. ELAPSED  TIME =                1.671 sec, corrected to                1.612 sec
+   TOTAL CPU TIME =               13.663 sec
+AVERAGE CORRECTED ELAPSED TIME =                1.725 seconds
+Making 2 runs . . .
+Using 1 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000038
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000034
+testing: CPU      0.234 vs. Real      0.235: correction factor =   0.993052
+0. ELAPSED  TIME =                0.410 sec, corrected to                0.410 sec
+   TOTAL CPU TIME =                0.405 sec
+testing: CPU      0.234 vs. Real      0.235: correction factor =   0.996290
+1. ELAPSED  TIME =                0.409 sec, corrected to                0.406 sec
+   TOTAL CPU TIME =                0.403 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.408 seconds
+Making 2 runs . . .
+Using 2 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.234 vs. Real      0.233: correction factor =   1.000039
+testing: CPU      0.233 vs. Real      0.233: correction factor =   1.000038
+testing: CPU      0.233 vs. Real      0.234: correction factor =   0.997557
+0. ELAPSED  TIME =                0.607 sec, corrected to                0.607 sec
+   TOTAL CPU TIME =                1.195 sec
+testing: CPU      0.233 vs. Real      0.236: correction factor =   0.991431
+1. ELAPSED  TIME =                0.619 sec, corrected to                0.618 sec
+   TOTAL CPU TIME =                1.216 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.612 seconds
+Making 2 runs . . .
+Using 4 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000038
+testing: CPU      0.235 vs. Real      0.235: correction factor =   1.000034
+testing: CPU      0.235 vs. Real      0.235: correction factor =   0.996465
+0. ELAPSED  TIME =                0.624 sec, corrected to                0.624 sec
+   TOTAL CPU TIME =                2.399 sec
+testing: CPU      0.235 vs. Real      0.235: correction factor =   0.998059
+1. ELAPSED  TIME =                0.619 sec, corrected to                0.616 sec
+   TOTAL CPU TIME =                2.415 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.620 seconds
+Making 2 runs . . .
+Using 8 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000030
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000013
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.001448
+0. ELAPSED  TIME =                0.674 sec, corrected to                0.674 sec
+   TOTAL CPU TIME =                4.616 sec
+testing: CPU      0.234 vs. Real      0.235: correction factor =   0.998118
+1. ELAPSED  TIME =                0.794 sec, corrected to                0.795 sec
+   TOTAL CPU TIME =                4.594 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.735 seconds
+Making 2 runs . . .
+Using 16 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000039
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000035
+testing: CPU      0.234 vs. Real      0.236: correction factor =   0.988915
+0. ELAPSED  TIME =                0.662 sec, corrected to                0.662 sec
+   TOTAL CPU TIME =                7.591 sec
+testing: CPU      0.234 vs. Real      0.238: correction factor =   0.982801
+1. ELAPSED  TIME =                0.874 sec, corrected to                0.865 sec
+   TOTAL CPU TIME =                8.195 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.763 seconds
+Making 2 runs . . .
+Using 1 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.240 vs. Real      0.240: correction factor =   1.000037
+testing: CPU      0.238 vs. Real      0.238: correction factor =   1.000013
+testing: CPU      0.238 vs. Real      0.238: correction factor =   1.000567
+0. ELAPSED  TIME =                0.411 sec, corrected to                0.411 sec
+   TOTAL CPU TIME =                0.407 sec
+testing: CPU      0.238 vs. Real      0.241: correction factor =   0.990594
+1. ELAPSED  TIME =                0.410 sec, corrected to                0.411 sec
+   TOTAL CPU TIME =                0.405 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.411 seconds
+Making 2 runs . . .
+Using 2 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.235 vs. Real      0.235: correction factor =   1.000043
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000031
+testing: CPU      0.234 vs. Real      0.236: correction factor =   0.992200
+0. ELAPSED  TIME =                0.305 sec, corrected to                0.305 sec
+   TOTAL CPU TIME =                0.589 sec
+testing: CPU      0.234 vs. Real      0.236: correction factor =   0.988918
+1. ELAPSED  TIME =                0.328 sec, corrected to                0.326 sec
+   TOTAL CPU TIME =                0.636 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.315 seconds
+Making 2 runs . . .
+Using 4 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.236 vs. Real      0.236: correction factor =   1.000034
+testing: CPU      0.237 vs. Real      0.237: correction factor =   1.000034
+testing: CPU      0.237 vs. Real      0.234: correction factor =   1.013080
+0. ELAPSED  TIME =                0.301 sec, corrected to                0.301 sec
+   TOTAL CPU TIME =                1.056 sec
+testing: CPU      0.237 vs. Real      0.235: correction factor =   1.007133
+1. ELAPSED  TIME =                0.277 sec, corrected to                0.280 sec
+   TOTAL CPU TIME =                1.049 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.291 seconds
+Making 2 runs . . .
+Using 8 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.235 vs. Real      0.235: correction factor =   1.000000
+testing: CPU      0.235 vs. Real      0.235: correction factor =   1.000034
+testing: CPU      0.235 vs. Real      0.237: correction factor =   0.989885
+0. ELAPSED  TIME =                0.264 sec, corrected to                0.264 sec
+   TOTAL CPU TIME =                1.837 sec
+testing: CPU      0.235 vs. Real      0.236: correction factor =   0.993348
+1. ELAPSED  TIME =                0.344 sec, corrected to                0.341 sec
+   TOTAL CPU TIME =                2.118 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.302 seconds
+Making 2 runs . . .
+Using 16 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.235 vs. Real      0.235: correction factor =   1.000038
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000022
+testing: CPU      0.234 vs. Real      0.241: correction factor =   0.970966
+0. ELAPSED  TIME =                0.221 sec, corrected to                0.221 sec
+   TOTAL CPU TIME =                1.659 sec
+testing: CPU      0.234 vs. Real      0.238: correction factor =   0.981201
+1. ELAPSED  TIME =                0.209 sec, corrected to                0.203 sec
+   TOTAL CPU TIME =                1.868 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.212 seconds
+Making 2 runs . . .
+Using 1 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000017
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000035
+testing: CPU      0.234 vs. Real      0.235: correction factor =   0.995729
+0. ELAPSED  TIME =                0.014 sec, corrected to                0.014 sec
+   TOTAL CPU TIME =                0.008 sec
+testing: CPU      0.234 vs. Real      0.237: correction factor =   0.989616
+1. ELAPSED  TIME =                0.014 sec, corrected to                0.014 sec
+   TOTAL CPU TIME =                0.011 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.014 seconds
+Making 2 runs . . .
+Using 2 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.235 vs. Real      0.235: correction factor =   1.000012
+testing: CPU      0.235 vs. Real      0.235: correction factor =   1.000034
+testing: CPU      0.235 vs. Real      0.235: correction factor =   0.998864
+0. ELAPSED  TIME =                0.014 sec, corrected to                0.014 sec
+   TOTAL CPU TIME =                0.005 sec
+testing: CPU      0.235 vs. Real      0.236: correction factor =   0.994512
+1. ELAPSED  TIME =                0.014 sec, corrected to                0.014 sec
+   TOTAL CPU TIME =                0.008 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.014 seconds
+Making 2 runs . . .
+Using 4 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.235 vs. Real      0.235: correction factor =   1.000017
+testing: CPU      0.235 vs. Real      0.235: correction factor =   1.000038
+testing: CPU      0.235 vs. Real      0.234: correction factor =   1.002500
+0. ELAPSED  TIME =                0.011 sec, corrected to                0.011 sec
+   TOTAL CPU TIME =                0.003 sec
+testing: CPU      0.235 vs. Real      0.237: correction factor =   0.991308
+1. ELAPSED  TIME =                0.014 sec, corrected to                0.014 sec
+   TOTAL CPU TIME =                0.004 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.012 seconds
+Making 2 runs . . .
+Using 8 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.235 vs. Real      0.234: correction factor =   1.000038
+testing: CPU      0.235 vs. Real      0.235: correction factor =   1.000017
+testing: CPU      0.235 vs. Real      0.237: correction factor =   0.990577
+0. ELAPSED  TIME =                0.008 sec, corrected to                0.008 sec
+   TOTAL CPU TIME =                0.004 sec
+testing: CPU      0.235 vs. Real      0.238: correction factor =   0.985367
+1. ELAPSED  TIME =                0.008 sec, corrected to                0.008 sec
+   TOTAL CPU TIME =                0.003 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.008 seconds
+Making 2 runs . . .
+Using 16 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000038
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000030
+testing: CPU      0.234 vs. Real      0.236: correction factor =   0.990830
+0. ELAPSED  TIME =                0.014 sec, corrected to                0.014 sec
+   TOTAL CPU TIME =                0.002 sec
+testing: CPU      0.234 vs. Real      0.234: correction factor =   0.999586
+1. ELAPSED  TIME =                0.008 sec, corrected to                0.008 sec
+   TOTAL CPU TIME =                0.002 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.011 seconds
+Making 2 runs . . .
+Using 1 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000026
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000034
+testing: CPU      0.234 vs. Real      0.235: correction factor =   0.995638
+0. ELAPSED  TIME =                0.015 sec, corrected to                0.015 sec
+   TOTAL CPU TIME =                0.012 sec
+testing: CPU      0.234 vs. Real      0.236: correction factor =   0.992257
+1. ELAPSED  TIME =                0.014 sec, corrected to                0.014 sec
+   TOTAL CPU TIME =                0.010 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.015 seconds
+Making 2 runs . . .
+Using 2 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000038
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000035
+testing: CPU      0.234 vs. Real      0.236: correction factor =   0.990462
+0. ELAPSED  TIME =                0.015 sec, corrected to                0.015 sec
+   TOTAL CPU TIME =                0.012 sec
+testing: CPU      0.234 vs. Real      0.235: correction factor =   0.993255
+1. ELAPSED  TIME =                0.043 sec, corrected to                0.042 sec
+   TOTAL CPU TIME =                0.073 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.029 seconds
+Making 2 runs . . .
+Using 4 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000035
+testing: CPU      0.233 vs. Real      0.233: correction factor =   1.000035
+testing: CPU      0.233 vs. Real      0.235: correction factor =   0.991527
+0. ELAPSED  TIME =                0.047 sec, corrected to                0.047 sec
+   TOTAL CPU TIME =                0.110 sec
+testing: CPU      0.233 vs. Real      0.235: correction factor =   0.991396
+1. ELAPSED  TIME =                0.048 sec, corrected to                0.048 sec
+   TOTAL CPU TIME =                0.106 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.047 seconds
+Making 2 runs . . .
+Using 8 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.236 vs. Real      0.236: correction factor =   1.000039
+testing: CPU      0.238 vs. Real      0.238: correction factor =   1.000038
+testing: CPU      0.238 vs. Real      0.236: correction factor =   1.010120
+0. ELAPSED  TIME =                0.062 sec, corrected to                0.062 sec
+   TOTAL CPU TIME =                0.274 sec
+testing: CPU      0.238 vs. Real      0.237: correction factor =   1.006180
+1. ELAPSED  TIME =                0.083 sec, corrected to                0.084 sec
+   TOTAL CPU TIME =                0.431 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.073 seconds
+Making 2 runs . . .
+Using 16 processors . . .
+  Opened pictures/peacock.jpg: height = 2560, width = 1920, c = 3
+testing: CPU      0.233 vs. Real      0.233: correction factor =   1.000039
+testing: CPU      0.234 vs. Real      0.234: correction factor =   1.000009
+testing: CPU      0.234 vs. Real      0.236: correction factor =   0.994381
+0. ELAPSED  TIME =                0.103 sec, corrected to                0.103 sec
+   TOTAL CPU TIME =                0.850 sec
+testing: CPU      0.234 vs. Real      0.235: correction factor =   0.996728
+1. ELAPSED  TIME =                0.095 sec, corrected to                0.094 sec
+   TOTAL CPU TIME =                0.753 sec
+AVERAGE CORRECTED ELAPSED TIME =                0.099 seconds

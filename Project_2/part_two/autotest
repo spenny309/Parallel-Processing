@@ -1,21 +1,6 @@
-no_lockslocal_histsindiv_locksbucket_locks#!/bin/bash
-
-# make sure you do the command
-# chmod u+x runScript
-# run with the command
-# nohup ./runScript  &
-# It will put its output into a file named nohup.out.
-
-#./part1-t1 is the executable compiled for 1 thread
-#./part1-t2 is the executable compiled for 2 threads
-#./part1-t4 is the executable compiled for 4 threads, etc.
-
-# These jobs will run one after the other in series, putting the
-# information sent to stdout/stderr into the out.* files so you can
-# get the execution time results from those files.
+#!/bin/bash
 
 #make executables
-
 make --f make_uni
 make --f make_bucket
 make --f make_indiv
@@ -23,11 +8,9 @@ make --f make_local_hists
 make --f make_no_locks
 
 #create output files
-
 mkdir outputs
 
 #test on large image
-
 ./prog2_big_lock 2 1 pictures/peacock.jpg nulloutput.jpg
 ./prog2_big_lock 2 2 pictures/peacock.jpg nulloutput.jpg
 ./prog2_big_lock 2 4 pictures/peacock.jpg nulloutput.jpg
