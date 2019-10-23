@@ -267,7 +267,7 @@ void *CS338_row_seq(void *local_hist_or_proc_num){
 			r = from->row_pointers[i][j*3];
 			g = from->row_pointers[i][1 + j*3];
 			b = from->row_pointers[i][2 + j*3];
-			printf("current values: proc: %l, i: %d, j: %d, r: %d, g: %d, b:%d\n", thread_num, i, j, r, g, b);
+			printf("current values: proc: %ld, i: %d, j: %d, r: %d, g: %d, b:%d\n", thread_num, i, j, r, g, b);
 			(*local_data).local_r_hist[r]++;
 			(*local_data).local_g_hist[g]++;
 			(*local_data).local_b_hist[b]++;
