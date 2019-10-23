@@ -261,20 +261,17 @@ void *CS338_row_seq(void *local_hist_or_proc_num){
 
 	#else
 	//for all height and width from radius...
-	printf("incrementing local histograms\n");
 	for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
 		for(j = 0; j < from->image_width; j++){
 			r = from->row_pointers[i][j*3];
 			g = from->row_pointers[i][1 + j*3];
 			b = from->row_pointers[i][2 + j*3];
-			printf("current values: proc: %ld, i: %d, j: %d, r: %d, g: %d, b:%d\n", thread_num, i, j, r, g, b);
 			(*local_data).local_r_hist[r]++;
 			(*local_data).local_g_hist[g]++;
 			(*local_data).local_b_hist[b]++;
 			(*local_data).local_s_hist[r + g + b]++;
 		}
 	}
-	printf("trying to exit\n");
 	pthread_exit(local_data);
 
 	#endif
@@ -296,7 +293,6 @@ void CS338_function(){
 	FILE * csv_output;
 
 	//memset histograms to 0
-	printf("sizeof rHist: %lu\nexpected size: 256 * sizeof(u int)\n", sizeof(rHist));
 	memset(rHist, 0, sizeof(rHist));
 	memset(gHist, 0, sizeof(gHist));
 	memset(bHist, 0, sizeof(bHist));
@@ -332,25 +328,24 @@ void CS338_function(){
 		}
 #endif
 
+	#if defined(INDIV_LOCKS) || defined(BUCKET_LOCKS) || defined(UNI_LOCK) || defined(NO_LOCKS)
+	for(long thread = 0; thread < num_procs; thread++){
+		pthread_create(&thread_IDs[thread], NULL, CS338_row_seq, (void*) thread);
+	}
+
+	#else
 	//Create num_procs threads to count pixels in row-major order
 	for(long thread = 0; thread < num_procs; thread++){
-		printf("trying to make the boi\n");
 		struct local_histogram *this_hist;
 		this_hist = malloc(sizeof *this_hist);
-
-		printf("setting proc num\n");
 		(*this_hist).processor_number = thread;
-		printf("proc num: %lu\n", (*this_hist).processor_number);
 		memset((*this_hist).local_r_hist, 0, 256 * sizeof(unsigned long));
 		memset((*this_hist).local_g_hist, 0, 256 * sizeof(unsigned long));
 		memset((*this_hist).local_b_hist, 0, 256 * sizeof(unsigned long));
 		memset((*this_hist).local_s_hist, 0, 768 * sizeof(unsigned long));
-
-		printf("0 val: %lu\n", (*this_hist).local_r_hist[0]);
-
-		printf("pthread boi\n");
 		pthread_create(&thread_IDs[thread], NULL, CS338_row_seq, (void*)this_hist);
 	}
+	#endif
 
 	//Recall threads
 	#if defined(INDIV_LOCKS) || defined(BUCKET_LOCKS) || defined(UNI_LOCK) || defined(NO_LOCKS)
@@ -362,9 +357,7 @@ void CS338_function(){
 	void * retval;
 	for(long come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], &retval);
-		printf("rejoining\n");
 		struct local_histogram *this_proc_data = (struct local_histogram*) retval;
-		printf("casting\n");
 
 		for (i=0; i < 256; i++){
 			rHist[i] += (*this_proc_data).local_r_hist[i];
