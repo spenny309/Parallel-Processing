@@ -286,6 +286,18 @@ output this data to an OutputFile
 */
 void CS338_function(){
 
+	#if defined(INDIV_LOCKS)
+	printf("running: INDIV LOCKS with %d procs", num_procs);
+	#elif defined(BUCKET_LOCKS)
+	printf("running: BUCKET LOCKS with %d procs", num_procs);
+	#elif defined(UNI_LOCK)
+	printf("running: UNI LOCK with %d procs", num_procs);
+	#elif defined(NO_LOCKS)
+	printf("running: NO LOCKS with %d procs", num_procs);
+	#else
+	printf("running: PRIV HISTS with %d procs", num_procs);
+	#endif
+
 	int i = 0;
 	long pthread;
 	pthread_t thread_IDs[num_procs];
