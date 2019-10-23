@@ -361,7 +361,7 @@ void CS338_function(){
 	#else
 	void * retval;
 	for(long come_back = 0; come_back < num_procs; come_back++){
-		pthread_join(thread_IDs[come_back], retval);
+		pthread_join(thread_IDs[come_back], *retval);
 		printf("rejoining\n");
 		struct local_histogram *this_proc_data = (struct local_histogram*) retval;
 		printf("casting\n");
