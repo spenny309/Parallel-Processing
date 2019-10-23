@@ -1,0 +1,134 @@
+Peacock:
+
+1 Proc:
+Files to compare:        outputs/output_big_lock.txt     outputs/output_no_locks.txt
+Output file:             valdiff.output
+Reading in file outputs/output_big_lock.txt
+Reading in file outputs/output_no_locks.txt
+total file1: r 4915200 g 4915200 b 4915200
+total file2: r 4915200 g 4915200 b 4915200
+
+Statistics:
+Sum of errors per color:
+         R 0 G 0 B 0
+Total error: 0
+
+2 Proc:
+Files to compare:        outputs/output_big_lock.txt     outputs/output_no_locks.txt
+Output file:             valdiff.output
+Reading in file outputs/output_big_lock.txt
+Reading in file outputs/output_no_locks.txt
+total file1: r 4915200 g 4915200 b 4915200
+total file2: r 4820678 g 4814234 b 4816499
+
+Statistics:
+Sum of errors per color:
+         R 94522 G 100966 B 98701
+Total error: 294189
+
+4 Proc:
+Files to compare:        outputs/output_big_lock.txt     outputs/output_no_locks.txt
+Output file:             valdiff.output
+Reading in file outputs/output_big_lock.txt
+Reading in file outputs/output_no_locks.txt
+total file1: r 4915200 g 4915200 b 4915200
+total file2: r 4794861 g 4785805 b 4792503
+
+Statistics:
+Sum of errors per color:
+         R 120339 G 129395 B 122697
+Total error: 372431
+
+8 Proc:
+Files to compare:        outputs/output_big_lock.txt     outputs/output_no_locks.txt
+Output file:             valdiff.output
+Reading in file outputs/output_big_lock.txt
+Reading in file outputs/output_no_locks.txt
+total file1: r 4915200 g 4915200 b 4915200
+total file2: r 4470699 g 4438672 b 4462072
+
+Statistics:
+Sum of errors per color:
+         R 444501 G 476528 B 453128
+Total error: 1374157
+
+16 Proc:
+Files to compare:        outputs/output_big_lock.txt     outputs/output_no_locks.txt
+Output file:             valdiff.output
+Reading in file outputs/output_big_lock.txt
+Reading in file outputs/output_no_locks.txt
+total file1: r 4915200 g 4915200 b 4915200
+total file2: r 4203982 g 4167858 b 4181640
+
+Statistics:
+Sum of errors per color:
+         R 711218 G 747342 B 733560
+Total error: 2192120
+
+
+Monochrome:
+
+1 Proc:
+Files to compare:        outputs/output_indiv_locks.txt  outputs/output_no_locks.txt
+Output file:             valdiff.output
+Reading in file outputs/output_indiv_locks.txt
+Reading in file outputs/output_no_locks.txt
+total file1: r 2304000 g 2304000 b 2304000
+total file2: r 2304000 g 2304000 b 2304000
+
+Statistics:
+Sum of errors per color:
+         R 0 G 0 B 0
+Total error: 0
+
+2 Proc:
+Files to compare:        outputs/output_indiv_locks.txt  outputs/output_no_locks.txt
+Output file:             valdiff.output
+Reading in file outputs/output_indiv_locks.txt
+Reading in file outputs/output_no_locks.txt
+total file1: r 2304000 g 2304000 b 2304000
+total file2: r 2292353 g 2292353 b 2292353
+
+Statistics:
+Sum of errors per color:
+         R 11647 G 11647 B 11647
+Total error: 34941
+
+4 Proc:
+Files to compare:        outputs/output_indiv_locks.txt  outputs/output_no_locks.txt
+Output file:             valdiff.output
+Reading in file outputs/output_indiv_locks.txt
+Reading in file outputs/output_no_locks.txt
+total file1: r 2304000 g 2304000 b 2304000
+total file2: r 1181856 g 1184309 b 1184076
+
+Statistics:
+Sum of errors per color:
+         R 1122144 G 1119691 B 1119924
+Total error: 3361759
+
+8 Proc:
+Files to compare:        outputs/output_indiv_locks.txt  outputs/output_no_locks.txt
+Output file:             valdiff.output
+Reading in file outputs/output_indiv_locks.txt
+Reading in file outputs/output_no_locks.txt
+total file1: r 2304000 g 2304000 b 2304000
+total file2: r 646536 g 647016 b 646228
+
+Statistics:
+Sum of errors per color:
+         R 1657464 G 1656984 B 1657772
+Total error: 4972220
+
+16 Proc:
+Files to compare:        outputs/output_indiv_locks.txt  outputs/output_no_locks.txt
+Output file:             valdiff.output
+Reading in file outputs/output_indiv_locks.txt
+Reading in file outputs/output_no_locks.txt
+total file1: r 2304000 g 2304000 b 2304000
+total file2: r 959468 g 962881 b 964175
+
+Statistics:
+Sum of errors per color:
+         R 1344532 G 1341119 B 1339825
+Total error: 4025476
