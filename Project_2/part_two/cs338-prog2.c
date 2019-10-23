@@ -272,7 +272,7 @@ void *CS338_row_seq(void *local_hist_or_proc_num){
 			printf("j: %d", j);
 			printf("r: %d", r);
 			printf("g: %d", g);
-			printf("b: %d", b);
+			printf("b: %d\n", b);
 			(*local_data).local_r_hist[r]++;
 			(*local_data).local_g_hist[g]++;
 			(*local_data).local_b_hist[b]++;
