@@ -274,7 +274,7 @@ void *CS338_row_seq(void *local_hist_or_proc_num){
 			(*local_data).local_s_hist[r + g + b]++;
 		}
 	}
-
+	printf("trying to exit\n");
 	pthread_exit((void *) local_data);
 
 	#endif
