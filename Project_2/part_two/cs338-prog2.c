@@ -198,7 +198,9 @@ void destroy_frame(frame_ptr kill_me);
  * new code should be located here (or in another file, if it's large).
  */
 
-//row-major order
+//row-major order is used to count pixels. No difference in speeds based on
+//part one, so row-major order was chosen based on its theoretically
+//faster speed
 void *CS338_row_seq(void *local_hist_or_proc_num){
 	int i, j, k;
 	frame_ptr from;
@@ -206,15 +208,18 @@ void *CS338_row_seq(void *local_hist_or_proc_num){
 	long thread_num = -1;
 	int r, g, b;
 
+//If we're not using local hist, the argument is the hthread num
 	#if defined(INDIV_LOCKS) || defined(BUCKET_LOCKS) || defined(UNI_LOCK) || defined(NO_LOCKS)
 	thread_num = (long)local_hist_or_proc_num;
 
+//If we're using local hist, the argument is a hist struct
 	#else
 	struct local_histogram *local_data = (struct local_histogram*) local_hist_or_proc_num;
 	thread_num = (*local_data).processor_number;
 
 	#endif
 
+//If we're using locks, go through all appropriate pixels, get lock, inc, release
 	#if defined(INDIV_LOCKS) || defined(BUCKET_LOCKS) || defined(UNI_LOCK)
 	//for all height and width from radius...
 	for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
@@ -243,6 +248,7 @@ void *CS338_row_seq(void *local_hist_or_proc_num){
 
 	pthread_exit((void*)0);
 
+//If no locks, same as above but don't acquire/release locks
 	#elif defined(NO_LOCKS)
 	//for all height and width from radius...
 	for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
@@ -259,6 +265,7 @@ void *CS338_row_seq(void *local_hist_or_proc_num){
 
 	pthread_exit((void*)0);
 
+//If using local hists, same as above but increment  data in local hist struct
 	#else
 	//for all height and width from radius...
 	for(i = thread_num * (from->image_height / num_procs); i < (1 + thread_num) * (from->image_height / num_procs); i++){
@@ -285,19 +292,6 @@ call a method to count pixel colours, then
 output this data to an OutputFile
 */
 void CS338_function(){
-
-	#if defined(INDIV_LOCKS)
-	printf("running: INDIV LOCKS with %d procs\n", num_procs);
-	#elif defined(BUCKET_LOCKS)
-	printf("running: BUCKET LOCKS with %d procs\n", num_procs);
-	#elif defined(UNI_LOCK)
-	printf("running: UNI LOCK with %d procs\n", num_procs);
-	#elif defined(NO_LOCKS)
-	printf("running: NO LOCKS with %d procs\n", num_procs);
-	#else
-	printf("running: PRIV HISTS with %d procs\n", num_procs);
-	#endif
-
 	int i = 0;
 	long pthread;
 	pthread_t thread_IDs[num_procs];
@@ -340,11 +334,13 @@ void CS338_function(){
 		}
 #endif
 
+//Create threads passing proc num if not using local hist
 	#if defined(INDIV_LOCKS) || defined(BUCKET_LOCKS) || defined(UNI_LOCK) || defined(NO_LOCKS)
 	for(long thread = 0; thread < num_procs; thread++){
 		pthread_create(&thread_IDs[thread], NULL, CS338_row_seq, (void*) thread);
 	}
 
+//Otherwise create local hist structs and pass one to each new thread
 	#else
 	//Create num_procs threads to count pixels in row-major order
 	for(long thread = 0; thread < num_procs; thread++){
@@ -380,14 +376,6 @@ void CS338_function(){
 			sHist[i + 512] += (*this_proc_data).local_s_hist[i + 512];
 		}
 	}
-		// for (i=0; i < 256; i++){
-		// 	rHist[i] += ((unsigned long*)retval[0])[i];
-		// 	gHist[i] += ((unsigned long*)retval[1])[i];
-		// 	bHist[i] += ((unsigned long*)retval[2])[i];
-		// 	sHist[i] += ((unsigned long*)retval[3])[i];
-		// 	sHist[i + 256] += ((unsigned long*)retval[3])[i + 256];
-		// 	sHist[i + 512] += ((unsigned long*)retval[3])[i + 512];
-		// }
 	#endif
 
 	/*

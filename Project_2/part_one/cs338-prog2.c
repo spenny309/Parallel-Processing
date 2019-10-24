@@ -380,6 +380,11 @@ void blur_borders(long process_number){
 	}
 }
 
+/*
+	Main function, which depending on definitions will call one of the
+	above functions to blur an image. It uses an input image, and builds
+	(with the above functions) an appropriately blurred output frame.
+*/
 void CS338_function()
 {
 	int i, j, k;
@@ -390,6 +395,7 @@ void CS338_function()
 	from = input_frames[0];
 	to = output_frames[0] = allocate_frame(from->image_height, from->image_width, from->num_components);
 
+//Pre-work to calculate radius, blurring divisor for central pixels, etc.
 	if(from->image_height > from ->image_width){
 		radius = from->image_height * BLUR_PCT;
 	} else {
@@ -414,6 +420,8 @@ void CS338_function()
 
 	long pthread;
 	pthread_t thread_IDs[num_procs];
+
+//Make blur calls based on definitions
 
 	#if defined(ROW_MAJOR) && defined(BLOCK_ORDER)
 	printf("calling row_block\n");
@@ -442,6 +450,8 @@ void CS338_function()
 		pthread_create(&thread_IDs[thread], NULL, CS338_col_int, (void*)thread);
 	}
 	#endif
+
+//Return threads, free pre-work multiplicand matrix, and return
 
 	for(int come_back = 0; come_back < num_procs; come_back++){
 		pthread_join(thread_IDs[come_back], NULL);
