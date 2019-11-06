@@ -439,7 +439,8 @@ runKernel(frame_ptr result)
   }
 
   //Allocate device memory and transfer input data and output array
-  unsigned char* image_as_one_dimensional_array_d, output_as_one_dimensional_array_d;
+  unsigned char* image_as_one_dimensional_array_d
+  unsigned char* output_as_one_dimensional_array_d;
   if (cudaMalloc((void **) &image_as_one_dimensional_array_d, array_size_for_memory) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory allocation failure\n");
     exit(1);
@@ -477,7 +478,7 @@ runKernel(frame_ptr result)
     for(int j = 0 ; j < picture_width ; j++){
       for(int k = 0 ; k < picture_components ; k++){
         offset = (i * picture_width) + (j * picture_components) + k;
-        to->row_pointers[i][(j * picture_components) + k] = output_as_one_dimensional_array[offset];
+        result->row_pointers[i][(j * picture_components) + k] = output_as_one_dimensional_array[offset];
       }
     }
   }
