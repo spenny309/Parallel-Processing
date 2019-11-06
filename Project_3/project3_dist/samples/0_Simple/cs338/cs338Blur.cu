@@ -437,14 +437,11 @@ runKernel(frame_ptr result)
         offset = (i * picture_width) + (j * picture_components) + k;
         image_as_one_dimensional_array[offset] = from->row_pointers[i][(j * picture_components) + k];
         output_as_one_dimensional_array[offset] = 200;
-        printf("pixel : %d \t value : %d \n", offset, from->row_pointers[i][(j * picture_components) + k]);
       }
     }
   }
 
-  printf("height : %d\n", from->image_height);
-  printf("width  : %d\n", from->image_width);
-  printf("compon : %d\n", from->num_components);
+  printf("array size for mem : %d\n", array_size_for_memory);
 
   //Allocate device memory and transfer input data and output array
   unsigned char* image_as_one_dimensional_array_d;
