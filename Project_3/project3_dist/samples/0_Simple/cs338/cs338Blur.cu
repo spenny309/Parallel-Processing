@@ -326,7 +326,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 
   int col = (blockIdx.x * blockDim.x + threadIdx.x);
   int row = (blockIdx.y * blockDim.y + threadIdx.y);
-  int this_pixel = (row * width * k) + (col * k);
+  int this_pixel = (col * width * k) + (row * k);
 
   printf("this pixel: %d\n", this_pixel);
 
