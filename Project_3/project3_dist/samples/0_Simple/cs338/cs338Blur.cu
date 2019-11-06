@@ -321,17 +321,18 @@ runTest( int argc, char** argv)
 __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 			  int height, int width, int k)
 {
-  unsigned int col = (blockIdx.x * blockDim.x + threadIdx.x);
-  unsigned int row = (blockIdx.y * blockDim.y + threadIdx.y);
-  unsigned int this_pixel = (row * width * k) + (col * k);
+  int col = (blockIdx.x * blockDim.x + threadIdx.x);
+  int row = (blockIdx.y * blockDim.y + threadIdx.y);
+  int this_pixel = (row * width * k) + (col * k);
 
 //If current pixel is invalid, do nothing
-  if(col >= width || row >= height || col < 0 || row < 0) {
+  if(col >= width || row >= height) {
     return;
   } else {
     long weight_divisor = 0;
     int local_weight = 0;
-    int blurred_pixels[k] = { 0 };
+    // TODO : find solution -- cannot use {k} here; compiler requires constant value.
+    int blurred_pixels[3] = { 0 };
     int col_neighbor;
     int row_neighbor;
     int curr_dimension;
@@ -402,7 +403,7 @@ runKernel(frame_ptr result)
   int picture_height = from->image_height;
   int picture_width = from->image_width;
   int picture_components = from->num_components;
-  unsigned int array_size_for_memory = picture_width * picture_height * picture_components * sizoef(JSAMPLE);
+  unsigned int array_size_for_memory = picture_width * picture_height * picture_components * sizeof(char);
 
   /* TODO : Change radial_param to be a definable val? */
   float radial_param = .05;
@@ -410,15 +411,15 @@ runKernel(frame_ptr result)
   int radius = ceil(max_of_width_and_height * radial_param);
 
   //Allocate one dimensional array for input picture pixels
-  JSAMPLE *image_as_one_dimensional_array;
-  if (image_as_one_dimensional_array = (JSAMPLE*)malloc(array_size_for_memory) == NULL){
+  unsigned char *image_as_one_dimensional_array;
+  if (image_as_one_dimensional_array = (unsigned char*)malloc(array_size_for_memory) == NULL){
     fprintf(stderr, "ERROR: Memory allocation failure\n");
     exit(1);
   }
 
   //Allocate one dimensional array for output picture pixels
   JSAMPLE *output_as_one_dimensional_array;
-  if (output_as_one_dimensional_array = (JSAMPLE*)malloc(array_size_for_memory) == NULL){
+  if (output_as_one_dimensional_array = (unsigned char*)malloc(array_size_for_memory) == NULL){
     fprintf(stderr, "ERROR: Memory allocation failure\n");
     exit(1);
   }
@@ -436,7 +437,7 @@ runKernel(frame_ptr result)
   }
 
   //Allocate device memory and transfer input data and output array
-  JSAMPLE* image_as_one_dimensional_array_d, output_as_one_dimensional_array_d;
+  unsigned char* image_as_one_dimensional_array_d, output_as_one_dimensional_array_d;
   if (cudaMalloc((void **) &image_as_one_dimensional_array_d, array_size_for_memory) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory allocation failure\n");
     exit(1);
