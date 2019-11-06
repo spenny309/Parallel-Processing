@@ -323,9 +323,9 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 {
   //printf("blockIdx.x : %d \t blockDim.x : %d \t threadIdx.x : %d \n blockIdx.y : %d \t blockDim.y : %d \t threadIdx.y : %d \n\n", blockIdx.x, blockDim.x, threadIdx.x, blockIdx.y, blockDim.y, threadIdx.y);
 
-  int row = (blockIdx.x * blockDim.x + threadIdx.x);
-  int col = (blockIdx.y * blockDim.y + threadIdx.y);
-  int this_pixel = (row * height * k) + (col * k);
+  int col = (blockIdx.x * blockDim.x + threadIdx.x);
+  int row = (blockIdx.y * blockDim.y + threadIdx.y);
+  int this_pixel = (row * width * k) + (col * k);
 
 //If current pixel is invalid, do nothing
   if(col >= width || row >= height) {
@@ -346,7 +346,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
           local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
           weight_divisor += local_weight;
           //current_neighbor = location of R value in RGB
-          current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
+          current_neighbor = (row_neighbor * height * k) + (col_neighbor * k);
           for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
             blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
           }
