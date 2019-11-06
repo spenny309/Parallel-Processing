@@ -321,10 +321,7 @@ runTest( int argc, char** argv)
 __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 			  int height, int width, int k)
 {
-
-  //printf("kernel exec\n");
-
-  printf("blockIdx.x : %d \t blockDim.x : %d \t threadIdx.x : %d \n blockIdx.y : %d \t blockDim.y : %d \t threadIdx.y : %d \n\n", blockIdx.x, blockDim.x, threadIdx.x, blockIdx.y, blockDim.y, threadIdx.y);
+  //printf("blockIdx.x : %d \t blockDim.x : %d \t threadIdx.x : %d \n blockIdx.y : %d \t blockDim.y : %d \t threadIdx.y : %d \n\n", blockIdx.x, blockDim.x, threadIdx.x, blockIdx.y, blockDim.y, threadIdx.y);
 
   int col = (blockIdx.x * blockDim.x + threadIdx.x);
   int row = (blockIdx.y * blockDim.y + threadIdx.y);
@@ -438,8 +435,9 @@ runKernel(frame_ptr result)
     for(int j = 0 ; j < picture_width ; j++){
       for(int k = 0 ; k < picture_components ; k++){
         offset = (i * picture_width) + (j * picture_components) + k;
-        image_as_one_dimensional_array[offset] = from->row_pointers[i][(j * picture_components)+ k];
+        image_as_one_dimensional_array[offset] = from->row_pointers[i][(j * picture_components) + k];
         output_as_one_dimensional_array[offset] = 0;
+        printf("pixel : %d \t value : %d \n", offset, from->row_pointers[i][(j * picture_components) + k]);
       }
     }
   }
