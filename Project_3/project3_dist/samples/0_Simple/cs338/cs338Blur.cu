@@ -442,6 +442,10 @@ runKernel(frame_ptr result)
     }
   }
 
+  printf("height : %d", from->image_height);
+  printf("width  : %d", from->image_width);
+  printf("compon : %d", from->num_components);
+
   //Allocate device memory and transfer input data and output array
   unsigned char* image_as_one_dimensional_array_d;
   unsigned char* output_as_one_dimensional_array_d;
