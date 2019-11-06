@@ -321,8 +321,11 @@ runTest( int argc, char** argv)
 __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 			  int height, int width, int k)
 {
-  int row = (blockIdx.x * blockDim.x + threadIdx.x);
-  int col = (blockIdx.y * blockDim.y + threadIdx.y);
+
+  printf("kernel exec\n");
+
+  int col = (blockIdx.x * blockDim.x + threadIdx.x);
+  int row = (blockIdx.y * blockDim.y + threadIdx.y);
   int this_pixel = (row * width * k) + (col * k);
 
 //If current pixel is invalid, do nothing
