@@ -441,8 +441,6 @@ runKernel(frame_ptr result)
     }
   }
 
-  printf("array size for mem : %d\n", array_size_for_memory);
-
   //Allocate device memory and transfer input data and output array
   unsigned char* image_as_one_dimensional_array_d;
   unsigned char* output_as_one_dimensional_array_d;
@@ -478,7 +476,11 @@ runKernel(frame_ptr result)
   cs338Blur<<<dim_grid, dim_block>>>(image_as_one_dimensional_array, output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
   printf("finishing kernel\n");
   //Collect results
-  cudaMemcpy(output_as_one_dimensional_array, output_as_one_dimensional_array_d, array_size_for_memory, cudaMemcpyDeviceToHost);
+  if (cudaMemcpy(output_as_one_dimensional_array, output_as_one_dimensional_array_d, array_size_for_memory, cudaMemcpyDeviceToHost) != cudaSuccess){
+    fprintf(stderr, "ERROR: CUDA memory copy failure\n");
+    printf("ERROR\n");
+    exit(1);
+  }
 
   //Transform into 2D array
   //Fill output image with pixels from cudaMemcpy
