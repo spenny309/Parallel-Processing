@@ -329,7 +329,6 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 
 //If current pixel is invalid, do nothing
   if(col >= width || row >= height) {
-    printf("returning on invalid bounds\n");
     return;
   } else {
     long weight_divisor = 0;
@@ -346,7 +345,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
           local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
           weight_divisor += local_weight;
           //current_neighbor = location of R value in RGB
-          current_neighbor = (row_neighbor * height * k) + (col_neighbor * k);
+          current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
           for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
             blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
           }
@@ -354,13 +353,13 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     }
 
     if(weight_divisor == 0){
+      printf("divisor 0\n");
       return;
     }
 
     for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
       to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
     }
-
     return;
   }
 }
