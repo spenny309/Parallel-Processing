@@ -324,10 +324,10 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 
   //printf("kernel exec\n");
 
-  printf("blockIdx.x : %d \t blockDim.x : %d \t threadIdx.x : %d \n blockIdx.y : %d \t blockDim.y : %d \t threadIdx.y : %d \n\n", blockIdx.y, blockDim.y, threadIdx.y, blockIdx.z, blockDim.z, threadIdx.z);
+  printf("blockIdx.x : %d \t blockDim.x : %d \t threadIdx.x : %d \n blockIdx.y : %d \t blockDim.y : %d \t threadIdx.y : %d \n\n", blockIdx.x, blockDim.x, threadIdx.x, blockIdx.y, blockDim.y, threadIdx.y);
 
-  int col = (blockIdx.y * blockDim.y + threadIdx.y);
-  int row = (blockIdx.z * blockDim.z + threadIdx.z);
+  int col = (blockIdx.x * blockDim.x + threadIdx.x);
+  int row = (blockIdx.y * blockDim.y + threadIdx.y);
   int this_pixel = (row * width * k) + (col * k);
 
 //If current pixel is invalid, do nothing
@@ -472,10 +472,11 @@ runKernel(frame_ptr result)
          formats are rarely more rectangular than 4:3 or 16:9
          */
   int square_dimension = ceil(sqrt(max_of_width_and_height));
-  dim3 dim_square(square_dimension, square_dimension, 1);
+  dim3 dim_grid(square_dimension, square_dimension, 1);
+  dim3 dim_block(square_dimension, square_dimension, 1);
 
   printf("executing kernel\n");
-  cs338Blur<<<dim_square, dim_square>>>(image_as_one_dimensional_array, output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
+  cs338Blur<<<dim_grid, dim_block>>>(image_as_one_dimensional_array, output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
   printf("finishing kernel\n");
   //Collect results
   cudaMemcpy(output_as_one_dimensional_array, output_as_one_dimensional_array_d, array_size_for_memory, cudaMemcpyDeviceToHost);
