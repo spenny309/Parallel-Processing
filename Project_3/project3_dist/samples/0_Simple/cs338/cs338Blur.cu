@@ -111,7 +111,7 @@ void write_JPEG_file (char * filename, frame_ptr p_info, int quality)
   else {
     fprintf(stderr, "ERROR: Non-standard colorspace for compressing!\n");
     exit(1);
-  } 
+  }
   /* Fill in the defaults for everything else, then override quality */
   jpeg_set_defaults(&cinfo);
   jpeg_set_quality(&cinfo, quality, TRUE /* limit to baseline-JPEG values */);
@@ -154,7 +154,7 @@ frame_ptr read_JPEG_file (char * filename)
   //  JSAMPLE *realBuffer;
   //  JSAMPLE **buffer;		/* Output row buffer */
   //  int row_stride;		/* physical row width in output buffer */
-  
+
   /* Step 1: allocate and initialize JPEG decompression object */
   cinfo.err = jpeg_std_error(&jerr);
   jpeg_create_decompress(&cinfo);
@@ -173,7 +173,7 @@ frame_ptr read_JPEG_file (char * filename)
 
   /* Step 5: Start decompressor */
   (void) jpeg_start_decompress(&cinfo);
-  
+
   /* Step X: Create a frame struct & buffers and fill in the blanks */
   fprintf(stderr, "  Opened %s: height = %d, width = %d, c = %d\n",
       filename, cinfo.output_height, cinfo.output_width, cinfo.output_components);
@@ -215,7 +215,7 @@ frame_ptr allocate_frame(int height, int width, int num_components)
 
   /* JSAMPLEs per row in output buffer */
   row_stride = width * num_components;
-  
+
   /* Basic struct and information */
   if ((p_info = (frame_struct_t*)malloc(sizeof(frame_struct_t))) == NULL) {
     fprintf(stderr, "ERROR: Memory allocation failure\n");
@@ -236,7 +236,7 @@ frame_ptr allocate_frame(int height, int width, int num_components)
   }
   for (i=0; i < height; i++)
   	p_info->row_pointers[i] = & (p_info->image_buffer[i * row_stride]);
-  
+
   /* And send it back! */
   return p_info;
 }
@@ -261,7 +261,7 @@ void checkResults(frame_ptr f1, frame_ptr f2)
 {
   int i, j, k;
 
-  if(f1->image_height != f2->image_height && f1->image_width != f2->image_width 
+  if(f1->image_height != f2->image_height && f1->image_width != f2->image_width
 		&& f1->num_components != f2->num_components){
 	fprintf(stderr, "Dimensions do not match\n");
 	exit(1);
@@ -284,19 +284,19 @@ void checkResults(frame_ptr f1, frame_ptr f2)
 
 }
 
-void runKernel(frame_ptr result);  
+void runKernel(frame_ptr result);
 
 
 
 /*
  * This is just a helper method. It should call runKernel to set up and
  * invoke the kernel.  It should then also call the uniprocessor version
- * of your blurring code (which does not need to be optimized) and 
+ * of your blurring code (which does not need to be optimized) and
  * check for correctness of your kernel code.
  */
 void
 runTest( int argc, char** argv)
-{	 
+{
 
   frame_ptr from = input_frames[0];
   // Allocate frame for kernel to store its results into
@@ -318,11 +318,11 @@ runTest( int argc, char** argv)
  *
 */
 
-__global__ void cs338Blur(unsigned char* from, unsigned char* to, int r, 
+__global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 			  int height, int width, int k)
 {
-  
-  
+
+
 }
 
 
@@ -339,7 +339,7 @@ main(int argc, char **argv)
     usage();
     exit(1);
   }
-  
+
   // Load input file
   input_frames[0] = read_JPEG_file(argv[1]);
 
@@ -348,28 +348,89 @@ main(int argc, char **argv)
 
   // Write output file
   write_JPEG_file(argv[2], output_frames[0], 75);
-  
+
   return 0;
 }
 
 //********************************************************************************************************************************************
 
 
-// This sets up GPU device by allocating the required memory and then 
+// This sets up GPU device by allocating the required memory and then
 // calls the kernel on GPU. (You might choose to add/remove arguments.)
 // It's currently set up to use the global variables and write its
-// final results into the specified argument.  
-void 
+// final results into the specified argument.
+void
 runKernel(frame_ptr result)
 {
-  // Some useful CUDA functions:
-  // checkCudaErrors is helpful for checking correctness of cudaMalloc
-  // and cudaMemCpy
-  // You want to use cudaEvent_t to get timing information.  Look at
-  // cudaEventCreate, cudaEventRecord, cudaEventSynchronize,
-  // cudaEventElapsedTime, cudaEventDestroy
+  frame_ptr from = input_frames[0];
+  int picture_height = from->image_height;
+  int picture_width = from->image_width;
+  int picture_components = from->num_components;
+  unsigned int array_size_for_memory = picture_width * picture_height * picture_components * sizoef(JSAMPLE);
+
+  /* TODO : Change radial_param to be a definable val? */
+  float radial_param = .05;
+  int max_of_width_and_height = (picture_height > picture_width) ? picture_height : picture_width;
+  int radius = ceil(max_of_width_and_height * radial_param);
+
+//Allocate one dimensional array for input picture pixels
+  JSAMPLE *image_as_one_dimensional_array;
+  if (image_as_one_dimensional_array = (JSAMPLE*)malloc(array_size_for_memory) == NULL){
+    fprintf(stderr, "ERROR: Memory allocation failure\n");
+    exit(1);
+  }
+
+  //Allocate one dimensional array for output picture pixels
+    JSAMPLE *output_as_one_dimensional_array;
+    if (output_as_one_dimensional_array = (JSAMPLE*)malloc(array_size_for_memory) == NULL){
+      fprintf(stderr, "ERROR: Memory allocation failure\n");
+      exit(1);
+    }
+
+//Fill input array with picture pixels (row major), and set output array to 0 [black]
+  int offset = 0;
+  for(int i = 0 ; i < picture_height ; i++){
+    for(int j = 0 ; j < picture_width ; j++){
+      for(int k = 0 ; k < picture_components ; k++){
+        offset = (i * picture_width) + (j * picture_components) + k;
+        image_as_one_dimensional_array[offset] = from->row_pointers[i][(j * picture_components)+ k];
+        output_as_one_dimensional_array[offset] = 0;
+      }
+    }
+  }
+
+//Allocate device memory and transfer input data and output array
+  JSAMPLE* image_as_one_dimensional_array_d, output_as_one_dimensional_array_d;
+  if (cudaMalloc((void **) &image_as_one_dimensional_array_d, array_size_for_memory) != cudaSuccess){
+    fprintf(stderr, "ERROR: CUDA memory allocation failure\n");
+    exit(1);
+  }
+  if (cudaMemcpy(image_as_one_dimensional_array, image_as_one_dimensional_array_d, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
+    fprintf(stderr, "ERROR: CUDA memory copy failure\n");
+    exit(1);
+  }
+
+  if (cudaMalloc((void **) &output_as_one_dimensional_array_d, array_size_for_memory) != cudaSuccess){
+    fprintf(stderr, "ERROR: CUDA memory allocation failure\n");
+    exit(1);
+  }
+  if (cudaMemcpy(output_as_one_dimensional_array, output_as_one_dimensional_array_d, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
+    fprintf(stderr, "ERROR: CUDA memory copy failure\n");
+    exit(1);
+  }
+
+  //Kernel invocation with dimensionality
+    /* CURRENT IMPLEMENTATION : Equal number of square grids and square blocks */
+  dim3 dim_grid(ceil(sqrt(max_of_width_and_height)), ceil(sqrt(max_of_width_and_height)), 1);
+  dim3 dim_block(ceil(sqrt(max_of_width_and_height)), ceil(sqrt(max_of_width_and_height)), 1);
+
+  cs338Blur<<<dim_grid, dim_block>>>(image_as_one_dimensional_array, output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
 
 }
 
-
-
+// Some useful CUDA functions:
+// checkCudaErrors is helpful for checking correctness of cudaMalloc
+// and cudaMemCpy
+// You want to use cudaEvent_t to get timing information.  Look at
+// cudaEventCreate, cudaEventRecord, cudaEventSynchronize,
+// cudaEventElapsedTime, cudaEventDestroy
