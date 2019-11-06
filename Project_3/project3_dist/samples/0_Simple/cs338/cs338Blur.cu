@@ -321,8 +321,44 @@ runTest( int argc, char** argv)
 __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 			  int height, int width, int k)
 {
+  unsigned int col = (blockIdx.x * blockDim.x + threadIdx.x);
+  unsigned int row = (blockIdx.y * blockDim.y + threadIdx.y);
+  unsigned int this_pixel = (row * width * k) + (col * k);
 
+//If current pixel is invalid, do nothing
+  if(col >= width || row >= height || col < 0 || row < 0) {
+    return;
+  } else {
+    long weight_divisor = 0;
+    int local_weight = 0;
+    int blurred_pixels[k] = { 0 };
+    int col_neighbor;
+    int row_neighbor;
+    int curr_dimension;
+    int current_neighbor;
+    for(col_neighbor = ((1 + col - r < 0) ? 0 : (1 + col - r)) ; col_neighbor < col + r && col_neighbor < width ; col_neighbor++){
+      for(row_neighbor = ((1 + row - r < 0) ? 0 : (1 + row - r)) ; row_neighbor < row + r && row_neighbor < height ; row_neighbor++){
+          //Weight adjustment based on abs distance from this_pixel
+          local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
+          weight_divisor += local_weight;
+          //current_neighbor = location of R value in RGB
+          current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
+          for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
+            blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
+          }
+      }
+    }
 
+    if(weight_divisor == 0){
+      return;
+    }
+
+    for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
+      to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
+    }
+
+    return;
+  }
 }
 
 
@@ -373,7 +409,7 @@ runKernel(frame_ptr result)
   int max_of_width_and_height = (picture_height > picture_width) ? picture_height : picture_width;
   int radius = ceil(max_of_width_and_height * radial_param);
 
-//Allocate one dimensional array for input picture pixels
+  //Allocate one dimensional array for input picture pixels
   JSAMPLE *image_as_one_dimensional_array;
   if (image_as_one_dimensional_array = (JSAMPLE*)malloc(array_size_for_memory) == NULL){
     fprintf(stderr, "ERROR: Memory allocation failure\n");
@@ -381,13 +417,13 @@ runKernel(frame_ptr result)
   }
 
   //Allocate one dimensional array for output picture pixels
-    JSAMPLE *output_as_one_dimensional_array;
-    if (output_as_one_dimensional_array = (JSAMPLE*)malloc(array_size_for_memory) == NULL){
-      fprintf(stderr, "ERROR: Memory allocation failure\n");
-      exit(1);
-    }
+  JSAMPLE *output_as_one_dimensional_array;
+  if (output_as_one_dimensional_array = (JSAMPLE*)malloc(array_size_for_memory) == NULL){
+    fprintf(stderr, "ERROR: Memory allocation failure\n");
+    exit(1);
+  }
 
-//Fill input array with picture pixels (row major), and set output array to 0 [black]
+  //Fill input array with picture pixels (row major), and set output array to 0 [black]
   int offset = 0;
   for(int i = 0 ; i < picture_height ; i++){
     for(int j = 0 ; j < picture_width ; j++){
@@ -399,13 +435,13 @@ runKernel(frame_ptr result)
     }
   }
 
-//Allocate device memory and transfer input data and output array
+  //Allocate device memory and transfer input data and output array
   JSAMPLE* image_as_one_dimensional_array_d, output_as_one_dimensional_array_d;
   if (cudaMalloc((void **) &image_as_one_dimensional_array_d, array_size_for_memory) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory allocation failure\n");
     exit(1);
   }
-  if (cudaMemcpy(image_as_one_dimensional_array, image_as_one_dimensional_array_d, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
+  if (cudaMemcpy(image_as_one_dimensional_array_d, image_as_one_dimensional_array, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory copy failure\n");
     exit(1);
   }
@@ -414,18 +450,34 @@ runKernel(frame_ptr result)
     fprintf(stderr, "ERROR: CUDA memory allocation failure\n");
     exit(1);
   }
-  if (cudaMemcpy(output_as_one_dimensional_array, output_as_one_dimensional_array_d, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
+  if (cudaMemcpy(output_as_one_dimensional_array_d, output_as_one_dimensional_array, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory copy failure\n");
     exit(1);
   }
 
   //Kernel invocation with dimensionality
-    /* CURRENT IMPLEMENTATION : Equal number of square grids and square blocks */
-  dim3 dim_grid(ceil(sqrt(max_of_width_and_height)), ceil(sqrt(max_of_width_and_height)), 1);
-  dim3 dim_block(ceil(sqrt(max_of_width_and_height)), ceil(sqrt(max_of_width_and_height)), 1);
+    /* CURRENT IMPLEMENTATION : Equal number of square grids and square blocks.
+      ###
+         Wasteful for severely rectangular images, but standard image
+         formats are rarely more rectangular than 4:3 or 16:9
+         */
+  int square_dimension = ceil(sqrt(max_of_width_and_height));
+  dim3 dim_square(square_dimension, square_dimension, 1);
+  cs338Blur<<<dim_square, dim_square>>>(image_as_one_dimensional_array, output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
 
-  cs338Blur<<<dim_grid, dim_block>>>(image_as_one_dimensional_array, output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
+  //Collect results
+  cudaMemcpy(output_as_one_dimensional_array, output_as_one_dimensional_array_d, array_size_for_memory, cudaMemcpyDeviceToHost);
 
+  //Transform into 2D array
+  //Fill output image with pixels from cudaMemcpy
+  for(int i = 0 ; i < picture_height ; i++){
+    for(int j = 0 ; j < picture_width ; j++){
+      for(int k = 0 ; k < picture_components ; k++){
+        offset = (i * picture_width) + (j * picture_components) + k;
+        to->row_pointers[i][(j * picture_components) + k] = output_as_one_dimensional_array[offset];
+      }
+    }
+  }
 }
 
 // Some useful CUDA functions:
