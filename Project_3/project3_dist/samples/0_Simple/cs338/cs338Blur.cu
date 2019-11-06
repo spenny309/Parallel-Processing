@@ -324,11 +324,11 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 
   //printf("kernel exec\n");
 
+  printf("blockIdx.x : %d \t blockDim.x : %d \t threadIdx.x : %d \n blockIdx.y : %d \t blockDim.y : %d \t threadIdx.y : %d \n\n", blockIdx.x, blockDim.x, threadIdx.x, blockIdx.y, blockDim.y, threadIdx.y);
+
   int col = (blockIdx.x * blockDim.x + threadIdx.x);
   int row = (blockIdx.y * blockDim.y + threadIdx.y);
-  int this_pixel = (col * width * k) + (row * k);
-
-  printf("this pixel: %d\n", this_pixel);
+  int this_pixel = (row * width * k) + (col * k);
 
 //If current pixel is invalid, do nothing
   if(col >= width || row >= height) {
