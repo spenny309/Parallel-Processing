@@ -473,7 +473,7 @@ runKernel(frame_ptr result)
   dim3 dim_block(square_dimension, square_dimension, 1);
 
   printf("executing kernel\n");
-  cs338Blur<<<dim_grid, dim_block>>>(image_as_one_dimensional_array, output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
+  cs338Blur<<<dim_grid, dim_block>>>(image_as_one_dimensional_array_d, output_as_one_dimensional_array_d, radius, picture_height, picture_width, picture_components);
   printf("finishing kernel\n");
   //Collect results
   if (cudaMemcpy(output_as_one_dimensional_array, output_as_one_dimensional_array_d, array_size_for_memory, cudaMemcpyDeviceToHost) != cudaSuccess){
