@@ -328,6 +328,8 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
   int row = (blockIdx.y * blockDim.y + threadIdx.y);
   int this_pixel = (row * width * k) + (col * k);
 
+  printf("this pixel: %d\n", this_pixel);
+
 //If current pixel is invalid, do nothing
   if(col >= width || row >= height) {
     printf("returning on invalid bounds\n");
