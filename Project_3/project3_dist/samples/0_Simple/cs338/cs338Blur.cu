@@ -439,7 +439,7 @@ runKernel(frame_ptr result)
   }
 
   //Allocate device memory and transfer input data and output array
-  unsigned char* image_as_one_dimensional_array_d
+  unsigned char* image_as_one_dimensional_array_d;
   unsigned char* output_as_one_dimensional_array_d;
   if (cudaMalloc((void **) &image_as_one_dimensional_array_d, array_size_for_memory) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory allocation failure\n");
