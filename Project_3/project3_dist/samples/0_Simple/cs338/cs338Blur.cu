@@ -412,14 +412,16 @@ runKernel(frame_ptr result)
 
   //Allocate one dimensional array for input picture pixels
   unsigned char *image_as_one_dimensional_array;
-  if (image_as_one_dimensional_array = (unsigned char*)malloc(array_size_for_memory) == NULL){
+  image_as_one_dimensional_array = (unsigned char*)malloc(array_size_for_memory);
+  if (image_as_one_dimensional_array == NULL){
     fprintf(stderr, "ERROR: Memory allocation failure\n");
     exit(1);
   }
 
   //Allocate one dimensional array for output picture pixels
   JSAMPLE *output_as_one_dimensional_array;
-  if (output_as_one_dimensional_array = (unsigned char*)malloc(array_size_for_memory) == NULL){
+  output_as_one_dimensional_array = (unsigned char*)malloc(array_size_for_memory);
+  if (output_as_one_dimensional_array == NULL){
     fprintf(stderr, "ERROR: Memory allocation failure\n");
     exit(1);
   }
