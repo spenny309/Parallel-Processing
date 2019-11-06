@@ -467,8 +467,10 @@ runKernel(frame_ptr result)
          */
   int square_dimension = ceil(sqrt(max_of_width_and_height));
   dim3 dim_square(square_dimension, square_dimension, 1);
-  cs338Blur<<<dim_square, dim_square>>>(image_as_one_dimensional_array, output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
 
+  printf("executing kernel\n");
+  cs338Blur<<<dim_square, dim_square>>>(image_as_one_dimensional_array, output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
+  printf("finishing kernel\n");
   //Collect results
   cudaMemcpy(output_as_one_dimensional_array, output_as_one_dimensional_array_d, array_size_for_memory, cudaMemcpyDeviceToHost);
 
