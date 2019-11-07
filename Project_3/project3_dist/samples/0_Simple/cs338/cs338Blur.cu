@@ -336,7 +336,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     int local_weight = 0;
     // TODO : find solution -- cannot use {k} here; compiler requires constant value.
     // Wastes space, but still works on greyscale images
-    long blurred_pixels[3] = { 0 };
+    int blurred_pixels[3] = { 0 };
     int col_neighbor;
     int row_neighbor;
     int curr_dimension;
