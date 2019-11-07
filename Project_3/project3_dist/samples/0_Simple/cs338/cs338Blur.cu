@@ -323,9 +323,9 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 {
   //printf("blockIdx.x : %d \t blockDim.x : %d \t threadIdx.x : %d \n blockIdx.y : %d \t blockDim.y : %d \t threadIdx.y : %d \n\n", blockIdx.x, blockDim.x, threadIdx.x, blockIdx.y, blockDim.y, threadIdx.y);
 
-  int col = (blockIdx.x * blockDim.x + threadIdx.x);
-  int row = (blockIdx.y * blockDim.y + threadIdx.y);
-  int this_pixel = (row * width * k) + col * k;
+  long col = (blockIdx.x * blockDim.x + threadIdx.x);
+  long row = (blockIdx.y * blockDim.y + threadIdx.y);
+  long this_pixel = (row * width * k) + col * k;
 
 //If current pixel is invalid, do nothing
   if(col >= width || row >= height) {
@@ -334,7 +334,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     long weight_divisor = 0;
     int local_weight = 0;
     // TODO : find solution -- cannot use {k} here; compiler requires constant value.
-    int blurred_pixels[3] = { 0 };
+    long blurred_pixels[3] = { 0 };
     int col_neighbor;
     int row_neighbor;
     int curr_dimension;
@@ -413,7 +413,7 @@ runKernel(frame_ptr result)
   int picture_height = from->image_height;
   int picture_width = from->image_width;
   int picture_components = from->num_components;
-  unsigned int array_size_for_memory = picture_width * picture_height * picture_components * sizeof(char);
+  long array_size_for_memory = picture_width * picture_height * picture_components * sizeof(char);
 
   /* TODO : Change radial_param to be a definable val? */
   float radial_param = .05;
