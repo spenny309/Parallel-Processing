@@ -305,8 +305,8 @@ runTest( int argc, char** argv)
   // call kernel
   runKernel(output_frames[0]);
 
-  // invoke uniprocessor version and check results of kernel to uniprocessor
-  // version
+  // TODO : {easy} - invoke uniprocessor version and check results of kernel
+                   //to uniprocessor version
 
 }
 
@@ -321,7 +321,6 @@ runTest( int argc, char** argv)
 __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 			  int height, int width, int k)
 {
-  //printf("blockIdx.x : %d \t blockDim.x : %d \t threadIdx.x : %d \n blockIdx.y : %d \t blockDim.y : %d \t threadIdx.y : %d \n\n", blockIdx.x, blockDim.x, threadIdx.x, blockIdx.y, blockDim.y, threadIdx.y);
 
   long col = (blockIdx.x * blockDim.x + threadIdx.x);
   long row = (blockIdx.y * blockDim.y + threadIdx.y);
@@ -334,12 +333,15 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     long weight_divisor = 0;
     int local_weight = 0;
     // TODO : find solution -- cannot use {k} here; compiler requires constant value.
+    // Wastes space, but still works on greyscale images
     long blurred_pixels[3] = { 0 };
     int col_neighbor;
     int row_neighbor;
     int curr_dimension;
     int current_neighbor;
 
+    //For this pixel, find all valid neighbors and calculate weights and values
+    //Bounds check built into for-loop ; less branching this way in cases when row - r or col - r would be very negative
     for(row_neighbor = ((1 + row - r < 0) ? 0 : (1 + row - r)) ; row_neighbor < row + r && row_neighbor < height ; row_neighbor++){
       for(col_neighbor = ((1 + col - r < 0) ? 0 : (1 + col - r)) ; col_neighbor < col + r && col_neighbor < width ; col_neighbor++){
           //Weight adjustment based on abs distance from this_pixel
@@ -353,11 +355,12 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       }
     }
 
+    //Check for divide by 0 errors
     if(weight_divisor == 0){
-      printf("divisor 0\n");
       return;
     }
 
+    //Calculate blurred pixel value
     for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
       to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
     }
@@ -365,9 +368,6 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     return;
   }
 }
-
-
-
 
 /**
  * Host main routine
@@ -394,7 +394,6 @@ main(int argc, char **argv)
 }
 
 //********************************************************************************************************************************************
-
 
 // This sets up GPU device by allocating the required memory and then
 // calls the kernel on GPU. (You might choose to add/remove arguments.)
@@ -464,25 +463,22 @@ runKernel(frame_ptr result)
   }
 
   //Kernel invocation with dimensionality
-    /* CURRENT IMPLEMENTATION : Equal number of square grids and square blocks.
-      ###
+    /* CURRENT IMPLEMENTATION :
          Wasteful for severely rectangular images, but standard image
          formats are rarely more rectangular than 4:3 or 16:9
          */
+         //Add define value for block dimensions
   int square_dimension = ceil(sqrt(max_of_width_and_height));
   dim3 dim_grid(ceil(max_of_width_and_height / 32.0), ceil(max_of_width_and_height / 32.0), 1);
   dim3 dim_block(32, 32, 1);
 
-  printf("executing kernel\n");
   cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
 
   //Collect results
   if (cudaMemcpy(output_as_one_dimensional_array, d_output_as_one_dimensional_array, array_size_for_memory, cudaMemcpyDeviceToHost) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory copy failure\n");
-    printf("ERROR\n");
     exit(1);
   }
-  printf("finishing kernel\n");
 
   //Transform into 2D array
   //Fill output image with pixels from cudaMemcpy
