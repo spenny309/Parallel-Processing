@@ -441,22 +441,22 @@ runKernel(frame_ptr result)
   }
 
   //Allocate device memory and transfer input data and output array
-  unsigned char* image_as_one_dimensional_array_d;
-  unsigned char* output_as_one_dimensional_array_d;
-  if (cudaMalloc((void **) &image_as_one_dimensional_array_d, array_size_for_memory) != cudaSuccess){
+  unsigned char* d_image_as_one_dimensional_array;
+  unsigned char* d_output_as_one_dimensional_array;
+  if (cudaMalloc((void **) &d_image_as_one_dimensional_array, array_size_for_memory) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory allocation failure\n");
     exit(1);
   }
-  if (cudaMemcpy(image_as_one_dimensional_array_d, image_as_one_dimensional_array, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
+  if (cudaMemcpy(d_image_as_one_dimensional_array, image_as_one_dimensional_array, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory copy failure\n");
     exit(1);
   }
 
-  if (cudaMalloc((void **) &output_as_one_dimensional_array_d, array_size_for_memory) != cudaSuccess){
+  if (cudaMalloc((void **) &d_output_as_one_dimensional_array, array_size_for_memory) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory allocation failure\n");
     exit(1);
   }
-  if (cudaMemcpy(output_as_one_dimensional_array_d, output_as_one_dimensional_array, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
+  if (cudaMemcpy(d_output_as_one_dimensional_array, output_as_one_dimensional_array, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory copy failure\n");
     exit(1);
   }
@@ -472,14 +472,15 @@ runKernel(frame_ptr result)
   dim3 dim_block(square_dimension, square_dimension, 1);
 
   printf("executing kernel\n");
-  cs338Blur<<<dim_grid, dim_block>>>(image_as_one_dimensional_array_d, output_as_one_dimensional_array_d, radius, picture_height, picture_width, picture_components);
-  printf("finishing kernel\n");
+  cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
+
   //Collect results
-  if (cudaMemcpy(output_as_one_dimensional_array, output_as_one_dimensional_array_d, array_size_for_memory, cudaMemcpyDeviceToHost) != cudaSuccess){
+  if (cudaMemcpy(output_as_one_dimensional_array, d_output_as_one_dimensional_array, array_size_for_memory, cudaMemcpyDeviceToHost) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory copy failure\n");
     printf("ERROR\n");
     exit(1);
   }
+  printf("finishing kernel\n");
 
   //Transform into 2D array
   //Fill output image with pixels from cudaMemcpy
@@ -491,6 +492,11 @@ runKernel(frame_ptr result)
       }
     }
   }
+
+  free(image_as_one_dimensional_array);
+  free(output_as_one_dimensional_array);
+  cudaFree(d_image_as_one_dimensional_array);
+  cudaFree(d_output_as_one_dimensional_array);
 }
 
 // Some useful CUDA functions:
