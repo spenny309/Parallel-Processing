@@ -472,8 +472,8 @@ runKernel(frame_ptr result)
          formats are rarely more rectangular than 4:3 or 16:9
          */
   int square_dimension = ceil(sqrt(max_of_width_and_height));
-  dim3 dim_grid(square_dimension, square_dimension, 1);
-  dim3 dim_block(square_dimension, square_dimension, 1);
+  dim3 dim_grid(ceil(max_of_width_and_height / 32.0), ceil(max_of_width_and_height / 32.0), 1);
+  dim3 dim_block(32, 32, 1);
 
   printf("executing kernel\n");
   cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
