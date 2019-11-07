@@ -325,7 +325,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 
   int col = (blockIdx.x * blockDim.x + threadIdx.x);
   int row = (blockIdx.y * blockDim.y + threadIdx.y);
-  int this_pixel = (row * width * k) + col;
+  int this_pixel = (row * width * k) + col * k;
 
 //If current pixel is invalid, do nothing
   if(col >= width || row >= height) {
