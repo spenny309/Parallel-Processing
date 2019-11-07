@@ -488,11 +488,11 @@ runKernel(frame_ptr result)
 
   //Transform into 2D array
   //Fill output image with pixels from cudaMemcpy
-  for(int i = 0 ; i < picture_height ; i++){
-    for(int j = 0 ; j < picture_width ; j++){
+  for(int i = 0 ; i < picture_width ; i++){
+    for(int j = 0 ; j < picture_height ; j++){
       for(int k = 0 ; k < picture_components ; k++){
         offset = (i * picture_width) + (j * picture_components) + k;
-        result->row_pointers[(j * picture_components) + k][i] = output_as_one_dimensional_array[offset];
+        result->row_pointers[i][(j * picture_components) + k] = output_as_one_dimensional_array[offset];
       }
     }
   }
