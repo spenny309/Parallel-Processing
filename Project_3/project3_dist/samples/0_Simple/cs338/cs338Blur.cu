@@ -365,6 +365,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       printf("found this config\n");
       printf("col: %d\n", col);
       printf("row: %d\n", row);
+      printf("thp: %d\n", this_pixel);
     }
     return;
   }
