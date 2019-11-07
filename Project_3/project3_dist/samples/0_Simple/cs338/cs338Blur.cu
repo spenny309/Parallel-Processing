@@ -1,4 +1,4 @@
-BLOCK_SIZE/**
+/**
  * Copyright 1993-2015 NVIDIA Corporation.  All rights reserved.
  *
  * Please refer to the NVIDIA end user license agreement (EULA) associated
@@ -62,9 +62,6 @@ typedef frame_struct_t *frame_ptr;
 #define MAXOUTPUTS 1
 frame_ptr input_frames[MAXINPUTS];	/* Pointers to input frames */
 frame_ptr output_frames[MAXOUTPUTS];	/* Pointers to output frames */
-
-#define BLOCK_SIZE 32.0
-#define RADIAL_PARAM .05
 
 /* Read/write JPEGs, for program startup & shutdown */
 /* YOU SHOULD NOT NEED TO USE THESE AT ALL */
@@ -308,8 +305,8 @@ runTest( int argc, char** argv)
   // call kernel
   runKernel(output_frames[0]);
 
-  // TODO : {easy} - invoke uniprocessor version and check results of kernel
-                   //to uniprocessor version
+  // invoke uniprocessor version and check results of kernel to uniprocessor
+  // version
 
 }
 
@@ -324,6 +321,8 @@ runTest( int argc, char** argv)
 __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 			  int height, int width, int k)
 {
+  //printf("blockIdx.x : %d \t blockDim.x : %d \t threadIdx.x : %d \n blockIdx.y : %d \t blockDim.y : %d \t threadIdx.y : %d \n\n", blockIdx.x, blockDim.x, threadIdx.x, blockIdx.y, blockDim.y, threadIdx.y);
+
   long col = (blockIdx.x * blockDim.x + threadIdx.x);
   long row = (blockIdx.y * blockDim.y + threadIdx.y);
   long this_pixel = (row * width * k) + col * k;
@@ -335,15 +334,12 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     long weight_divisor = 0;
     int local_weight = 0;
     // TODO : find solution -- cannot use {k} here; compiler requires constant value.
-    // Wastes space, but still works on greyscale images
-    int blurred_pixels[3] = { 0 };
+    long blurred_pixels[3] = { 0 };
     int col_neighbor;
     int row_neighbor;
     int curr_dimension;
     int current_neighbor;
 
-    //For this pixel, find all valid neighbors and calculate weights and values
-    //Bounds check built into for-loop ; less branching this way in cases when row - r or col - r would be very negative
     for(row_neighbor = ((1 + row - r < 0) ? 0 : (1 + row - r)) ; row_neighbor < row + r && row_neighbor < height ; row_neighbor++){
       for(col_neighbor = ((1 + col - r < 0) ? 0 : (1 + col - r)) ; col_neighbor < col + r && col_neighbor < width ; col_neighbor++){
           //Weight adjustment based on abs distance from this_pixel
@@ -357,12 +353,11 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       }
     }
 
-    //Avoid divide-by-zero errors
     if(weight_divisor == 0){
+      printf("divisor 0\n");
       return;
     }
 
-    //Calculate blurred pixel value
     for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
       to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
     }
@@ -414,8 +409,10 @@ runKernel(frame_ptr result)
   int picture_components = from->num_components;
   long array_size_for_memory = picture_width * picture_height * picture_components * sizeof(char);
 
+  /* TODO : Change radial_param to be a definable val? */
+  float radial_param = .05;
   int max_of_width_and_height = (picture_height > picture_width) ? picture_height : picture_width;
-  int radius = ceil(max_of_width_and_height * RADIAL_PARAM);
+  int radius = ceil(max_of_width_and_height * radial_param);
 
   //Allocate one dimensional array for input picture pixels
   unsigned char *image_as_one_dimensional_array;
@@ -467,13 +464,14 @@ runKernel(frame_ptr result)
   }
 
   //Kernel invocation with dimensionality
-    /* CURRENT IMPLEMENTATION :
+    /* CURRENT IMPLEMENTATION : Equal number of square grids and square blocks.
+      ###
          Wasteful for severely rectangular images, but standard image
          formats are rarely more rectangular than 4:3 or 16:9
          */
   int square_dimension = ceil(sqrt(max_of_width_and_height));
-  dim3 dim_grid(ceil(max_of_width_and_height / BLOCK_SIZE), ceil(max_of_width_and_height / BLOCK_SIZE), 1);
-  dim3 dim_block(BLOCK_SIZE, BLOCK_SIZE, 1);
+  dim3 dim_grid(ceil(max_of_width_and_height / 32.0), ceil(max_of_width_and_height / 32.0), 1);
+  dim3 dim_block(32, 32, 1);
 
   printf("executing kernel\n");
   cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
@@ -497,7 +495,6 @@ runKernel(frame_ptr result)
     }
   }
 
-  //Free resources
   free(image_as_one_dimensional_array);
   free(output_as_one_dimensional_array);
   cudaFree(d_image_as_one_dimensional_array);
