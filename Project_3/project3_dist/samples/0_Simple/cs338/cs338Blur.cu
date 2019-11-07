@@ -325,7 +325,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 
   int col = (blockIdx.x * blockDim.x + threadIdx.x);
   int row = (blockIdx.y * blockDim.y + threadIdx.y);
-  int this_pixel = (row * width * k) + (col * k);
+  int this_pixel = (col * height * k) + (row * k);
 
 //If current pixel is invalid, do nothing
   if(col >= width || row >= height) {
@@ -437,9 +437,9 @@ runKernel(frame_ptr result)
   for(int i = 0 ; i < picture_height ; i++){
     for(int j = 0 ; j < picture_width ; j++){
       for(int k = 0 ; k < picture_components ; k++){
+        offset = (i * picture_width * picture_components) + (j * picture_components) + k;
         image_as_one_dimensional_array[offset] = from->row_pointers[i][(j * picture_components) + k];
         output_as_one_dimensional_array[offset] = 200;
-        offset++;
       }
     }
   }
