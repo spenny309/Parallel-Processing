@@ -323,8 +323,8 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 {
   //printf("blockIdx.x : %d \t blockDim.x : %d \t threadIdx.x : %d \n blockIdx.y : %d \t blockDim.y : %d \t threadIdx.y : %d \n\n", blockIdx.x, blockDim.x, threadIdx.x, blockIdx.y, blockDim.y, threadIdx.y);
 
-  int row = (blockIdx.x * blockDim.x + threadIdx.x);
-  int col = (blockIdx.y * blockDim.y + threadIdx.y);
+  int col = (blockIdx.x * blockDim.x + threadIdx.x);
+  int row = (blockIdx.y * blockDim.y + threadIdx.y);
   int this_pixel = (row * width * k) + (col * k);
 
 //If current pixel is invalid, do nothing
@@ -360,6 +360,10 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
       to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
     }
+
+    if(col == 50 && row == 50)
+      printf("found this config\n");
+
     return;
   }
 }
