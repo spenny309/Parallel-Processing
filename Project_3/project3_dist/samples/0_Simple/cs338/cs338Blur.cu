@@ -361,9 +361,11 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
     }
 
-    if(col == 50 && row == 50)
+    if(col == 50 && row == 50){
       printf("found this config\n");
-
+      printf("col: %d\n", col);
+      printf("row: %d\n", row);
+    }
     return;
   }
 }
