@@ -495,7 +495,7 @@ runKernel(frame_ptr result)
   for(int i = 0 ; i < picture_height ; i++){
     for(int j = 0 ; j < picture_width ; j++){
       for(int k = 0 ; k < picture_components ; k++){
-        offset = (i * picture_width) + (j * picture_components) + k;
+        offset = (i * picture_width * picture_components) + (j * picture_components) + k;
         result->row_pointers[i][(j * picture_components) + k] = output_as_one_dimensional_array[offset];
       }
     }
