@@ -469,8 +469,9 @@ runKernel(frame_ptr result)
          */
          //Add define value for block dimensions
   int square_dimension = ceil(sqrt(max_of_width_and_height));
-  dim3 dim_grid(ceil(max_of_width_and_height / 32.0), ceil(max_of_width_and_height / 32.0), 1);
-  dim3 dim_block(32, 32, 1);
+  double block_size = 32.0;
+  dim3 dim_grid(ceil(max_of_width_and_height / block_size), ceil(max_of_width_and_height / block_size), 1);
+  dim3 dim_block(block_size, block_size, 1);
 
   cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
 
