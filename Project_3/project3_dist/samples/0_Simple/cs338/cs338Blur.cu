@@ -450,6 +450,7 @@ runTest( int argc, char** argv)
 __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
   int height, int width, int k, int * weight_matrix, long pre_calculated_divisor)
   {
+    printf("pre-calc div: %d\n", pre_calculated_divisor);
     long col = (blockIdx.x * blockDim.x + threadIdx.x);
     long row = (blockIdx.y * blockDim.y + threadIdx.y);
     //If current pixel is invalid, do nothing {col && row cann never be < 0, so no need to check}
