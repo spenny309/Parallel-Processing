@@ -58,9 +58,16 @@ typedef struct frame_struct
 typedef frame_struct_t *frame_ptr;
 
 
+#ifdef BLOCK
+  #define BLOCK_SIZE BLOCK
+#else
+  //default block_size
+  #define BLOCK_SIZE 32.0
+#endif
 
-#define BLOCK_SIZE 32.0
+//CHANGE TO UPDATE RADIUS
 #define RADIAL_PARAM 0.05f
+
 
 #define MAXINPUTS 1
 #define MAXOUTPUTS 1
@@ -519,36 +526,36 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       return;
     }
   }
-  
-  // Insert this function before main
-  void kelly_write_file(char *fname)
-  {
-    char *name = (char*)malloc(strlen(fname) + 5);
-    strcpy(name, fname);
-    strcat(name, ".out");
 
-    FILE *file = fopen(name, "w");
-    if(file == 0){
-      printf("Unable to open %s\n", name);
-    }
-    else{
-      int i, j, k;
-      frame_ptr to;
-
-      to = output_frames[0];
-
-      for (i=0; i < to->image_height; i++){
-        for (j=0; j < to->image_width; j++){
-          for (k=0; k < to->num_components; k++){
-                    fprintf(file, "%d ", to->row_pointers[i][(to->num_components)*j+k]);
-          }
-        }
-        fprintf(file, "\n");
-      }
-    }
-    fclose(file);
-    free(name);
-  }
+  // // Insert this function before main
+  // void kelly_write_file(char *fname)
+  // {
+  //   char *name = (char*)malloc(strlen(fname) + 5);
+  //   strcpy(name, fname);
+  //   strcat(name, ".out");
+  //
+  //   FILE *file = fopen(name, "w");
+  //   if(file == 0){
+  //     printf("Unable to open %s\n", name);
+  //   }
+  //   else{
+  //     int i, j, k;
+  //     frame_ptr to;
+  //
+  //     to = output_frames[0];
+  //
+  //     for (i=0; i < to->image_height; i++){
+  //       for (j=0; j < to->image_width; j++){
+  //         for (k=0; k < to->num_components; k++){
+  //                   fprintf(file, "%d ", to->row_pointers[i][(to->num_components)*j+k]);
+  //         }
+  //       }
+  //       fprintf(file, "\n");
+  //     }
+  //   }
+  //   fclose(file);
+  //   free(name);
+  // }
 
 /**
  * Host main routine
@@ -571,7 +578,7 @@ main(int argc, char **argv)
 
   // Write output file
   write_JPEG_file(argv[2], output_frames[0], 75);
-  kelly_write_file(argv[3]);
+  //kelly_write_file(argv[3]);
 
   return 0;
 }
@@ -665,11 +672,11 @@ runKernel(frame_ptr result)
 		for (int j = 0; j < radius; j++){
       weight_matrix[(i*radius) + j] = (radius - i) * (radius - j);
       if (i > 0 && j > 0) { //the 4* covers the 4 quadrant equivalents of i,j
-        pre_calculated_divisor += 4 * ((radius - abs(i)) * (radius - abs(j)));
+        pre_calculated_divisor += 4 * ((radius - i) * (radius - j));
       } else if (i > 0 || j > 0) { //the 2* covers the 2 axes equivalents of i,j
-        pre_calculated_divisor += 2 * ((radius - abs(i)) * (radius - abs(j)));
+        pre_calculated_divisor += 2 * ((radius - i) * (radius - j));
       } else { // the 1* covers the one origin at i,j = 0,0
-        pre_calculated_divisor += (radius - abs(i)) * (radius - abs(j));
+        pre_calculated_divisor += (radius - i) * (radius - j);
       }
 		}
 	}
@@ -690,7 +697,6 @@ runKernel(frame_ptr result)
          Wasteful for severely rectangular images, but standard image
          formats are rarely more rectangular than 4:3 or 16:9
          */
-         //Add define value for block dimensions
 
   dim3 dim_grid(ceil(max_of_width_and_height / BLOCK_SIZE), ceil(max_of_width_and_height / BLOCK_SIZE), 1);
   dim3 dim_block(BLOCK_SIZE, BLOCK_SIZE, 1);
@@ -722,7 +728,7 @@ runKernel(frame_ptr result)
     }
   }
 
-  printf("Kernal runtime: %f milliseconds\n", milliseconds);
+  printf("Kernal runtime: %f milliseconds\tBlock size: %f", milliseconds, BLOCK_SIZE);
   free(weight_matrix);
   free(image_as_one_dimensional_array);
   free(output_as_one_dimensional_array);
