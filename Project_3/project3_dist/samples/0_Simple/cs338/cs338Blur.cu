@@ -482,7 +482,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
         for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
           //Check bounds to ensure validity
-          if(row_neighbor > 0 && col_neighbor > 0 && row_neighbor < height && col_neighbor < width){
+          if(row_neighbor >= 0 && col_neighbor >= 0 && row_neighbor < height && col_neighbor < width){
             //Weight adjustment based on abs distance from this_pixel
             local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
             weight_divisor += local_weight;
@@ -563,8 +563,6 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 int
 main(int argc, char **argv)
 {
-
-  printf("BLOCK SIZE: %f", BLOCK_SIZE);
 
   if(argc < 3){
     usage();
@@ -730,7 +728,7 @@ runKernel(frame_ptr result)
     }
   }
 
-  printf("Kernal runtime: %f milliseconds\tBlock size: %f", milliseconds, BLOCK_SIZE);
+  printf("Kernal runtime: %f milliseconds\tBlock size: %f\n", milliseconds, BLOCK_SIZE);
   free(weight_matrix);
   free(image_as_one_dimensional_array);
   free(output_as_one_dimensional_array);

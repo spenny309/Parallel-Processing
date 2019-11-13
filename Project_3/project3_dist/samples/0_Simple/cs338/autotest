@@ -39,6 +39,7 @@ echo $'redtree.jpg' >> output.txt
 ./cs338Blur_16 p2_distribute/part1/redtree.jpg output.jpg >> output.txt
 ./cs338Blur_32 p2_distribute/part1/redtree.jpg output.jpg >> output.txt
 
+echo $'finished test' >> output.txt
 #clean up
 
 make --f make1 clean
@@ -47,3 +48,5 @@ make --f make4 clean
 make --f make8 clean
 make --f make16 clean
 make --f make32 clean
+
+echo $'finished cleanup' >> output.txt
