@@ -497,6 +497,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       }
       return;
     } else {
+      printf("entering here\n");
       //No need for bounds checks in this else case
       for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
         for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
