@@ -478,7 +478,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
         for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
           if(row_neighbor > 0 && col_neighbor > 0 && row_neighbor < height && col_neighbor < width){
             //Weight adjustment based on abs distance from this_pixel
-            local_weight = abs(row - row_neighbor) * abs(col - col_neighbor);
+            local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
             weight_divisor += local_weight;
             //current_neighbor = location of R value in RGB
             current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
