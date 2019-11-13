@@ -448,7 +448,7 @@ runTest( int argc, char** argv)
 
 //VERSION 3: Uncomment for Block Branching approach with Pre-calculated values
 __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
-  int height, int width, int k, int ** weight_matrix, long pre_calculated_divisor)
+  int height, int width, int k, int * weight_matrix, long pre_calculated_divisor)
   {
     long col = (blockIdx.x * blockDim.x + threadIdx.x);
     long row = (blockIdx.y * blockDim.y + threadIdx.y);
