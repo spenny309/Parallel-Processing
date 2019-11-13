@@ -450,7 +450,6 @@ runTest( int argc, char** argv)
 __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
   int height, int width, int k, int * weight_matrix, long pre_calculated_divisor)
   {
-    printf("r  : %d\twmv: %d\n", r, weight_matrix[(abs(11) * r) + abs(11)]);
     long col = (blockIdx.x * blockDim.x + threadIdx.x);
     long row = (blockIdx.y * blockDim.y + threadIdx.y);
     //If current pixel is invalid, do nothing {col && row cann never be < 0, so no need to check}
@@ -586,6 +585,7 @@ runKernel(frame_ptr result)
 
   //Fill input array with picture pixels (row major), and set output array to 200 [light grey]
   int offset = 0;
+  printf("looping 1\n");
   for(int i = 0 ; i < picture_height ; i++){
     for(int j = 0 ; j < picture_width ; j++){
       for(int k = 0 ; k < picture_components ; k++){
@@ -595,6 +595,7 @@ runKernel(frame_ptr result)
       }
     }
   }
+  printf("done loop 1\n");
 
   //Allocate device memory and transfer input data and output array
   unsigned char* d_image_as_one_dimensional_array;
@@ -618,6 +619,7 @@ runKernel(frame_ptr result)
   }
 
   //Pre-calculate weight divisor matrix
+  printf("weight loop\n");
   int weight_matrix_size = sizeof(int) * (radius * radius);
   weight_matrix = (int *)malloc(weight_matrix_size);
 	for (int i = 1; i < radius; i++){
@@ -626,6 +628,7 @@ runKernel(frame_ptr result)
       pre_calculated_divisor += (radius - i) * (radius - j);
 		}
 	}
+  printf("begone loop\n");
   pre_calculated_divisor *= 4;
   int* d_weight_matrix;
   if (cudaMalloc((void **) &d_weight_matrix, weight_matrix_size) != cudaSuccess){
