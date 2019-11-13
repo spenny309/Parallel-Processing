@@ -284,7 +284,7 @@ else
 	@echo "Sample is ready - all dependencies have been met"
 endif
 
-cs338Blur_16.o:cs338Blur_16.cu
+cs338Blur_16.o:cs338Blur.cu
 	$(EXEC) $(NVCC) $(INCLUDES) -DBLOCK=16.0 $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
 cs338Blur_16: cs338Blur_16.o
