@@ -519,8 +519,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       return;
     }
   }
-
-
+  
   // Insert this function before main
   void kelly_write_file(char *fname)
   {
