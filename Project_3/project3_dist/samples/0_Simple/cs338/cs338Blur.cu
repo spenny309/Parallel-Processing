@@ -599,7 +599,7 @@ runKernel(frame_ptr result)
     exit(1);
   }
   if (cudaMemcpy(d_image_as_one_dimensional_array, image_as_one_dimensional_array, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
-    fprintf(stderr, "ERROR: CUDA memory copy failure\n");
+    fprintf(stderr, "1: ERROR: CUDA memory copy failure\n");
     exit(1);
   }
 
@@ -608,7 +608,7 @@ runKernel(frame_ptr result)
     exit(1);
   }
   if (cudaMemcpy(d_output_as_one_dimensional_array, output_as_one_dimensional_array, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
-    fprintf(stderr, "ERROR: CUDA memory copy failure\n");
+    fprintf(stderr, "2: ERROR: CUDA memory copy failure\n");
     exit(1);
   }
 
@@ -637,7 +637,7 @@ runKernel(frame_ptr result)
 
   //Collect results
   if (cudaMemcpy(output_as_one_dimensional_array, d_output_as_one_dimensional_array, array_size_for_memory, cudaMemcpyDeviceToHost) != cudaSuccess){
-    fprintf(stderr, "ERROR: CUDA memory copy failure\n");
+    fprintf(stderr, "3: ERROR: CUDA memory copy failure\n");
     exit(1);
   }
 
