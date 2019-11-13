@@ -450,7 +450,7 @@ runTest( int argc, char** argv)
 __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
   int height, int width, int k, int * weight_matrix, long pre_calculated_divisor)
   {
-    printf("pre-calc div: %d\n", pre_calculated_divisor);
+    //printf("pre-calc div: %d\n", pre_calculated_divisor);
     long col = (blockIdx.x * blockDim.x + threadIdx.x);
     long row = (blockIdx.y * blockDim.y + threadIdx.y);
     //If current pixel is invalid, do nothing {col && row cann never be < 0, so no need to check}
@@ -470,7 +470,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 
     // TODO : Ensure this bounds check is accurate on a by-block basis
     //If we're in an edge case, use boundary checking, else assume we have r+ neighbors in each direction
-    printf("bIdx: %d\tbDmx: %d\tbIdy: %d\tbDmy: %d\trad : %d\tmhw : %d\n", blockIdx.x, blockDim.x, blockIdx.y, blockDim.y, r, min_of_height_and_width);
+    //printf("bIdx: %d\tbDmx: %d\tbIdy: %d\tbDmy: %d\trad : %d\tmhw : %d\n", blockIdx.x, blockDim.x, blockIdx.y, blockDim.y, r, min_of_height_and_width);
     if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > min_of_height_and_width || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > min_of_height_and_width){
       int local_weight;
       long weight_divisor = 0;
@@ -498,7 +498,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       }
       return;
     } else {
-      printf("entering here\n");
+      //printf("entering here\n");
       //No need for bounds checks in this else case
       for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
         for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
@@ -506,7 +506,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
           current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
           for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
             //use pre-calculated weight matrix to determine weight of current neighbor on blur of current pixel
-            printf("row: %d\trne: %d\tcol: %d\tcne: %d\twmv: %d\n", row, row_neighbor, col, col_neighbor, weight_matrix[(abs(row - row_neighbor) * r) + abs(col - col_neighbor)]);
+            //printf("row: %d\trne: %d\tcol: %d\tcne: %d\twmv: %d\n", row, row_neighbor, col, col_neighbor, weight_matrix[(abs(row - row_neighbor) * r) + abs(col - col_neighbor)]);
             blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * weight_matrix[(abs(row - row_neighbor) * r) + abs(col - col_neighbor)];
           }
         }
