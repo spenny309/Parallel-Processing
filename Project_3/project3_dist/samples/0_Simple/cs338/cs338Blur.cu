@@ -483,7 +483,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
             //current_neighbor = location of R value in RGB
             current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
             for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-              blurred_pixels[curr_dimension] += 255/*from[current_neighbor + curr_dimension]*/ * local_weight;
+              blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
             }
           }
         }
