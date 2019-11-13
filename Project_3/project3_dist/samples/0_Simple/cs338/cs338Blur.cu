@@ -573,7 +573,7 @@ main(int argc, char **argv)
 
   // Load input file
   input_frames[0] = read_JPEG_file(argv[1]);
-  frame_ptr compare_to_me = read_JPEG_file(argv[3]);
+  //frame_ptr compare_to_me = read_JPEG_file(argv[3]);
 
   // Do the actual work including calling CUDA kernel
   runTest(argc, argv);
