@@ -504,7 +504,8 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
           current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
           for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
             //use pre-calculated weight matrix to determine weight of current neighbor on blur of current pixel
-            blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * weight_matrix[abs(row - row_neighbor) + (r * abs(col - col_neighbor))];
+            printf("row: %d\trne: %d\tcol: %d\tcne: %d\twmv: %d\n", row, row_neighbor, col, col_neighbor, weight_matrix[(abs(row - row_neighbor) * r) + abs(col - col_neighbor)]);
+            blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * weight_matrix[(abs(row - row_neighbor) * r) + abs(col - col_neighbor)];
           }
         }
       }
