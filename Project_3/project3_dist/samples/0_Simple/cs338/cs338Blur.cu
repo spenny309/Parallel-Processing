@@ -476,7 +476,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       //Bounds check built into for-loop ; less branching this way in cases when row - r or col - r would be very negative
       for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
         for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
-          if(row_neighbor > 0 && col_neighbor > 0 && row_neighbor < width && col_neighbor < height){
+          if(row_neighbor > 0 && col_neighbor > 0 && row_neighbor < height && col_neighbor < width){
             //Weight adjustment based on abs distance from this_pixel
             local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
             weight_divisor += local_weight;
