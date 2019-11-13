@@ -390,11 +390,12 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     int row_neighbor;
     int curr_dimension;
     int current_neighbor;
+    int min_of_height_and_width = min(height, width);
 
 
 // TODO : Ensure this bounds check is accurate on a by-block basis
     //If we're in an edge case, use boundary checking, else assume we have at least neighbors in each direction
-    if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > height || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > height){
+    if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > min_of_height_and_width || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > min_of_height_and_width){
       //For this pixel, find all valid neighbors and calculate weights and values
       //Bounds check built into for-loop ; less branching this way in cases when row - r or col - r would be very negative
       for(row_neighbor = ((1 + row - r < 0) ? 0 : (1 + row - r)) ; row_neighbor < row + r && row_neighbor < height ; row_neighbor++){
