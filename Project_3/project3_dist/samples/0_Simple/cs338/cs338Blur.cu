@@ -317,7 +317,7 @@ runTest( int argc, char** argv)
  * This is code for blurring a single pixel
  *
 */
-//    //VERSION 1: Uncomment for naive approach.
+   //VERSION 1: Uncomment for naive approach.
 // __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 // 			  int height, int width, int k)
 // {
@@ -354,17 +354,14 @@ runTest( int argc, char** argv)
 //           }
 //       }
 //     }
-//
 //     //Check for divide by 0 errors
 //     if(weight_divisor == 0){
 //       return;
 //     }
-//
 //     //Calculate blurred pixel value
 //     for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
 //       to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
 //     }
-//
 //     return;
 //   }
 // }
@@ -390,12 +387,12 @@ runTest( int argc, char** argv)
 //     int row_neighbor;
 //     int curr_dimension;
 //     int current_neighbor;
-//     int min_of_height_and_width = min(height, width);
 //
-//
-// // TODO : Ensure this bounds check is accurate on a by-block basis
+
+    // TODO : Test if built-in for-loop bounds are faster than logical if() within double for
+
 //     //If we're in an edge case, use boundary checking, else assume we have at least neighbors in each direction
-//     if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > min_of_height_and_width || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > min_of_height_and_width){
+//     if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > width - r || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > height - r){
 //       //For this pixel, find all valid neighbors and calculate weights and values
 //       //Bounds check built into for-loop ; less branching this way in cases when row - r or col - r would be very negative
 //       for(row_neighbor = ((1 + row - r < 0) ? 0 : (1 + row - r)) ; row_neighbor < row + r && row_neighbor < height ; row_neighbor++){
@@ -466,9 +463,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     int current_neighbor;
     int min_of_height_and_width = min(height, width);
 
-    // TODO : Ensure this bounds check is accurate on a by-block basis
-    //If we're in an edge case, use boundary checking, else assume we have r+ neighbors in each direction
-    //printf("bIdx: %d\tbDmx: %d\tbIdy: %d\tbDmy: %d\trad : %d\tmhw : %d\n", blockIdx.x, blockDim.x, blockIdx.y, blockDim.y, r, min_of_height_and_width);
+    //If we're in an edge case, use boundary checking, else assume we have r+ neighbors in each directions
     if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > width - r || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > height - r){
       int local_weight;
       long weight_divisor = 0;
@@ -484,7 +479,6 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
             current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
             for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
               blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
-              //blurred_pixels[curr_dimension] += 255 * local_weight;
             }
           }
         }
@@ -499,7 +493,6 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       }
       return;
     } else {
-      //printf("entering here\n");
       //No need for bounds checks in this else case
       for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
         for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
@@ -587,7 +580,6 @@ runKernel(frame_ptr result)
 
   //Fill input array with picture pixels (row major), and set output array to 200 [light grey]
   int offset = 0;
-  printf("looping 1\n");
   for(int i = 0 ; i < picture_height ; i++){
     for(int j = 0 ; j < picture_width ; j++){
       for(int k = 0 ; k < picture_components ; k++){
@@ -597,7 +589,6 @@ runKernel(frame_ptr result)
       }
     }
   }
-  printf("done loop 1\n");
 
   //Allocate device memory and transfer input data and output array
   unsigned char* d_image_as_one_dimensional_array;
@@ -620,14 +611,18 @@ runKernel(frame_ptr result)
     exit(1);
   }
 
-  //Pre-calculate weight divisor matrix
-  printf("weight loop\n");
+  //Allocate weight matrix for pre-calculations of inner-pixels
   int weight_matrix_size = sizeof(int) * (radius * radius);
   weight_matrix = (int *)calloc(1, weight_matrix_size);
+  if (weight_matrix == NULL){
+    fprintf(stderr, "ERROR: Memory allocation failure\n");
+    exit(1);
+  }
+  //Pre-calculate divisor and weight_matrix
 	for (int i = 0; i < radius; i++){
 		for (int j = 0; j < radius; j++){
       weight_matrix[(i*radius) + j] = (radius - i) * (radius - j);
-      if (i > 0 && j > 0){
+      if (i > 0 && j > 0) {
         pre_calculated_divisor += 4 * ((radius - abs(i)) * (radius - abs(j)));
       } else if (i > 0 || j > 0) {
         pre_calculated_divisor += 2 * ((radius - abs(i)) * (radius - abs(j)));
@@ -636,14 +631,8 @@ runKernel(frame_ptr result)
       }
 		}
 	}
-/*
-  for(int i = -radius ; i <= radius ; i++){
-    for(int j = -radius ; j <= radius ; j++){
-      pre_calculated_divisor += (radius - abs(i)) * (radius - abs(j));
-    }
-  } */
 
-  printf("begone loop\n");
+  //Create a device copy of weight matrix
   int* d_weight_matrix;
   if (cudaMalloc((void **) &d_weight_matrix, weight_matrix_size) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory allocation failure\n");
@@ -664,16 +653,14 @@ runKernel(frame_ptr result)
   dim3 dim_grid(ceil(max_of_width_and_height / block_size), ceil(max_of_width_and_height / block_size), 1);
   dim3 dim_block(block_size, block_size, 1);
 
-  printf("calling blur\n");
   cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components, d_weight_matrix, pre_calculated_divisor);
   //cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
 
-  //Collect results
+  //Collect results with Device to Host memcpy
   if (cudaMemcpy(output_as_one_dimensional_array, d_output_as_one_dimensional_array, array_size_for_memory, cudaMemcpyDeviceToHost) != cudaSuccess){
     fprintf(stderr, "4: ERROR: CUDA memory copy failure\n");
     exit(1);
   }
-  printf("begone call\n");
 
   //Transform into 2D array
   //Fill output image with pixels from cudaMemcpy
@@ -689,6 +676,7 @@ runKernel(frame_ptr result)
   free(weight_matrix);
   free(image_as_one_dimensional_array);
   free(output_as_one_dimensional_array);
+  cudaFree(d_weight_matrix);
   cudaFree(d_image_as_one_dimensional_array);
   cudaFree(d_output_as_one_dimensional_array);
 }
