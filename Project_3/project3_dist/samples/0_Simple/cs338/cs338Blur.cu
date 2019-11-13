@@ -533,9 +533,12 @@ main(int argc, char **argv)
 
   // Load input file
   input_frames[0] = read_JPEG_file(argv[1]);
+  frame_ptr compare_to_me = read_JPEG_file(argv[3]);
 
   // Do the actual work including calling CUDA kernel
   runTest(argc, argv);
+
+  checkResults(output_frames[0], compare_to_me);
 
   // Write output file
   write_JPEG_file(argv[2], output_frames[0], 75);
@@ -561,6 +564,15 @@ runKernel(frame_ptr result)
   long pre_calculated_divisor = 0;
   int max_of_width_and_height = (picture_height > picture_width) ? picture_height : picture_width;
   int radius = ceil(max_of_width_and_height * RADIAL_PARAM);
+  cudaEvent_t start, stop;
+  if (cudaEventCreate(&start) != cudaSuccess){
+    fprintf(stderror, "ERROR: Failed to create CUDA start\n");
+    exit(1);
+  }
+  if (cudaEventCreate(&stop) != cudaSuccess){
+    fprintf(stderror, "ERROR: Failed to create CUDA stop\n");
+    exit(1);
+  }
 
   //Allocate one dimensional array for input picture pixels
   unsigned char *image_as_one_dimensional_array;
@@ -598,7 +610,7 @@ runKernel(frame_ptr result)
     exit(1);
   }
   if (cudaMemcpy(d_image_as_one_dimensional_array, image_as_one_dimensional_array, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
-    fprintf(stderr, "1: ERROR: CUDA memory copy failure\n");
+    fprintf(stderr, "ERROR: CUDA memory copy failure\n");
     exit(1);
   }
 
@@ -607,7 +619,7 @@ runKernel(frame_ptr result)
     exit(1);
   }
   if (cudaMemcpy(d_output_as_one_dimensional_array, output_as_one_dimensional_array, array_size_for_memory, cudaMemcpyHostToDevice) != cudaSuccess){
-    fprintf(stderr, "2: ERROR: CUDA memory copy failure\n");
+    fprintf(stderr, "ERROR: CUDA memory copy failure\n");
     exit(1);
   }
 
@@ -639,7 +651,7 @@ runKernel(frame_ptr result)
     exit(1);
   }
   if (cudaMemcpy(d_weight_matrix, weight_matrix, weight_matrix_size, cudaMemcpyHostToDevice) != cudaSuccess){
-    fprintf(stderr, "3: ERROR: CUDA memory copy failure\n");
+    fprintf(stderr, "ERROR: CUDA memory copy failure\n");
     exit(1);
   }
 
@@ -653,14 +665,21 @@ runKernel(frame_ptr result)
   dim3 dim_grid(ceil(max_of_width_and_height / BLOCK_SIZE), ceil(max_of_width_and_height / BLOCK_SIZE), 1);
   dim3 dim_block(BLOCK_SIZE, BLOCK_SIZE, 1);
 
+  cudaEventRecord(start);
   cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components, d_weight_matrix, pre_calculated_divisor);
   //cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
+  cudaEventRecord(stop);
 
   //Collect results with Device to Host memcpy
   if (cudaMemcpy(output_as_one_dimensional_array, d_output_as_one_dimensional_array, array_size_for_memory, cudaMemcpyDeviceToHost) != cudaSuccess){
-    fprintf(stderr, "4: ERROR: CUDA memory copy failure\n");
+    fprintf(stderr, "ERROR: CUDA memory copy failure\n");
     exit(1);
   }
+
+  cudaEventSynchronize(stop);
+
+  float milliseconds = 0;
+  cudaEventElapsedTime(&milliseconds, start, stop);
 
   //Transform into 2D array
   //Fill output image with pixels from cudaMemcpy
@@ -673,6 +692,7 @@ runKernel(frame_ptr result)
     }
   }
 
+  printf("Kernal runtime: %f", milliseconds);
   free(weight_matrix);
   free(image_as_one_dimensional_array);
   free(output_as_one_dimensional_array);
