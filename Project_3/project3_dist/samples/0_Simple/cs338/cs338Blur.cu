@@ -626,14 +626,21 @@ runKernel(frame_ptr result)
 	for (int i = 0; i < radius; i++){
 		for (int j = 0; j < radius; j++){
       weight_matrix[(i*radius) + j] = (radius - i) * (radius - j);
+      if (i > 0 && j > 0){
+        pre_calculated_divisor += 4 * ((radius - abs(i)) * (radius - abs(j)));
+      } else if (i > 0 || j > 0) {
+        pre_calculated_divisor += 2 * ((radius - abs(i)) * (radius - abs(j)));
+      } else {
+        pre_calculated_divisor += (radius - abs(i)) * (radius - abs(j));
+      }
 		}
 	}
-
+/*
   for(int i = -radius ; i <= radius ; i++){
     for(int j = -radius ; j <= radius ; j++){
       pre_calculated_divisor += (radius - abs(i)) * (radius - abs(j));
     }
-  }
+  }*/
 
   printf("begone loop\n");
   int* d_weight_matrix;
