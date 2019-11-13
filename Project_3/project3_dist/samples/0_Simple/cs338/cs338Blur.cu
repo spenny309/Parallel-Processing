@@ -628,11 +628,13 @@ runKernel(frame_ptr result)
       weight_matrix[(i*radius) + j] = (radius - i) * (radius - j);
 		}
 	}
-  for(int i = 1 - radius ; i < radius ; i++){
-    for(int j = 1 - radius ; j < radius ; j++){
-      pre_calculated_divisor += abs(radius - i) * abs(radius - j);
+
+  for(int i = -radius ; i <= radius ; i++){
+    for(int j = -radius ; j <= radius ; j++){
+      pre_calculated_divisor += (radius - abs(i)) * (radius - abs(j));
     }
   }
+
   printf("begone loop\n");
   int* d_weight_matrix;
   if (cudaMalloc((void **) &d_weight_matrix, weight_matrix_size) != cudaSuccess){
