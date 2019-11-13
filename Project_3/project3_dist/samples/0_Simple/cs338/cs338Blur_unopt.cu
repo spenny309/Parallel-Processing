@@ -546,10 +546,8 @@ runKernel(frame_ptr result)
   }
 
   printf("Kernal runtime: %10.2f milliseconds\tBlock size: %2.1f\n", milliseconds, BLOCK_SIZE);
-  free(weight_matrix);
   free(image_as_one_dimensional_array);
   free(output_as_one_dimensional_array);
-  cudaFree(d_weight_matrix);
   cudaFree(d_image_as_one_dimensional_array);
   cudaFree(d_output_as_one_dimensional_array);
 }
