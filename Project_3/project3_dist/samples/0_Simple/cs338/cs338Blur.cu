@@ -620,8 +620,8 @@ runKernel(frame_ptr result)
   //Pre-calculate weight divisor matrix
   int weight_matrix_size = sizeof(int) * (radius * radius);
   weight_matrix = (int *)malloc(weight_matrix_size);
-	for (int i = 0; i < radius; i++){
-		for (int j = 0; j < radius; j++){
+	for (int i = 1; i < radius; i++){
+		for (int j = 1; j < radius; j++){
 			weight_matrix[(i*radius) + j] = (radius - i) * (radius - j);
       pre_calculated_divisor += (radius - i) * (radius - j);
 		}
