@@ -626,7 +626,7 @@ runKernel(frame_ptr result)
       pre_calculated_divisor += (radius - i) * (radius - j);
 		}
 	}
-  pre_calculated_divisor = radius * radius * radius * radius;
+  pre_calculated_divisor *= 4;
   int* d_weight_matrix;
   if (cudaMalloc((void **) &d_weight_matrix, weight_matrix_size) != cudaSuccess){
     fprintf(stderr, "ERROR: CUDA memory allocation failure\n");
