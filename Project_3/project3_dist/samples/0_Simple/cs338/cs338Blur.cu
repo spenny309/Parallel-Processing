@@ -516,7 +516,7 @@ runKernel(frame_ptr result)
          Wasteful for severely rectangular images, but standard image
          formats are rarely more rectangular than 4:3 or 16:9
          */
-  dim3 dim_grid(ceil(max_of_width_and_height / BLOCK_SIZE), ceil(max_of_width_and_height / BLOCK_SIZE), 1);
+  dim3 dim_grid(ceil(picture_height / BLOCK_SIZE), ceil(picture_width / BLOCK_SIZE), 1);
   dim3 dim_block(BLOCK_SIZE, BLOCK_SIZE, 1);
 
   cudaEventRecord(start);
@@ -545,7 +545,7 @@ runKernel(frame_ptr result)
     }
   }
 
-  printf("Kernal runtime: %10.2f milliseconds\tBlock size: %2.1f\n", milliseconds, BLOCK_SIZE);
+  printf("Kernal runtime: %10.2f milliseconds\t\tBlock size: %2.1f\n", milliseconds, BLOCK_SIZE);
   free(image_as_one_dimensional_array);
   free(output_as_one_dimensional_array);
   cudaFree(d_image_as_one_dimensional_array);
