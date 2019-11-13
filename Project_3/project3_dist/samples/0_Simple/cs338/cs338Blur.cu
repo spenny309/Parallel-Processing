@@ -450,7 +450,7 @@ runTest( int argc, char** argv)
 __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
   int height, int width, int k, int * weight_matrix, long pre_calculated_divisor)
   {
-    //printf("pre-calc div: %d\n", pre_calculated_divisor);
+    printf("pre-calc div: %d\n", pre_calculated_divisor);
     long col = (blockIdx.x * blockDim.x + threadIdx.x);
     long row = (blockIdx.y * blockDim.y + threadIdx.y);
     //If current pixel is invalid, do nothing {col && row cann never be < 0, so no need to check}
@@ -484,7 +484,6 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
           //current_neighbor = location of R value in RGB
           current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
           for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-            printf("row: %d\trne: %d\tcol: %d\tcne: %d\twmv: %d\n", row, row_neighbor, col, col_neighbor, weight_matrix[(abs(row - row_neighbor) * r) + abs(col - col_neighbor)]);
             blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
           }
         }
