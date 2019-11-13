@@ -57,7 +57,7 @@ typedef frame_struct_t *frame_ptr;
 
 
 
-#define BLOCK_SIZE 32.0
+#define BLOCK_SIZE 16.0
 #define RADIAL_PARAM 0.05f
 
 #define MAXINPUTS 1
