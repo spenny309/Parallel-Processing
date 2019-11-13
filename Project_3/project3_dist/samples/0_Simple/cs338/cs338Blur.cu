@@ -58,6 +58,7 @@ typedef frame_struct_t *frame_ptr;
 
 
 #define BLOCK_SIZE 32.0
+#define RADIAL_PARAM 0.05f
 
 #define MAXINPUTS 1
 #define MAXOUTPUTS 1
@@ -558,9 +559,8 @@ runKernel(frame_ptr result)
   long array_size_for_memory = picture_width * picture_height * picture_components * sizeof(char);
   int * weight_matrix;
   long pre_calculated_divisor = 0;
-  float radial_param = .05;
   int max_of_width_and_height = (picture_height > picture_width) ? picture_height : picture_width;
-  int radius = ceil(max_of_width_and_height * radial_param);
+  int radius = ceil(max_of_width_and_height * RADIAL_PARAM);
 
   //Allocate one dimensional array for input picture pixels
   unsigned char *image_as_one_dimensional_array;
