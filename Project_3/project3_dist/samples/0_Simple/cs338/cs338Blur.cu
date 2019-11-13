@@ -692,7 +692,7 @@ runKernel(frame_ptr result)
     }
   }
 
-  printf("Kernal runtime: %f", milliseconds);
+  printf("Kernal runtime: %f milliseconds\n", milliseconds);
   free(weight_matrix);
   free(image_as_one_dimensional_array);
   free(output_as_one_dimensional_array);
