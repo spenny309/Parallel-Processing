@@ -629,7 +629,7 @@ runKernel(frame_ptr result)
 	}
   for (int i = 1; i < radius; i++){
 		for (int j = 1; j < radius; j++){
-      pre_calculated_divisor += (radius - i) * (radius - j);
+      pre_calculated_divisor += 3 * ((radius - i) * (radius - j));
 		}
 	}
   printf("begone loop\n");
