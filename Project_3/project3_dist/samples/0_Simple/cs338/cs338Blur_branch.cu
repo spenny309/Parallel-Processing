@@ -321,164 +321,34 @@ runTest( int argc, char** argv)
 
 }
 
-
-
 /**
  * CUDA Kernel Device code
  * This is code for blurring a single pixel
  *
 */
-   //VERSION 1: Uncomment for naive approach.
-// __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
-// 			  int height, int width, int k)
-// {
-//
-//   long col = (blockIdx.x * blockDim.x + threadIdx.x);
-//   long row = (blockIdx.y * blockDim.y + threadIdx.y);
-//   long this_pixel = (row * width * k) + col * k;
-//
-// //If current pixel is invalid, do nothing
-//   if(col >= width || row >= height) {
-//     return;
-//   } else {
-//     long weight_divisor = 0;
-//     int local_weight = 0;
-//     // TODO : find solution -- cannot use {k} here; compiler requires constant value.
-//     // Wastes space, but still works on greyscale images
-//     long blurred_pixels[3] = { 0 };
-//     int col_neighbor;
-//     int row_neighbor;
-//     int curr_dimension;
-//     int current_neighbor;
-//
-//     //For this pixel, find all valid neighbors and calculate weights and values
-//     //Bounds check built into for-loop ; less branching this way in cases when row - r or col - r would be very negative
-//     for(row_neighbor = ((1 + row - r < 0) ? 0 : (1 + row - r)) ; row_neighbor < row + r && row_neighbor < height ; row_neighbor++){
-//       for(col_neighbor = ((1 + col - r < 0) ? 0 : (1 + col - r)) ; col_neighbor < col + r && col_neighbor < width ; col_neighbor++){
-//           //Weight adjustment based on abs distance from this_pixel
-//           local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
-//           weight_divisor += local_weight;
-//           //current_neighbor = location of R value in RGB
-//           current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
-//           for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-//             blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
-//           }
-//       }
-//     }
-//     //Check for divide by 0 errors
-//     if(weight_divisor == 0){
-//       return;
-//     }
-//     //Calculate blurred pixel value
-//     for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-//       to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
-//     }
-//     return;
-//   }
-// }
-
-//     //VERSION 2: Uncomment for Block Branching approach
-// __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
-//   int height, int width, int k)
-//   {
-//     long col = (blockIdx.x * blockDim.x + threadIdx.x);
-//     long row = (blockIdx.y * blockDim.y + threadIdx.y);
-//     //If current pixel is invalid, do nothing {col && row cann never be < 0, so no need to check}
-//     if(col >= width || row >= height) {
-//       return;
-//     }
-//     long this_pixel = (row * width * k) + col * k;
-//
-//     long weight_divisor = 0;
-//     int local_weight = 0;
-//     // TODO : find solution -- cannot use {k} here; compiler requires constant value.
-//     // Wastes space, but still works on greyscale images
-//     long blurred_pixels[3] = { 0 };
-//     int col_neighbor;
-//     int row_neighbor;
-//     int curr_dimension;
-//     int current_neighbor;
-//
-
-    // TODO : Test if built-in for-loop bounds are faster than logical if() within double for
-
-//     //If we're in an edge case, use boundary checking, else assume we have at least neighbors in each direction
-//     if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > width - r || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > height - r){
-//       //For this pixel, find all valid neighbors and calculate weights and values
-//       //Bounds check built into for-loop ; less branching this way in cases when row - r or col - r would be very negative
-//       for(row_neighbor = ((1 + row - r < 0) ? 0 : (1 + row - r)) ; row_neighbor < row + r && row_neighbor < height ; row_neighbor++){
-//         for(col_neighbor = ((1 + col - r < 0) ? 0 : (1 + col - r)) ; col_neighbor < col + r && col_neighbor < width ; col_neighbor++){
-//           //Weight adjustment based on abs distance from this_pixel
-//           local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
-//           weight_divisor += local_weight;
-//           //current_neighbor = location of R value in RGB
-//           current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
-//           for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-//             blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
-//           }
-//         }
-//       }
-//       //Check for divide by 0 errors {should NEVER trip unless error}
-//       if(weight_divisor == 0){
-//         return;
-//       }
-//       //Calculate blurred pixel values
-//       for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-//         to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
-//       }
-//       return;
-//     } else {
-//       //For this pixel, find all valid neighbors and calculate weights and values
-//       //No need for bounds checks in this else case
-//       for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
-//         for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
-//           //Weight adjustment based on abs distance from this_pixel
-//           local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
-//           weight_divisor += local_weight;
-//           //current_neighbor = location of R value in RGB
-//           current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
-//           for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-//             blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
-//           }
-//         }
-//       }
-//       //Check for divide by 0 errors {should NEVER trip unless error}
-//       if(weight_divisor == 0){
-//         return;
-//       }
-//       //Calculate blurred pixel values
-//       for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-//         to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
-//       }
-//       return;
-//     }
-//   }
-
-//VERSION 3: Uncomment for Block Branching approach with Pre-calculated values
+    //VERSION 2: Block Branching approach
 __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
-  int height, int width, int k, int * weight_matrix, long pre_calculated_divisor)
+  int height, int width, int k)
   {
     long col = (blockIdx.x * blockDim.x + threadIdx.x);
     long row = (blockIdx.y * blockDim.y + threadIdx.y);
-    //If current pixel is invalid, do nothing {col && row cann never be < 0, so no need to check}
+    //If current pixel is invalid, do nothing {col && row can never be < 0, so no need to check}
     if(col >= width || row >= height) {
       return;
     }
     long this_pixel = (row * width * k) + col * k;
-    // TODO : find solution -- cannot use {k} here; compiler requires constant value.
+
+    long weight_divisor = 0;
+    int local_weight = 0;
     // Wastes space, but still works on greyscale images
     long blurred_pixels[3] = { 0 };
     int col_neighbor;
     int row_neighbor;
     int curr_dimension;
     int current_neighbor;
-    int min_of_height_and_width = min(height, width);
 
-    //If we're in an edge case, use boundary checking, else assume we have r+ neighbors in each directions
+    //If we're in an edge case, use boundary checking, else assume we have at least neighbors in each direction
     if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > width - r || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > height - r){
-      int local_weight;
-      long weight_divisor = 0;
-      //For this pixel, find all valid neighbors and calculate weights and values
       for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
         for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
           //Check bounds to ensure validity
@@ -494,68 +364,65 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
           }
         }
       }
-      //Check for divide by 0 errors {should NEVER trip unless error}
-      if(weight_divisor == 0){
-        return;
-      }
-      //Calculate blurred pixel values
-      for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-        to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
-      }
-      return;
     } else {
+      //For this pixel, find all valid neighbors and calculate weights and values
       //No need for bounds checks in this else case
       for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
         for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
+          //Weight adjustment based on abs distance from this_pixel
+          local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
+          weight_divisor += local_weight;
           //current_neighbor = location of R value in RGB
           current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
           for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-            //use pre-calculated weight matrix to determine weight of current neighbor on blur of current pixel
-            blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * weight_matrix[(abs(row - row_neighbor) * r) + abs(col - col_neighbor)];
+            blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
           }
         }
       }
-      //Check for divide by 0 errors {should NEVER trip unless error}
-      if(pre_calculated_divisor == 0){
-        return;
-      }
-      //Calculate blurred pixel values
-      for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-        to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / pre_calculated_divisor);
-      }
+    }
+
+    //Check for divide by 0 errors {should NEVER trip unless error}
+    if(weight_divisor == 0){
       return;
     }
+    //Calculate blurred pixel values
+    for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
+      to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
+    }
+
+    return;
   }
 
-  // Insert this function before main
-  void kelly_write_file(char *fname)
-  {
-    char *name = (char*)malloc(strlen(fname) + 5);
-    strcpy(name, fname);
-    strcat(name, ".out");
-
-    FILE *file = fopen(name, "w");
-    if(file == 0){
-      printf("Unable to open %s\n", name);
-    }
-    else{
-      int i, j, k;
-      frame_ptr to;
-
-      to = output_frames[0];
-
-      for (i=0; i < to->image_height; i++){
-        for (j=0; j < to->image_width; j++){
-          for (k=0; k < to->num_components; k++){
-                    fprintf(file, "%d ", to->row_pointers[i][(to->num_components)*j+k]);
-          }
-        }
-        fprintf(file, "\n");
-      }
-    }
-    fclose(file);
-    free(name);
-  }
+  // UNCOMMENT FOR TEST OUTPUT TXT
+  // // Insert this function before main
+  // void kelly_write_file(char *fname)
+  // {
+  //   char *name = (char*)malloc(strlen(fname) + 5);
+  //   strcpy(name, fname);
+  //   strcat(name, ".out");
+  //
+  //   FILE *file = fopen(name, "w");
+  //   if(file == 0){
+  //     printf("Unable to open %s\n", name);
+  //   }
+  //   else{
+  //     int i, j, k;
+  //     frame_ptr to;
+  //
+  //     to = output_frames[0];
+  //
+  //     for (i=0; i < to->image_height; i++){
+  //       for (j=0; j < to->image_width; j++){
+  //         for (k=0; k < to->num_components; k++){
+  //                   fprintf(file, "%d ", to->row_pointers[i][(to->num_components)*j+k]);
+  //         }
+  //       }
+  //       fprintf(file, "\n");
+  //     }
+  //   }
+  //   fclose(file);
+  //   free(name);
+  // }
 
 /**
  * Host main routine
@@ -577,8 +444,10 @@ main(int argc, char **argv)
 
   // Write output file
   write_JPEG_file(argv[2], output_frames[0], 75);
-  frame_ptr compare_to_me = read_JPEG_file(argv[3]);
-  kelly_write_file(argv[3]);
+
+  // UNCOMMENT FOR TEST OUTPUT TXT
+  //frame_ptr compare_to_me = read_JPEG_file(argv[3]);
+  //kelly_write_file(argv[3]);
 
   return 0;
 }
@@ -597,8 +466,6 @@ runKernel(frame_ptr result)
   int picture_width = from->image_width;
   int picture_components = from->num_components;
   long array_size_for_memory = picture_width * picture_height * picture_components * sizeof(char);
-  int * weight_matrix;
-  long pre_calculated_divisor = 0;
   int max_of_width_and_height = (picture_height > picture_width) ? picture_height : picture_width;
   int radius = ceil(max_of_width_and_height * RADIAL_PARAM);
   cudaEvent_t start, stop;
@@ -660,50 +527,12 @@ runKernel(frame_ptr result)
     exit(1);
   }
 
-  //Allocate weight matrix for pre-calculations of inner-pixels
-  int weight_matrix_size = sizeof(int) * (radius * radius);
-  weight_matrix = (int *)calloc(1, weight_matrix_size);
-  if (weight_matrix == NULL){
-    fprintf(stderr, "ERROR: Memory allocation failure\n");
-    exit(1);
-  }
-  //Pre-calculate divisor and weight_matrix via simple maths
-	for (int i = 0; i < radius; i++){
-		for (int j = 0; j < radius; j++){
-      weight_matrix[(i*radius) + j] = (radius - i) * (radius - j);
-      if (i > 0 && j > 0) { //the 4* covers the 4 quadrant equivalents of i,j
-        pre_calculated_divisor += 4 * ((radius - i) * (radius - j));
-      } else if (i > 0 || j > 0) { //the 2* covers the 2 axes equivalents of i,j
-        pre_calculated_divisor += 2 * ((radius - i) * (radius - j));
-      } else { // the 1* covers the one origin at i,j = 0,0
-        pre_calculated_divisor += (radius - i) * (radius - j);
-      }
-		}
-	}
-
-  //Create a device copy of weight matrix
-  int* d_weight_matrix;
-  if (cudaMalloc((void **) &d_weight_matrix, weight_matrix_size) != cudaSuccess){
-    fprintf(stderr, "ERROR: CUDA memory allocation failure\n");
-    exit(1);
-  }
-  if (cudaMemcpy(d_weight_matrix, weight_matrix, weight_matrix_size, cudaMemcpyHostToDevice) != cudaSuccess){
-    fprintf(stderr, "ERROR: CUDA memory copy failure\n");
-    exit(1);
-  }
-
   //Kernel invocation with dimensionality
-    /* CURRENT IMPLEMENTATION :
-         Wasteful for severely rectangular images, but standard image
-         formats are rarely more rectangular than 4:3 or 16:9
-         */
-
-  dim3 dim_grid(ceil(max_of_width_and_height / BLOCK_SIZE), ceil(max_of_width_and_height / BLOCK_SIZE), 1);
+  dim3 dim_grid(ceil(picture_width / BLOCK_SIZE), ceil(picture_height / BLOCK_SIZE), 1);
   dim3 dim_block(BLOCK_SIZE, BLOCK_SIZE, 1);
 
   cudaEventRecord(start);
-  cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components, d_weight_matrix, pre_calculated_divisor);
-  //cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
+  cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
   cudaEventRecord(stop);
 
   //Collect results with Device to Host memcpy
@@ -728,18 +557,9 @@ runKernel(frame_ptr result)
     }
   }
 
-  printf("Kernal runtime: %10.2f milliseconds\tBlock size: %2.1f\n", milliseconds, BLOCK_SIZE);
-  free(weight_matrix);
+  printf("Kernal runtime: %10.2f milliseconds\t\tBlock size: %2.1f\n", milliseconds, BLOCK_SIZE);
   free(image_as_one_dimensional_array);
   free(output_as_one_dimensional_array);
-  cudaFree(d_weight_matrix);
   cudaFree(d_image_as_one_dimensional_array);
   cudaFree(d_output_as_one_dimensional_array);
 }
-
-// Some useful CUDA functions:
-// checkCudaErrors is helpful for checking correctness of cudaMalloc
-// and cudaMemCpy
-// You want to use cudaEvent_t to get timing information.  Look at
-// cudaEventCreate, cudaEventRecord, cudaEventSynchronize,
-// cudaEventElapsedTime, cudaEventDestroy

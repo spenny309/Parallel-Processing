@@ -321,14 +321,12 @@ runTest( int argc, char** argv)
 
 }
 
-
-
 /**
  * CUDA Kernel Device code
  * This is code for blurring a single pixel
  *
 */
-   //VERSION 1: Uncomment for naive approach.
+   //VERSION 1: Naive approach.
 __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 			  int height, int width, int k)
 {
@@ -336,7 +334,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
   long row = (blockIdx.y * blockDim.y + threadIdx.y);
   long this_pixel = (row * width * k) + col * k;
 
-//If current pixel is invalid, do nothing
+//If current pixel is invalid, do nothing {col && row can never be < 0, so no need to check}
   if(col >= width || row >= height) {
     return;
   } else {
@@ -512,10 +510,6 @@ runKernel(frame_ptr result)
   }
 
   //Kernel invocation with dimensionality
-    /* CURRENT IMPLEMENTATION :
-         Wasteful for severely rectangular images, but standard image
-         formats are rarely more rectangular than 4:3 or 16:9
-         */
   dim3 dim_grid(ceil(picture_width / BLOCK_SIZE), ceil(picture_height / BLOCK_SIZE), 1);
   dim3 dim_block(BLOCK_SIZE, BLOCK_SIZE, 1);
 
