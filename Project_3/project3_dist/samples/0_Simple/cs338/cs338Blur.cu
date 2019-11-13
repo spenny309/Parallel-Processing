@@ -393,8 +393,8 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
 
 
 // TODO : Ensure this bounds check is accurate on a by-block basis
-    //If we're in an edge case, use boundary checking, else assume we have r+ neighbors in each direction
-    if((blockIdx.x * blockDim.x) < r || (blockIdx.x * blockDim.x) > (width - r) || (blockIdx.y * blockDim.y) < r || (blockIdx.y * blockDim.y) > (height - r)){
+    //If we're in an edge case, use boundary checking, else assume we have at least neighbors in each direction
+    if((blockIdx.x * blockDim.x) <= r || (blockIdx.x * blockDim.x) => (width - r) || (blockIdx.y * blockDim.y) <= r || (blockIdx.y * blockDim.y) => (height - r)){
       //For this pixel, find all valid neighbors and calculate weights and values
       //Bounds check built into for-loop ; less branching this way in cases when row - r or col - r would be very negative
       for(row_neighbor = ((1 + row - r < 0) ? 0 : (1 + row - r)) ; row_neighbor < row + r && row_neighbor < height ; row_neighbor++){
