@@ -466,11 +466,10 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     int current_neighbor;
     int min_of_height_and_width = min(height, width);
 
-
     // TODO : Ensure this bounds check is accurate on a by-block basis
     //If we're in an edge case, use boundary checking, else assume we have r+ neighbors in each direction
     //printf("bIdx: %d\tbDmx: %d\tbIdy: %d\tbDmy: %d\trad : %d\tmhw : %d\n", blockIdx.x, blockDim.x, blockIdx.y, blockDim.y, r, min_of_height_and_width);
-    if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > min_of_height_and_width || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > min_of_height_and_width){
+    if((blockIdx.x * blockDim.x) <= r || ((1 + blockIdx.x) * blockDim.x) >= min_of_height_and_width || (blockIdx.y * blockDim.y) <= r || ((1 + blockIdx.y) * blockDim.y) >= min_of_height_and_width){
       int local_weight;
       long weight_divisor = 0;
       //For this pixel, find all valid neighbors and calculate weights and values
@@ -621,7 +620,7 @@ runKernel(frame_ptr result)
   //Pre-calculate weight divisor matrix
   printf("weight loop\n");
   int weight_matrix_size = sizeof(int) * (radius * radius);
-  weight_matrix = (int *)malloc(weight_matrix_size);
+  weight_matrix = (int *)calloc(1, weight_matrix_size);
 	for (int i = 1; i < radius; i++){
 		for (int j = 1; j < radius; j++){
 			weight_matrix[(i*radius) + j] = (radius - i) * (radius - j);
