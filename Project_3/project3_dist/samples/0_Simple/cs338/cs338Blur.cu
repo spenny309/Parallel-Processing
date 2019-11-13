@@ -628,8 +628,8 @@ runKernel(frame_ptr result)
       weight_matrix[(i*radius) + j] = (radius - i) * (radius - j);
 		}
 	}
-  for(int i = 1 - radius ; i < radius ; i++){
-    for(int j = 1 - radius ; j < radius ; j++){
+  for(int i = 1 ; i < 2*radius ; i++){
+    for(int j = 1 ; j < 2*radius ; j++){
       pre_calculated_divisor += (radius - i) * (radius - j);
     }
   }
