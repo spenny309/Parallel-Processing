@@ -285,7 +285,7 @@ else
 endif
 
 cs338Blur_1.o:cs338Blur.cu
-	$(EXEC) $(NVCC) $(INCLUDES) -DBLOCK=16.0 $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+	$(EXEC) $(NVCC) $(INCLUDES) -DBLOCK=1.0 $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
 cs338Blur_1: cs338Blur_1.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
