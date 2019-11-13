@@ -57,6 +57,7 @@ typedef frame_struct_t *frame_ptr;
 
 
 
+#define BLOCK_SIZE 32.0
 
 #define MAXINPUTS 1
 #define MAXOUTPUTS 1
@@ -557,7 +558,6 @@ runKernel(frame_ptr result)
   long array_size_for_memory = picture_width * picture_height * picture_components * sizeof(char);
   int * weight_matrix;
   long pre_calculated_divisor = 0;
-  /* TODO : Change radial_param to be a definable val? */
   float radial_param = .05;
   int max_of_width_and_height = (picture_height > picture_width) ? picture_height : picture_width;
   int radius = ceil(max_of_width_and_height * radial_param);
@@ -618,15 +618,15 @@ runKernel(frame_ptr result)
     fprintf(stderr, "ERROR: Memory allocation failure\n");
     exit(1);
   }
-  //Pre-calculate divisor and weight_matrix
+  //Pre-calculate divisor and weight_matrix via simple maths
 	for (int i = 0; i < radius; i++){
 		for (int j = 0; j < radius; j++){
       weight_matrix[(i*radius) + j] = (radius - i) * (radius - j);
-      if (i > 0 && j > 0) {
+      if (i > 0 && j > 0) { //the 4* covers the 4 quadrant equivalents of i,j
         pre_calculated_divisor += 4 * ((radius - abs(i)) * (radius - abs(j)));
-      } else if (i > 0 || j > 0) {
+      } else if (i > 0 || j > 0) { //the 2* covers the 2 axes equivalents of i,j
         pre_calculated_divisor += 2 * ((radius - abs(i)) * (radius - abs(j)));
-      } else {
+      } else { // the 1* covers the one origin at i,j = 0,0
         pre_calculated_divisor += (radius - abs(i)) * (radius - abs(j));
       }
 		}
@@ -649,9 +649,9 @@ runKernel(frame_ptr result)
          formats are rarely more rectangular than 4:3 or 16:9
          */
          //Add define value for block dimensions
-  double block_size = 32.0;
-  dim3 dim_grid(ceil(max_of_width_and_height / block_size), ceil(max_of_width_and_height / block_size), 1);
-  dim3 dim_block(block_size, block_size, 1);
+
+  dim3 dim_grid(ceil(max_of_width_and_height / BLOCK_SIZE), ceil(max_of_width_and_height / BLOCK_SIZE), 1);
+  dim3 dim_block(BLOCK_SIZE, BLOCK_SIZE, 1);
 
   cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components, d_weight_matrix, pre_calculated_divisor);
   //cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
