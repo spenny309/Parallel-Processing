@@ -72,7 +72,7 @@ echo $'redtree.jpg' >> output.txt
 ./cs338Blur_32 p2_distribute/part1/redtree.jpg output.jpg >> output.txt
 echo $'' >> output.txt
 
-cp cs338Blur_unopt.cu cs338Blur.cu
+cp cs338Blur_precal.cu cs338Blur.cu
 echo $'OPTIMIZED TEST' >> output.txt
 echo $'' >> output.txt
 #make executables; varies by BLOCK_SIZE
