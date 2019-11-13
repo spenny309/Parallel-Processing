@@ -469,20 +469,22 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     // TODO : Ensure this bounds check is accurate on a by-block basis
     //If we're in an edge case, use boundary checking, else assume we have r+ neighbors in each direction
     //printf("bIdx: %d\tbDmx: %d\tbIdy: %d\tbDmy: %d\trad : %d\tmhw : %d\n", blockIdx.x, blockDim.x, blockIdx.y, blockDim.y, r, min_of_height_and_width);
-    if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > width || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > height){
+    if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > min_of_height_and_width || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > min_of_height_and_width){
       int local_weight;
       long weight_divisor = 0;
       //For this pixel, find all valid neighbors and calculate weights and values
       //Bounds check built into for-loop ; less branching this way in cases when row - r or col - r would be very negative
-      for(row_neighbor = (1 + row - r < 0) ? 0 : (1 + row - r) ; row_neighbor < row + r && row_neighbor < height ; row_neighbor++){
-        for(col_neighbor = (1 + col - r < 0) ? 0 : (1 + col - r) ; col_neighbor < col + r && col_neighbor < width ; col_neighbor++){
-          //Weight adjustment based on abs distance from this_pixel
-          local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
-          weight_divisor += local_weight;
-          //current_neighbor = location of R value in RGB
-          current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
-          for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-            blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
+      for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
+        for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
+          if(row_neighbor > 0 && col_neighbor > 0 && row_neighbor < width && col_neighbor < height){
+            //Weight adjustment based on abs distance from this_pixel
+            local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
+            weight_divisor += local_weight;
+            //current_neighbor = location of R value in RGB
+            current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
+            for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
+              blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
+            }
           }
         }
       }
