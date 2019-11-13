@@ -275,7 +275,7 @@ endif
 # Target rules
 all: build
 
-build: cs338Blur
+build: cs338Blur_16
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -284,19 +284,19 @@ else
 	@echo "Sample is ready - all dependencies have been met"
 endif
 
-cs338Blur.o:cs338Blur.cu
+cs338Blur_16.o:cs338Blur_16.cu
 	$(EXEC) $(NVCC) $(INCLUDES) -DBLOCK=16.0 $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-cs338Blur: cs338Blur.o
+cs338Blur_16: cs338Blur_16.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) mkdir -p ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)
 	$(EXEC) cp $@ ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)
 
 run: build
-	$(EXEC) ./cs338Blur
+	$(EXEC) ./cs338Blur_16
 
 clean:
-	rm -f cs338Blur cs338Blur.o
-	rm -rf ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)/cs338Blur
+	rm -f cs338Blur_16 cs338Blur_16.o
+	rm -rf ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)/cs338Blur_16
 
 clobber: clean
