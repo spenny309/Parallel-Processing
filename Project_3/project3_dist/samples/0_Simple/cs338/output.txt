@@ -1,3 +1,23 @@
 twotone.jpg
+Kernal runtime: 877.260803 milliseconds	Block size: 1.000000
+Kernal runtime: 241.278976 milliseconds	Block size: 2.000000
+Kernal runtime: 71.090179 milliseconds	Block size: 4.000000
+Kernal runtime: 27.127968 milliseconds	Block size: 8.000000
+Kernal runtime: 24.003519 milliseconds	Block size: 16.000000
+Kernal runtime: 23.829536 milliseconds	Block size: 32.000000
 tree.jpg
+Kernal runtime: 26875.410156 milliseconds	Block size: 1.000000
+Kernal runtime: 7333.546875 milliseconds	Block size: 2.000000
+Kernal runtime: 2138.791016 milliseconds	Block size: 4.000000
+Kernal runtime: 805.528625 milliseconds	Block size: 8.000000
+Kernal runtime: 714.102844 milliseconds	Block size: 16.000000
+Kernal runtime: 668.005371 milliseconds	Block size: 32.000000
 redtree.jpg
+Kernal runtime: 268448.031250 milliseconds	Block size: 1.000000
+Kernal runtime: 73283.476562 milliseconds	Block size: 2.000000
+Kernal runtime: 21438.332031 milliseconds	Block size: 4.000000
+Kernal runtime: 8048.010254 milliseconds	Block size: 8.000000
+Kernal runtime: 7052.776367 milliseconds	Block size: 16.000000
+Kernal runtime: 6462.407715 milliseconds	Block size: 32.000000
+finished test
+finished cleanup
