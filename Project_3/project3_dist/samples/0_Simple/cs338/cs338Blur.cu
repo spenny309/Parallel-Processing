@@ -24,6 +24,8 @@
 
 #include "jpeglib.h"
 
+#include <string.h>
+
 /*
  * IMAGE DATA FORMATS:
  *
@@ -519,6 +521,36 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
   }
 
 
+  // Insert this function before main
+  void kelly_write_file(char *fname)
+  {
+    char *name = (char*)malloc(strlen(fname) + 5);
+    strcpy(name, fname);
+    strcat(name, ".out");
+
+    FILE *file = fopen(name, "w");
+    if(file == 0){
+      printf("Unable to open %s\n", name);
+    }
+    else{
+      int i, j, k;
+      frame_ptr to;
+
+      to = output_frames[0];
+
+      for (i=0; i < to->image_height; i++){
+        for (j=0; j < to->image_width; j++){
+          for (k=0; k < to->num_components; k++){
+                    fprintf(file, "%d ", to->row_pointers[i][(to->num_components)*j+k]);
+          }
+        }
+        fprintf(file, "\n");
+      }
+    }
+    fclose(file);
+    free(name);
+  }
+
 /**
  * Host main routine
  */
@@ -538,10 +570,9 @@ main(int argc, char **argv)
   // Do the actual work including calling CUDA kernel
   runTest(argc, argv);
 
-  checkResults(output_frames[0], compare_to_me);
-
   // Write output file
   write_JPEG_file(argv[2], output_frames[0], 75);
+  kelly_write_file(argv[3]);
 
   return 0;
 }
