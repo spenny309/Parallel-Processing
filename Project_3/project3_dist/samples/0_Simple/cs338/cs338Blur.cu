@@ -469,7 +469,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     // TODO : Ensure this bounds check is accurate on a by-block basis
     //If we're in an edge case, use boundary checking, else assume we have r+ neighbors in each direction
     //printf("bIdx: %d\tbDmx: %d\tbIdy: %d\tbDmy: %d\trad : %d\tmhw : %d\n", blockIdx.x, blockDim.x, blockIdx.y, blockDim.y, r, min_of_height_and_width);
-    if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > height || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > width){
+    if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > min_of_height_and_width || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > min_of_height_and_width){
       int local_weight;
       long weight_divisor = 0;
       //For this pixel, find all valid neighbors and calculate weights and values
@@ -483,7 +483,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
             //current_neighbor = location of R value in RGB
             current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
             for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-              blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
+              blurred_pixels[curr_dimension] += 255/*from[current_neighbor + curr_dimension]*/ * local_weight;
             }
           }
         }
@@ -640,7 +640,7 @@ runKernel(frame_ptr result)
     for(int j = -radius ; j <= radius ; j++){
       pre_calculated_divisor += (radius - abs(i)) * (radius - abs(j));
     }
-  }*/
+  } */
 
   printf("begone loop\n");
   int* d_weight_matrix;
@@ -685,6 +685,7 @@ runKernel(frame_ptr result)
     }
   }
 
+  free(weight_matrix);
   free(image_as_one_dimensional_array);
   free(output_as_one_dimensional_array);
   cudaFree(d_image_as_one_dimensional_array);
