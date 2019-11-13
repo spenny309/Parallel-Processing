@@ -527,35 +527,35 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     }
   }
 
-  // // Insert this function before main
-  // void kelly_write_file(char *fname)
-  // {
-  //   char *name = (char*)malloc(strlen(fname) + 5);
-  //   strcpy(name, fname);
-  //   strcat(name, ".out");
-  //
-  //   FILE *file = fopen(name, "w");
-  //   if(file == 0){
-  //     printf("Unable to open %s\n", name);
-  //   }
-  //   else{
-  //     int i, j, k;
-  //     frame_ptr to;
-  //
-  //     to = output_frames[0];
-  //
-  //     for (i=0; i < to->image_height; i++){
-  //       for (j=0; j < to->image_width; j++){
-  //         for (k=0; k < to->num_components; k++){
-  //                   fprintf(file, "%d ", to->row_pointers[i][(to->num_components)*j+k]);
-  //         }
-  //       }
-  //       fprintf(file, "\n");
-  //     }
-  //   }
-  //   fclose(file);
-  //   free(name);
-  // }
+  // Insert this function before main
+  void kelly_write_file(char *fname)
+  {
+    char *name = (char*)malloc(strlen(fname) + 5);
+    strcpy(name, fname);
+    strcat(name, ".out");
+
+    FILE *file = fopen(name, "w");
+    if(file == 0){
+      printf("Unable to open %s\n", name);
+    }
+    else{
+      int i, j, k;
+      frame_ptr to;
+
+      to = output_frames[0];
+
+      for (i=0; i < to->image_height; i++){
+        for (j=0; j < to->image_width; j++){
+          for (k=0; k < to->num_components; k++){
+                    fprintf(file, "%d ", to->row_pointers[i][(to->num_components)*j+k]);
+          }
+        }
+        fprintf(file, "\n");
+      }
+    }
+    fclose(file);
+    free(name);
+  }
 
 /**
  * Host main routine
@@ -571,14 +571,14 @@ main(int argc, char **argv)
 
   // Load input file
   input_frames[0] = read_JPEG_file(argv[1]);
-  //frame_ptr compare_to_me = read_JPEG_file(argv[3]);
 
   // Do the actual work including calling CUDA kernel
   runTest(argc, argv);
 
   // Write output file
   write_JPEG_file(argv[2], output_frames[0], 75);
-  //kelly_write_file(argv[3]);
+  frame_ptr compare_to_me = read_JPEG_file(argv[3]);
+  kelly_write_file(argv[3]);
 
   return 0;
 }
@@ -728,7 +728,7 @@ runKernel(frame_ptr result)
     }
   }
 
-  printf("Kernal runtime: %f milliseconds\tBlock size: %f\n", milliseconds, BLOCK_SIZE);
+  printf("Kernal runtime: %10.2f milliseconds\tBlock size: %2.1f\n", milliseconds, BLOCK_SIZE);
   free(weight_matrix);
   free(image_as_one_dimensional_array);
   free(output_as_one_dimensional_array);
