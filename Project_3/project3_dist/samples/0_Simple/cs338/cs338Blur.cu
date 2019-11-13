@@ -474,8 +474,8 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       long weight_divisor = 0;
       //For this pixel, find all valid neighbors and calculate weights and values
       //Bounds check built into for-loop ; less branching this way in cases when row - r or col - r would be very negative
-      for(row_neighbor = ((1 + row - r < 0) ? 0 : (1 + row - r)) ; row_neighbor < row + r && row_neighbor < height ; row_neighbor++){
-        for(col_neighbor = ((1 + col - r < 0) ? 0 : (1 + col - r)) ; col_neighbor < col + r && col_neighbor < width ; col_neighbor++){
+      for(row_neighbor = (row - r < 0) ? 0 : (row - r)) ; row_neighbor <= row + r && row_neighbor < height ; row_neighbor++){
+        for(col_neighbor = (col - r < 0) ? 0 : (col - r)) ; col_neighbor <= col + r && col_neighbor < width ; col_neighbor++){
           //Weight adjustment based on abs distance from this_pixel
           local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
           weight_divisor += local_weight;
