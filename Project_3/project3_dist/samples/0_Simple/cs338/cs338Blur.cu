@@ -369,84 +369,84 @@ runTest( int argc, char** argv)
 //   }
 // }
 
-//     //VERSION 2: Uncomment for Block Branching approach
-// __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
-//   int height, int width, int k)
-//   {
-//     long col = (blockIdx.x * blockDim.x + threadIdx.x);
-//     long row = (blockIdx.y * blockDim.y + threadIdx.y);
-//     //If current pixel is invalid, do nothing {col && row cann never be < 0, so no need to check}
-//     if(col >= width || row >= height) {
-//       return;
-//     }
-//     long this_pixel = (row * width * k) + col * k;
-//
-//     long weight_divisor = 0;
-//     int local_weight = 0;
-//     // TODO : find solution -- cannot use {k} here; compiler requires constant value.
-//     // Wastes space, but still works on greyscale images
-//     long blurred_pixels[3] = { 0 };
-//     int col_neighbor;
-//     int row_neighbor;
-//     int curr_dimension;
-//     int current_neighbor;
-//
-//
-// // TODO : Ensure this bounds check is accurate on a by-block basis
-//     //If we're in an edge case, use boundary checking, else assume we have r+ neighbors in each direction
-//     if((blockIdx.x * blockDim.x) < r || (blockIdx.x * blockDim.x) > (width - r) || (blockIdx.y * blockDim.y) < r || (blockIdx.y * blockDim.y) > (height - r)){
-//       //For this pixel, find all valid neighbors and calculate weights and values
-//       //Bounds check built into for-loop ; less branching this way in cases when row - r or col - r would be very negative
-//       for(row_neighbor = ((1 + row - r < 0) ? 0 : (1 + row - r)) ; row_neighbor < row + r && row_neighbor < height ; row_neighbor++){
-//         for(col_neighbor = ((1 + col - r < 0) ? 0 : (1 + col - r)) ; col_neighbor < col + r && col_neighbor < width ; col_neighbor++){
-//           //Weight adjustment based on abs distance from this_pixel
-//           local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
-//           weight_divisor += local_weight;
-//           //current_neighbor = location of R value in RGB
-//           current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
-//           for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-//             blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
-//           }
-//         }
-//       }
-//       //Check for divide by 0 errors {should NEVER trip unless error}
-//       if(weight_divisor == 0){
-//         return;
-//       }
-//       //Calculate blurred pixel values
-//       for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-//         to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
-//       }
-//       return;
-//     } else {
-//       //For this pixel, find all valid neighbors and calculate weights and values
-//       //No need for bounds checks in this else case
-//       for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
-//         for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
-//           //Weight adjustment based on abs distance from this_pixel
-//           local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
-//           weight_divisor += local_weight;
-//           //current_neighbor = location of R value in RGB
-//           current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
-//           for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-//             blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
-//           }
-//         }
-//       }
-//       //Check for divide by 0 errors {should NEVER trip unless error}
-//       if(weight_divisor == 0){
-//         return;
-//       }
-//       //Calculate blurred pixel values
-//       for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-//         to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
-//       }
-//       return;
-//     }
-//   }
+    //VERSION 2: Uncomment for Block Branching approach
+__global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
+  int height, int width, int k)
+  {
+    long col = (blockIdx.x * blockDim.x + threadIdx.x);
+    long row = (blockIdx.y * blockDim.y + threadIdx.y);
+    //If current pixel is invalid, do nothing {col && row cann never be < 0, so no need to check}
+    if(col >= width || row >= height) {
+      return;
+    }
+    long this_pixel = (row * width * k) + col * k;
+
+    long weight_divisor = 0;
+    int local_weight = 0;
+    // TODO : find solution -- cannot use {k} here; compiler requires constant value.
+    // Wastes space, but still works on greyscale images
+    long blurred_pixels[3] = { 0 };
+    int col_neighbor;
+    int row_neighbor;
+    int curr_dimension;
+    int current_neighbor;
+
+
+// TODO : Ensure this bounds check is accurate on a by-block basis
+    //If we're in an edge case, use boundary checking, else assume we have r+ neighbors in each direction
+    if((blockIdx.x * blockDim.x) < r || (blockIdx.x * blockDim.x) > (width - r) || (blockIdx.y * blockDim.y) < r || (blockIdx.y * blockDim.y) > (height - r)){
+      //For this pixel, find all valid neighbors and calculate weights and values
+      //Bounds check built into for-loop ; less branching this way in cases when row - r or col - r would be very negative
+      for(row_neighbor = ((1 + row - r < 0) ? 0 : (1 + row - r)) ; row_neighbor < row + r && row_neighbor < height ; row_neighbor++){
+        for(col_neighbor = ((1 + col - r < 0) ? 0 : (1 + col - r)) ; col_neighbor < col + r && col_neighbor < width ; col_neighbor++){
+          //Weight adjustment based on abs distance from this_pixel
+          local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
+          weight_divisor += local_weight;
+          //current_neighbor = location of R value in RGB
+          current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
+          for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
+            blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
+          }
+        }
+      }
+      //Check for divide by 0 errors {should NEVER trip unless error}
+      if(weight_divisor == 0){
+        return;
+      }
+      //Calculate blurred pixel values
+      for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
+        to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
+      }
+      return;
+    } else {
+      //For this pixel, find all valid neighbors and calculate weights and values
+      //No need for bounds checks in this else case
+      for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
+        for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
+          //Weight adjustment based on abs distance from this_pixel
+          local_weight = (r - abs(row - row_neighbor)) * (r - abs(col - col_neighbor));
+          weight_divisor += local_weight;
+          //current_neighbor = location of R value in RGB
+          current_neighbor = (row_neighbor * width * k) + (col_neighbor * k);
+          for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
+            blurred_pixels[curr_dimension] += from[current_neighbor + curr_dimension] * local_weight;
+          }
+        }
+      }
+      //Check for divide by 0 errors {should NEVER trip unless error}
+      if(weight_divisor == 0){
+        return;
+      }
+      //Calculate blurred pixel values
+      for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
+        to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
+      }
+      return;
+    }
+  }
 
 //VERSION 3: Uncomment for Block Branching approach with Pre-calculated values
-__global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
+/*__global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
   int height, int width, int k, int ** weight_matrix, long pre_calculated_divisor)
   {
     printf("hi guys we're here\n");
@@ -516,7 +516,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       }
       return;
     }
-  }
+  } */
 
 
 /**
@@ -557,8 +557,8 @@ runKernel(frame_ptr result)
   int picture_width = from->image_width;
   int picture_components = from->num_components;
   long array_size_for_memory = picture_width * picture_height * picture_components * sizeof(char);
-  int ** weight_matrix;
-  long pre_calculated_divisor = 0;
+  //int ** weight_matrix;
+  //long pre_calculated_divisor = 0;
   /* TODO : Change radial_param to be a definable val? */
   float radial_param = .05;
   int max_of_width_and_height = (picture_height > picture_width) ? picture_height : picture_width;
@@ -613,7 +613,7 @@ runKernel(frame_ptr result)
     exit(1);
   }
 
-  //Pre-calculate weight divisor matrix
+  /*//Pre-calculate weight divisor matrix
   weight_matrix = (int **)malloc(sizeof(int*) * radius);
 	for (int i = 0; i < radius; i++){
 		weight_matrix[i] = (int *)malloc(sizeof(int) * radius);
@@ -621,7 +621,7 @@ runKernel(frame_ptr result)
 			weight_matrix[i][j] = (radius - i) * (radius - j);
       pre_calculated_divisor += (radius - i) * (radius - j);
 		}
-	}
+	}*/
 
   //Kernel invocation with dimensionality
     /* CURRENT IMPLEMENTATION :
@@ -634,7 +634,8 @@ runKernel(frame_ptr result)
   dim3 dim_grid(ceil(max_of_width_and_height / block_size), ceil(max_of_width_and_height / block_size), 1);
   dim3 dim_block(block_size, block_size, 1);
 
-  cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components, weight_matrix, pre_calculated_divisor);
+  //cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components, weight_matrix, pre_calculated_divisor);
+  cs338Blur<<<dim_grid, dim_block>>>(d_image_as_one_dimensional_array, d_output_as_one_dimensional_array, radius, picture_height, picture_width, picture_components);
 
   //Collect results
   if (cudaMemcpy(output_as_one_dimensional_array, d_output_as_one_dimensional_array, array_size_for_memory, cudaMemcpyDeviceToHost) != cudaSuccess){
