@@ -421,6 +421,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       }
       return;
     } else {
+      printf("central blockus ruckus\n");
       //For this pixel, find all valid neighbors and calculate weights and values
       //No need for bounds checks in this else case
       for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
