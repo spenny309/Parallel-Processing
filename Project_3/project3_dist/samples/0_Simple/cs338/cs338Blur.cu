@@ -564,6 +564,8 @@ int
 main(int argc, char **argv)
 {
 
+  printf("BLOCK SIZE: %f", BLOCK_SIZE);
+
   if(argc < 3){
     usage();
     exit(1);
