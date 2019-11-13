@@ -1,0 +1,49 @@
+#!/bin/bash
+
+#make executables; varies by BLOCK_SIZE
+make --f make1
+make --f make2
+make --f make4
+make --f make8
+make --f make16
+make --f make32
+
+touch output.txt
+
+#test on small image
+
+echo $'twotone.jpg' > output.txt
+
+./cs338blur_1 p2_distribute/part1/twotone.jpg output.jpg >> output.txt
+./cs338blur_2 p2_distribute/part1/twotone.jpg output.jpg >> output.txt
+./cs338blur_4 p2_distribute/part1/twotone.jpg output.jpg >> output.txt
+./cs338blur_8 p2_distribute/part1/twotone.jpg output.jpg >> output.txt
+./cs338blur_16 p2_distribute/part1/twotone.jpg output.jpg >> output.txt
+./cs338blur_32 p2_distribute/part1/twotone.jpg output.jpg >> output.txt
+
+echo $'tree.jpg' >> output.txt
+
+./cs338blur_1 p2_distribute/part1/tree.jpg output.jpg >> output.txt
+./cs338blur_2 p2_distribute/part1/tree.jpg output.jpg >> output.txt
+./cs338blur_4 p2_distribute/part1/tree.jpg output.jpg >> output.txt
+./cs338blur_8 p2_distribute/part1/tree.jpg output.jpg >> output.txt
+./cs338blur_16 p2_distribute/part1/tree.jpg output.jpg >> output.txt
+./cs338blur_32 p2_distribute/part1/tree.jpg output.jpg >> output.txt
+
+echo $'redtree.jpg' >> output.txt
+
+./cs338blur_1 p2_distribute/part1/redtree.jpg output.jpg >> output.txt
+./cs338blur_2 p2_distribute/part1/redtree.jpg output.jpg >> output.txt
+./cs338blur_4 p2_distribute/part1/redtree.jpg output.jpg >> output.txt
+./cs338blur_8 p2_distribute/part1/redtree.jpg output.jpg >> output.txt
+./cs338blur_16 p2_distribute/part1/redtree.jpg output.jpg >> output.txt
+./cs338blur_32 p2_distribute/part1/redtree.jpg output.jpg >> output.txt
+
+#clean up
+
+make --f make1 clean
+make --f make2 clean
+make --f make4 clean
+make --f make8 clean
+make --f make16 clean
+make --f make32 clean
