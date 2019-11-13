@@ -411,6 +411,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       }
       //Check for divide by 0 errors {should NEVER trip unless error}
       if(weight_divisor == 0){
+        printf("1: div 0\n");
         return;
       }
       //Calculate blurred pixel values
@@ -435,6 +436,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
       }
       //Check for divide by 0 errors {should NEVER trip unless error}
       if(weight_divisor == 0){
+        printf("2: div 0\n");
         return;
       }
       //Calculate blurred pixel values
@@ -587,7 +589,7 @@ runKernel(frame_ptr result)
       for(int k = 0 ; k < picture_components ; k++){
         offset = (i * picture_width * picture_components) + (j * picture_components) + k;
         image_as_one_dimensional_array[offset] = from->row_pointers[i][(j * picture_components) + k];
-        output_as_one_dimensional_array[offset] = 200;
+        output_as_one_dimensional_array[offset] = 255;
       }
     }
   }
