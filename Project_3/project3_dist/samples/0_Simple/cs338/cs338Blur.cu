@@ -566,11 +566,11 @@ runKernel(frame_ptr result)
   int radius = ceil(max_of_width_and_height * RADIAL_PARAM);
   cudaEvent_t start, stop;
   if (cudaEventCreate(&start) != cudaSuccess){
-    fprintf(stderror, "ERROR: Failed to create CUDA start\n");
+    fprintf(stderr, "ERROR: Failed to create CUDA start\n");
     exit(1);
   }
   if (cudaEventCreate(&stop) != cudaSuccess){
-    fprintf(stderror, "ERROR: Failed to create CUDA stop\n");
+    fprintf(stderr, "ERROR: Failed to create CUDA stop\n");
     exit(1);
   }
 
