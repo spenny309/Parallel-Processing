@@ -469,7 +469,7 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     // TODO : Ensure this bounds check is accurate on a by-block basis
     //If we're in an edge case, use boundary checking, else assume we have r+ neighbors in each direction
     //printf("bIdx: %d\tbDmx: %d\tbIdy: %d\tbDmy: %d\trad : %d\tmhw : %d\n", blockIdx.x, blockDim.x, blockIdx.y, blockDim.y, r, min_of_height_and_width);
-    if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > height || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > width){
+    if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > width || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > height){
       int local_weight;
       long weight_divisor = 0;
       //For this pixel, find all valid neighbors and calculate weights and values
