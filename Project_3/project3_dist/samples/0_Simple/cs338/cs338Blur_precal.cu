@@ -346,11 +346,11 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     int curr_dimension;
     int current_neighbor;
     int min_of_height_and_width = min(height, width);
-
+    long weight_divisor = pre_calculated_divisor;
     //If we're in an edge case, use boundary checking, else assume we have r+ neighbors in each directions
     if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > width - r || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > height - r){
       int local_weight;
-      long weight_divisor = 0;
+      weight_divisor = 0;
       //For this pixel, find all valid neighbors and calculate weights and values
       for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
         for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
