@@ -1,13 +1,35 @@
-## Project 3 : Check Point
+## Project 3 : Final submission
 #### 20sdc2
 
-This is my check-in submission for Project 3, Part 1 for CS338. The associated file, cs338Blur.cu will blur an input image, taking advantage of a CUDA device to parallelize the blurring task. To run this code, do the follow in the command line:
+This is my final submission for Project 3 for CS338. There are 3 associated files taking advantage of a CUDA device to parallelize an image blurring task.
+
+These files are:
+* cs338Blur_unopt.cu    (Part 1)
+* cs338Blur_branch.cu   (Part 2)
+* cs338Blur_precal.cu   (Part 3)
+
+WARNING: The Makefile, and variations of the Makefile (make1, make2, make4, ..., make32) included in this directory can only be used on a file named cs338Blur.cu. Therefore, in order to use one of the files, you must issue the following command before trying to compile it:
+
+$ cp cs338Blur_{version}.cu cs338Blur.cu
+
+This will create a copy of the desired version into a file named cs338Blur.cu. Next, a user can compile with the following (NOTE: make will default to block dimensions of 32 threads by 32 threads).
 
 * $ make
+* Output: cs338Blur.o && cs338Blur*
+
+A user can also specify a makefile that will determine the block dimensions of the program, with the options of: 1, 2, 4, 8, 16, or 32.
+
+* $ make --f make{dimension}
+* Output: cs338Blur_{dimension}.o && cs338Blur_{dimension}*
+
+The program may then be run as follows, to blur an input jpeg, and store the result in an output jpeg:
+
 * $ ./cs338Blur {input.jpg} {output.jpg}
+OR:
+* $ ./cs338Blur_{dimension} {input.jpg} {output.jpg}
 
-This program yields a blurred output image based on the input.jpg supplied.
+Also included in this directory is an autotest executable which will run all of the tests performed for the final paper of this assignment. Autotest will create a file, output.txt, delete its contents, then compile and execute 1, 2, 4, 8, 16, and 32 thread-dimensioned block versions of the unoptimized, branch-optimized, and fully-optimized code on 3 different images: twotone.jpg, tree.jpg, and redtree.jpg. The executables are then cleaned up from the filesystem.
 
-This program is a work in progress. Updates should be made to allow for user-specified blur-radius parameters, and there is an issue causing me to need to hard-code the k-value in a certain location to 3, which would impact the efficiency (but not functionality) of the program on a greyscale image.
+The radial parameter of each file is defined as .05. If a user wants to change this value, they must update the defined value of RADIAL_PARAM.
 
-The definition of BLOCK_SIZE is currently set to 32. This defines the block-dimension of our kernel (it is a BLOCK_SIZE by BLOCK_SIZE square), and this necessarily influences the grid dimensions (which is also a square of sides of ceil(max_of_width_and_height) / BLOCK_SIZE)
+Also included in this directory is a final paper, final outputs (output and nohup), a directory p2_distribute from Professor Kelly Shaw, which contains the 3 test images used by autotest.
