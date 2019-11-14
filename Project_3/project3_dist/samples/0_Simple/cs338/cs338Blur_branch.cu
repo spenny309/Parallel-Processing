@@ -389,7 +389,6 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
       to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
     }
-
     return;
   }
 
