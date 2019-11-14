@@ -493,7 +493,7 @@ runKernel(frame_ptr result)
     exit(1);
   }
 
-  //Fill input array with picture pixels (row major), and set output array to 200 [light grey]
+  //Fill input array with picture pixels (row major), and set output array to 255 [white]
   int offset = 0;
   for(int i = 0 ; i < picture_height ; i++){
     for(int j = 0 ; j < picture_width ; j++){
