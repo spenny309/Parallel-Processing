@@ -346,11 +346,11 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
     int curr_dimension;
     int current_neighbor;
     int min_of_height_and_width = min(height, width);
-
+    long weight_divisor = pre_calculated_divisor;
     //If we're in an edge case, use boundary checking, else assume we have r+ neighbors in each directions
     if((blockIdx.x * blockDim.x) < r || ((1 + blockIdx.x) * blockDim.x) > width - r || (blockIdx.y * blockDim.y) < r || ((1 + blockIdx.y) * blockDim.y) > height - r){
       int local_weight;
-      long weight_divisor = 0;
+      weight_divisor = 0;
       //For this pixel, find all valid neighbors and calculate weights and values
       for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
         for(col_neighbor = (1 + col - r) ; col_neighbor < col + r ; col_neighbor++){
@@ -367,15 +367,6 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
           }
         }
       }
-      //Check for divide by 0 errors {should NEVER trip unless error}
-      if(weight_divisor == 0){
-        return;
-      }
-      //Calculate blurred pixel values
-      for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-        to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
-      }
-      return;
     } else {
       //No need for bounds checks in this else case
       for(row_neighbor = (1 + row - r) ; row_neighbor < row + r ; row_neighbor++){
@@ -388,16 +379,17 @@ __global__ void cs338Blur(unsigned char* from, unsigned char* to, int r,
           }
         }
       }
-      //Check for divide by 0 errors {should NEVER trip unless error}
-      if(pre_calculated_divisor == 0){
-        return;
-      }
-      //Calculate blurred pixel values
-      for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
-        to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / pre_calculated_divisor);
-      }
+    }
+
+    //Check for divide by 0 errors {should NEVER trip unless error}
+    if(weight_divisor == 0){
       return;
     }
+    //Calculate blurred pixel values
+    for(curr_dimension = 0 ; curr_dimension < k ; curr_dimension++) {
+      to[this_pixel + curr_dimension] = (unsigned char) (blurred_pixels[curr_dimension] / weight_divisor);
+    }
+    return;
   }
 
   // UNCOMMENT FOR TEST OUTPUT TXT
