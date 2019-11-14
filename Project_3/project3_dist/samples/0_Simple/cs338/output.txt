@@ -1,0 +1,73 @@
+UNOPTIMIZED TEST
+
+twotone.jpg
+Kernal runtime:     974.99 milliseconds		Block size: 1.0
+Kernal runtime:     267.09 milliseconds		Block size: 2.0
+Kernal runtime:      74.40 milliseconds		Block size: 4.0
+Kernal runtime:      26.39 milliseconds		Block size: 8.0
+Kernal runtime:      23.52 milliseconds		Block size: 16.0
+Kernal runtime:      23.01 milliseconds		Block size: 32.0
+tree.jpg
+Kernal runtime:   29923.59 milliseconds		Block size: 1.0
+Kernal runtime:    8146.17 milliseconds		Block size: 2.0
+Kernal runtime:    2237.88 milliseconds		Block size: 4.0
+Kernal runtime:     782.88 milliseconds		Block size: 8.0
+Kernal runtime:     698.85 milliseconds		Block size: 16.0
+Kernal runtime:     656.54 milliseconds		Block size: 32.0
+redtree.jpg
+Kernal runtime:  299511.56 milliseconds		Block size: 1.0
+Kernal runtime:   81521.41 milliseconds		Block size: 2.0
+Kernal runtime:   22476.57 milliseconds		Block size: 4.0
+Kernal runtime:    7810.89 milliseconds		Block size: 8.0
+Kernal runtime:    6922.83 milliseconds		Block size: 16.0
+Kernal runtime:    6319.18 milliseconds		Block size: 32.0
+
+BRANCH TEST
+
+twotone.jpg
+Kernal runtime:     815.13 milliseconds		Block size: 1.0
+Kernal runtime:     223.88 milliseconds		Block size: 2.0
+Kernal runtime:      66.96 milliseconds		Block size: 4.0
+Kernal runtime:      26.40 milliseconds		Block size: 8.0
+Kernal runtime:      23.25 milliseconds		Block size: 16.0
+Kernal runtime:      23.13 milliseconds		Block size: 32.0
+tree.jpg
+Kernal runtime:   24914.72 milliseconds		Block size: 1.0
+Kernal runtime:    6787.94 milliseconds		Block size: 2.0
+Kernal runtime:    2012.32 milliseconds		Block size: 4.0
+Kernal runtime:     784.90 milliseconds		Block size: 8.0
+Kernal runtime:     686.49 milliseconds		Block size: 16.0
+Kernal runtime:     638.25 milliseconds		Block size: 32.0
+redtree.jpg
+Kernal runtime:  250503.00 milliseconds		Block size: 1.0
+Kernal runtime:   67862.80 milliseconds		Block size: 2.0
+Kernal runtime:   20108.48 milliseconds		Block size: 4.0
+Kernal runtime:    7826.52 milliseconds		Block size: 8.0
+Kernal runtime:    6829.87 milliseconds		Block size: 16.0
+Kernal runtime:    6187.26 milliseconds		Block size: 32.0
+
+OPTIMIZED TEST
+
+twotone.jpg
+Kernal runtime:     877.23 milliseconds		Block size: 1.0
+Kernal runtime:     241.39 milliseconds		Block size: 2.0
+Kernal runtime:      71.05 milliseconds		Block size: 4.0
+Kernal runtime:      27.12 milliseconds		Block size: 8.0
+Kernal runtime:      24.01 milliseconds		Block size: 16.0
+Kernal runtime:      23.83 milliseconds		Block size: 32.0
+tree.jpg
+Kernal runtime:   27418.06 milliseconds		Block size: 1.0
+Kernal runtime:    7333.04 milliseconds		Block size: 2.0
+Kernal runtime:    2138.95 milliseconds		Block size: 4.0
+Kernal runtime:     805.66 milliseconds		Block size: 8.0
+Kernal runtime:     709.60 milliseconds		Block size: 16.0
+Kernal runtime:     667.95 milliseconds		Block size: 32.0
+redtree.jpg
+Kernal runtime:  269847.00 milliseconds		Block size: 1.0
+Kernal runtime:   73291.99 milliseconds		Block size: 2.0
+Kernal runtime:   21404.34 milliseconds		Block size: 4.0
+Kernal runtime:    8036.51 milliseconds		Block size: 8.0
+Kernal runtime:    7054.01 milliseconds		Block size: 16.0
+Kernal runtime:    6471.83 milliseconds		Block size: 32.0
+
+finished cleanup

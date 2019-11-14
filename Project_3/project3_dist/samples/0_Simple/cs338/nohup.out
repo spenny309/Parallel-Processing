@@ -1,0 +1,138 @@
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=1.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_1.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_1 cs338Blur_1.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_1 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=2.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_2.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_2 cs338Blur_2.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_2 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=4.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_4.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_4 cs338Blur_4.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_4 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=8.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_8.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_8 cs338Blur_8.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_8 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=16.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_16.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_16 cs338Blur_16.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_16 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=32.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_32.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_32 cs338Blur_32.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_32 ../../bin/x86_64/linux/release
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=1.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_1.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_1 cs338Blur_1.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_1 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=2.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_2.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_2 cs338Blur_2.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_2 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=4.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_4.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_4 cs338Blur_4.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_4 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=8.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_8.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_8 cs338Blur_8.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_8 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=16.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_16.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_16 cs338Blur_16.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_16 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=32.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_32.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_32 cs338Blur_32.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_32 ../../bin/x86_64/linux/release
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=1.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_1.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_1 cs338Blur_1.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_1 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=2.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_2.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_2 cs338Blur_2.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_2 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=4.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_4.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_4 cs338Blur_4.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_4 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=8.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_8.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_8 cs338Blur_8.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_8 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=16.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_16.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_16 cs338Blur_16.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_16 ../../bin/x86_64/linux/release
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++ -I../../common/inc -DBLOCK=32.0  -m64    -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_32.o -c cs338Blur.cu
+/usr/local/cuda-10.1/bin/nvcc -ccbin g++   -m64      -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_75,code=sm_75 -gencode arch=compute_75,code=compute_75 -o cs338Blur_32 cs338Blur_32.o -ljpeg
+mkdir -p ../../bin/x86_64/linux/release
+cp cs338Blur_32 ../../bin/x86_64/linux/release
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/twotone.jpg: height = 225, width = 225, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/tree.jpg: height = 400, width = 600, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+  Opened p2_distribute/part1/redtree.jpg: height = 768, width = 1024, c = 3
+rm -f cs338Blur_1 cs338Blur_1.o
+rm -rf ../../bin/x86_64/linux/release/cs338Blur_1
+rm -f cs338Blur_2 cs338Blur_2.o
+rm -rf ../../bin/x86_64/linux/release/cs338Blur_2
+rm -f cs338Blur_4 cs338Blur_4.o
+rm -rf ../../bin/x86_64/linux/release/cs338Blur_4
+rm -f cs338Blur_8 cs338Blur_8.o
+rm -rf ../../bin/x86_64/linux/release/cs338Blur_8
+rm -f cs338Blur_16 cs338Blur_16.o
+rm -rf ../../bin/x86_64/linux/release/cs338Blur_16
+rm -f cs338Blur_32 cs338Blur_32.o
+rm -rf ../../bin/x86_64/linux/release/cs338Blur_32
