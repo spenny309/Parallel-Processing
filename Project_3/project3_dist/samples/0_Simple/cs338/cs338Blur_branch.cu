@@ -1,3 +1,5 @@
+// Branch optimized blur code
+
 /**
  * Copyright 1993-2015 NVIDIA Corporation.  All rights reserved.
  *

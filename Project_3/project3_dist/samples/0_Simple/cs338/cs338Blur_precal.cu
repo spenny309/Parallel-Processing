@@ -1,3 +1,4 @@
+// Fully optimized blur code with branch prediction and pre-calculation
 /**
  * Copyright 1993-2015 NVIDIA Corporation.  All rights reserved.
  *
