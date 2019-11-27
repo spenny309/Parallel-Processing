@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 {
   error = .1;
   parameter = .85;
-  double initial_weight = 1.0 / (N_NODES * N_NODES);
+  double initial_weight = 1.0 / N_NODES;
 
   //initialize node matrix with initial_weight before processing
   struct Node node_matrix[N_NODES];
