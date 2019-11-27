@@ -22,7 +22,7 @@ struct Node
 };
 
 void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int num_runs, int num_nodes, double error, double parameter);
-void print_page_ranks(struct Node * node_matrix);
+void print_page_ranks(struct Node * node_matrix, int num_nodes);
 
 int main(int argc, char *argv[])
 {
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 
 void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int num_runs, int num_nodes, double error, double parameter)
 {
-  //print_page_ranks(node_matrix);
+  //print_page_ranks(node_matrix, num_nodes);
   if(num_runs == 0){
     return;
   }
@@ -139,7 +139,7 @@ void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int n
   page_rank_execute(updated_matrix, adjacency_matrix, num_runs - 1, num_nodes, error, parameter);
 }
 
-void print_page_ranks(struct Node * node_matrix){
+void print_page_ranks(struct Node * node_matrix, int num_nodes){
   for(int i = 0; i < num_nodes; i++){
     printf("Node: %d\t -\t Weight: %1.8lf\n", i, node_matrix[i].weight);
   }
