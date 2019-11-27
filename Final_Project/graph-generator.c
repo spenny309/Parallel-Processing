@@ -8,8 +8,8 @@
 
 #define SEED 309
 #define GRAPH_FILES 100
-#define NODE_MIN 10
-#define NODE_MAX 50
+#define NODE_MIN 1000
+#define NODE_MAX 5000
 
 const char* directory = "graphs/";
 const char* file_name = "graph_";
