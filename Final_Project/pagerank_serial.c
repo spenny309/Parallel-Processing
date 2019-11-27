@@ -6,8 +6,11 @@
 #include <assert.h>
 #include <string.h>
 
-#define N_NODES 10
 #define NUM_RUNS 50
+
+const char* directory = "graphs/";
+const char* file_name = "graph_";
+const char* ext = ".txt";
 double error, parameter;
 
 struct Node
@@ -18,74 +21,116 @@ struct Node
   double outgoing_neighbor_count;
 };
 
-void page_rank_execute(struct Node node_matrix[], int adjacency_matrix[][N_NODES], int num_runs, double error, double parameter);
-void print_page_ranks(struct Node node_matrix[]);
+void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int num_runs, double error, double parameter);
+void print_page_ranks(struct Node * node_matrix);
 
 int main(int argc, char *argv[])
 {
   error = .1;
   parameter = .85;
-  double initial_weight = 1.0 / N_NODES;
+  int num_nodes;
+  char input_file[256];
 
-  //initialize node matrix with initial_weight before processing
-  struct Node node_matrix[N_NODES];
-  for (int i = 0 ; i < N_NODES ; i++){
-    (node_matrix[i]).weight = initial_weight;
-    //(node_matrix[i]).visited = 0;
-    (node_matrix[i]).outgoing_neighbor_count = 0.0;
-    (node_matrix[i]).incoming_neighbor_count = 0.0;
-  }
+  for(int index = 0 ; index < 100 ; index++){
+    clock_t start, end;
+    double clock_count;
 
-  //for Nodes i, j, adjacency_matrix[i][j] is 0 if no edge, 1 if edge from i --> j
-  int adjacency_matrix[N_NODES][N_NODES];
-  for (int i = 0 ; i < N_NODES ; i++){
-    for (int j = 0 ; j < N_NODES ; j++){
-      adjacency_matrix[i][j] = 0;
+    start = clock();
+    sprintf(input_file, "%s%s%d%s", directory, file_name, index, ext);
+    //UPDATE fopen to take different files
+    FILE * fp = fopen(input_file, "r");
+    if (fp == NULL){
+      fprintf(stderr, "ERROR: failed to open edge file!\n");
+      exit(-1);
     }
-  }
 
-  //Read input to fill in adjacency_matrix
-  FILE * fp = fopen("sample.txt", "r");
-  if (fp == NULL){
-    fprintf(stderr, "ERROR: failed to open edge file!\n");
-    exit(-1);
-  }
+    fscanf(fp, "%d\n", &num_nodes);
+    double initial_weight = 1.0 / num_nodes;
 
-  int out;
-  int in;
-  while(fscanf(fp, "%d %d\n", &out, &in) != EOF){
-    adjacency_matrix[out - 1][in - 1] = 1;
-    node_matrix[out-1].outgoing_neighbor_count += 1.0;
-    node_matrix[in-1].incoming_neighbor_count += 1.0;
-  }
+    //initialize node matrix with initial_weight before processing
+    struct Node * node_matrix;
+    node_matrix = (Node *)malloc(sizeof(struct Node) * num_nodes);
+    if (node_matrix == NULL){
+      fprintf(stderr, "ERROR: failed to malloc node matrix!\n");
+      exit(-1);
+    }
 
-  if (fclose(fp) == EOF){
-    fprintf(stderr, "ERROR: failed to close edge file!\n");
-    exit(-1);
-  }
+    for (int i = 0 ; i < num_nodes ; i++){
+      (node_matrix[i]).weight = initial_weight;
+      //(node_matrix[i]).visited = 0;
+      (node_matrix[i]).outgoing_neighbor_count = 0.0;
+      (node_matrix[i]).incoming_neighbor_count = 0.0;
+    }
 
-  //run the PageRank algorithm, and store the error from each run
-  page_rank_execute(node_matrix, adjacency_matrix, NUM_RUNS, error, parameter);
+    int ** adjacency_matrix;
+    adjacency_matrix = (int **)malloc(num_nodes * sizeof(int*));
+    if (adjacency_matrix == NULL){
+      fprintf(stderr, "ERROR: failed to malloc adjacency matrix!\n");
+      exit(-1);
+    }
+
+    for(int i = 0 ; i < num_nodes ; i++){
+      adjacency_matrix[i] = (int *)malloc(num_nodes * sizeof(int));
+      if (adjacency_matrix[i] == NULL){
+        fprintf(stderr, "ERROR: failed to malloc adjacency matrix!\n");
+        exit(-1);
+      }
+    }
+
+    //for Nodes i, j, adjacency_matrix[i][j] is 0 if no edge, 1 if edge from i --> j
+    //Set default value to 0
+    for (int i = 0 ; i < num_nodes ; i++){
+      for (int j = 0 ; j < num_nodes ; j++){
+        adjacency_matrix[i][j] = 0;
+      }
+    }
+
+    int out;
+    int in;
+    while(fscanf(fp, "%d %d\n", &out, &in) != EOF){
+      adjacency_matrix[out - 1][in - 1] = 1;
+      node_matrix[out-1].outgoing_neighbor_count += 1.0;
+      node_matrix[in-1].incoming_neighbor_count += 1.0;
+    }
+
+    if (fclose(fp) == EOF){
+      fprintf(stderr, "ERROR: failed to close edge file!\n");
+      exit(-1);
+    }
+
+    //run the PageRank algorithm, and store the error from each run
+    page_rank_execute(node_matrix, adjacency_matrix, NUM_RUNS, error, parameter);
+
+    for(int i = num_runs-1 ; i >= 0 ; i++){
+      free(adjacency_matrix[i]);
+    }
+    free(adjacency_matrix);
+    free(node_matrix);
+
+    end = clock();
+    clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("Time used on file %d:\t%lf", index, clock_count);
+  }
 }
 
-void page_rank_execute(struct Node node_matrix[], int adjacency_matrix[][N_NODES], int num_runs, double error, double parameter)
+void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int num_runs, double error, double parameter)
 {
-  print_page_ranks(node_matrix);
+  //print_page_ranks(node_matrix);
   if(num_runs == 0){
     return;
   }
 
-  double damping = (1.0 - parameter) / N_NODES;
+  double damping = (1.0 - parameter) / num_nodes;
 
-  struct Node updated_matrix[N_NODES];
-  for (int i = 0 ; i < N_NODES ; i++){
+  struct Node updated_matrix[num_nodes];
+  for (int i = 0 ; i < num_nodes ; i++){
     updated_matrix[i].weight = damping;
     updated_matrix[i].outgoing_neighbor_count = node_matrix[i].outgoing_neighbor_count;
     updated_matrix[i].incoming_neighbor_count = node_matrix[i].incoming_neighbor_count;
   }
 
-  for (int i = 0 ; i < N_NODES ; i++){
-    for (int j = 0 ; j < N_NODES ; j++){
+  for (int i = 0 ; i < num_nodes ; i++){
+    for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[i][j] != 0){
         updated_matrix[j].weight += damping * (node_matrix[i].weight / node_matrix[i].outgoing_neighbor_count);
       }
@@ -94,8 +139,8 @@ void page_rank_execute(struct Node node_matrix[], int adjacency_matrix[][N_NODES
   page_rank_execute(updated_matrix, adjacency_matrix, num_runs - 1, error, parameter);
 }
 
-void print_page_ranks(struct Node node_matrix[]){
-  for(int i = 0; i < N_NODES; i++){
+void print_page_ranks(struct Node * node_matrix){
+  for(int i = 0; i < num_nodes; i++){
     printf("Node: %d\t -\t Weight: %1.8lf\n", i, node_matrix[i].weight);
   }
   printf("-------------------------------------------------\n");
