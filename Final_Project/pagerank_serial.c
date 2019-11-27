@@ -18,7 +18,7 @@ struct Node
   double outgoing_neighbor_count;
 };
 
-void page_rank_execute(struct Node node_matrix[], int adjacency_matrix[][], int num_runs, double * convergence_by_run, double error, double parameter);
+void page_rank_execute(struct Node node_matrix[], int adjacency_matrix[][N_NODES], int num_runs, double error, double parameter);
 void print_page_ranks(struct Node node_matrix[]);
 
 int main(int argc, char *argv[])
