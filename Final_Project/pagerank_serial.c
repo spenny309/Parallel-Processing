@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
     page_rank_execute(node_matrix, adjacency_matrix, NUM_RUNS, num_nodes, error, parameter);
     printf("RETURNED FROM EXEC\n");
 
-    for(int i = NUM_RUNS - 1 ; i >= 0 ; i++){
+    for(int i = 0 ; i < num_nodes ; i++){
       free(adjacency_matrix[i]);
     }
     printf("FREED ADJ MATR\n");
