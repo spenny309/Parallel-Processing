@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <string.h>
 
-#define NUM_RUNS 50
+#define NUM_RUNS 10
 
 const char* directory = "graphs/";
 const char* file_name = "graph_";
