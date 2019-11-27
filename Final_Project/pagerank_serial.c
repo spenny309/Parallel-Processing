@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
     }
 
     fscanf(fp, "%d\n", &num_nodes);
+    printf("NUM NODES: %d\n", num_nodes);
     double initial_weight = 1.0 / num_nodes;
 
     //initialize node matrix with initial_weight before processing
@@ -54,6 +55,7 @@ int main(int argc, char *argv[])
       fprintf(stderr, "ERROR: failed to malloc node matrix!\n");
       exit(-1);
     }
+    printf("MALLOC'd NODE MATRIX\n");
 
     for (int i = 0 ; i < num_nodes ; i++){
       (node_matrix[i]).weight = initial_weight;
@@ -64,6 +66,9 @@ int main(int argc, char *argv[])
 
     int ** adjacency_matrix;
     adjacency_matrix = (int **)malloc(num_nodes * sizeof(int*));
+
+    printf("MALLOC'd ADJ MATRIX\n");
+
     if (adjacency_matrix == NULL){
       fprintf(stderr, "ERROR: failed to malloc adjacency matrix!\n");
       exit(-1);
@@ -76,6 +81,8 @@ int main(int argc, char *argv[])
         exit(-1);
       }
     }
+
+    printf("MALLOC'd ADJ SUBS\n");
 
     //for Nodes i, j, adjacency_matrix[i][j] is 0 if no edge, 1 if edge from i --> j
     //Set default value to 0
@@ -122,7 +129,13 @@ void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int n
 
   double damping = (1.0 - parameter) / num_nodes;
 
-  struct Node updated_matrix[num_nodes];
+  struct Node * updated_matrix;
+  updated_matrix = (struct Node *)malloc(num_nodes * sizeof(struct Node);
+  if (updated_matrix == NULL){
+    fprintf(stderr, "ERROR: failed to malloc node matrix!\n");
+    exit(-1);
+  }
+
   for (int i = 0 ; i < num_nodes ; i++){
     updated_matrix[i].weight = damping;
     updated_matrix[i].outgoing_neighbor_count = node_matrix[i].outgoing_neighbor_count;
@@ -137,6 +150,7 @@ void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int n
     }
   }
   page_rank_execute(updated_matrix, adjacency_matrix, num_runs - 1, num_nodes, error, parameter);
+  free(updated_matrix);
 }
 
 void print_page_ranks(struct Node * node_matrix, int num_nodes){
