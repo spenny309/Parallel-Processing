@@ -87,11 +87,11 @@ void page_rank_execute(struct Node node_matrix[], int adjacency_matrix[][N_NODES
   for (int i = 0 ; i < N_NODES ; i++){
     for (int j = 0 ; j < N_NODES ; j++){
       if(adjacency_matrix[i][j] != 0){
-        updated_matrix[j] += node_matrix[i].weight / node_matrix[i].outgoing_neighbor_count;
+        updated_matrix[j].weight += node_matrix[i].weight / node_matrix[i].outgoing_neighbor_count;
       }
     }
   }
-  page_rank_execute(updated_matrix, adjacency_matrix, num_runs - 1, convergence_by_run, error, parameter);
+  page_rank_execute(updated_matrix, adjacency_matrix, num_runs - 1, error, parameter);
 }
 
 void print_page_ranks(struct Node node_matrix[]){
