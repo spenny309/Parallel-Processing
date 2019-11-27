@@ -160,7 +160,7 @@ void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int n
 
   printf("finished PGE\n");
   page_rank_execute(updated_matrix, adjacency_matrix, num_runs - 1, num_nodes, error, parameter);
-  printf("Trying to free!\n");
+  printf("Trying to free: %d!\n", num_runs);
   free(updated_matrix);
 }
 
