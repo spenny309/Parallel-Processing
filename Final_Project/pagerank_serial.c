@@ -108,8 +108,9 @@ int main(int argc, char *argv[])
     free(node_matrix);
 
     end = clock();
+    double time = end - start;
     clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Time used on file %d:\t%lf", index, clock_count);
+    printf("Time used on file %d:\t%lf\t%lf\n", index, time, clock_count);
   }
 }
 
