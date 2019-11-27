@@ -21,19 +21,22 @@ int main(int argc, char *argv[]){
   //testing on sparse graphs is not representative
   int edge_min = NODE_MIN << 1;
   int edge_max = NODE_MAX * (NODE_MAX - 1);
-  int edge_range = edge_max - edge_min;
   int current_file = 0;
   char graph_name[256];
 
-  int node_count, edge_count, edge_out, edge_in;
+  int node_count, edge_count, edge_out, edge_in, edge_range;
 
   srand(SEED);
 
   while(current_file < GRAPH_FILES){
+    node_count = (rand() % node_range) + NODE_MIN;
+    edge_range = (node_count * (node_count - 1)) - (node_count << 1);
+    edge_count = (rand() % edge_range) + edge_min;
+
+    // TODO : Add error checking
     sprintf(graph_name, "%s%s%d%s", directory, file_name, current_file++, ext);
     FILE * fp = fopen(graph_name, "w+");
-    node_count = (rand() % node_range) + NODE_MIN;
-    edge_count = (rand() % edge_range) + edge_min;
+
     fprintf(fp, "%d\n", node_count);
     for(int i = 0 ; i < edge_count ; i++){
       edge_out = rand() % node_count;
