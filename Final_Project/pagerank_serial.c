@@ -18,7 +18,7 @@ struct Node
   double outgoing_neighbor_count;
 };
 
-void page_rank_execute(struct Node node_matrix[], int[][] adjacency_matrix, int num_runs, double * convergence_by_run, double error, double parameter);
+void page_rank_execute(struct Node node_matrix[], int adjacency_matrix[][], int num_runs, double * convergence_by_run, double error, double parameter);
 void print_page_ranks(struct Node node_matrix[]);
 
 int main(int argc, char *argv[])
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
   page_rank_execute(node_matrix, adjacency_matrix, NUM_RUNS, error, parameter);
 }
 
-void page_rank_execute(struct Node node_matrix[], int[][] adjacency_matrix, int num_runs, double error, double parameter)
+void page_rank_execute(struct Node node_matrix[], int adjacency_matrix[][N_NODES], int num_runs, double error, double parameter)
 {
   print_page_ranks(node_matrix);
   if(num_runs == 0){
