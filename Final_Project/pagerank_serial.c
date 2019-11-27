@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
     //initialize node matrix with initial_weight before processing
     struct Node * node_matrix;
-    node_matrix = (Node *)malloc(sizeof(struct Node) * num_nodes);
+    node_matrix = (struct Node *)malloc(sizeof(struct Node) * num_nodes);
     if (node_matrix == NULL){
       fprintf(stderr, "ERROR: failed to malloc node matrix!\n");
       exit(-1);
@@ -99,9 +99,9 @@ int main(int argc, char *argv[])
     }
 
     //run the PageRank algorithm, and store the error from each run
-    page_rank_execute(node_matrix, adjacency_matrix, NUM_RUNS, error, parameter);
+    page_rank_execute(node_matrix, adjacency_matrix, NUM_RUNS, num_nodes, error, parameter);
 
-    for(int i = num_runs-1 ; i >= 0 ; i++){
+    for(int i = NUM_RUNS - 1 ; i >= 0 ; i++){
       free(adjacency_matrix[i]);
     }
     free(adjacency_matrix);
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
   }
 }
 
-void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int num_runs, double error, double parameter)
+void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int num_runs, int num_nodes, double error, double parameter)
 {
   //print_page_ranks(node_matrix);
   if(num_runs == 0){
