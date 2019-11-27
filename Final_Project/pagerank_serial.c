@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     int in;
     while(fscanf(fp, "%d %d\n", &out, &in) != EOF){
       printf("NUMNODE: %d\tOUT: %d\tIN : %d\n", num_nodes, out, in);
-      adjacency_matrix[out - 1][in - 1] = 1;
+      adjacency_matrix[out ][in] = 1;
       node_matrix[out].outgoing_neighbor_count += 1.0;
       node_matrix[in].incoming_neighbor_count += 1.0;
     }
