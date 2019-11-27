@@ -7,7 +7,7 @@
 #include <string.h>
 
 #define N_NODES 10
-#define NUM_RUNS 10
+#define NUM_RUNS 50
 double error, parameter;
 
 struct Node
