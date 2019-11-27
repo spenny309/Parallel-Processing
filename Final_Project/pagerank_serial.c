@@ -92,6 +92,8 @@ int main(int argc, char *argv[])
       }
     }
 
+    printf("FINISHED ACCESSING ADJ MATR1\n");
+
     int out;
     int in;
     while(fscanf(fp, "%d %d\n", &out, &in) != EOF){
@@ -99,6 +101,8 @@ int main(int argc, char *argv[])
       node_matrix[out-1].outgoing_neighbor_count += 1.0;
       node_matrix[in-1].incoming_neighbor_count += 1.0;
     }
+
+    printf("FINISHED ACCESSING ADJ MATR + NODE MATR\n");
 
     if (fclose(fp) == EOF){
       fprintf(stderr, "ERROR: failed to close edge file!\n");
