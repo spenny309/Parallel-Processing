@@ -136,7 +136,7 @@ void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int n
       }
     }
   }
-  page_rank_execute(updated_matrix, adjacency_matrix, num_runs - 1, error, parameter);
+  page_rank_execute(updated_matrix, adjacency_matrix, num_runs - 1, num_nodes, error, parameter);
 }
 
 void print_page_ranks(struct Node * node_matrix){
