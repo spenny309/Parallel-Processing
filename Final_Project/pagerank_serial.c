@@ -97,7 +97,6 @@ int main(int argc, char *argv[])
     int out;
     int in;
     while(fscanf(fp, "%d %d\n", &out, &in) != EOF){
-      printf("NUMNODE: %d\tOUT: %d\tIN : %d\n", num_nodes, out, in);
       adjacency_matrix[out ][in] = 1;
       node_matrix[out].outgoing_neighbor_count += 1.0;
       node_matrix[in].incoming_neighbor_count += 1.0;
@@ -128,6 +127,7 @@ int main(int argc, char *argv[])
 void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int num_runs, int num_nodes, double error, double parameter)
 {
   //print_page_ranks(node_matrix, num_nodes);
+  printf("Begin execute\n");
   if(num_runs == 0){
     return;
   }
@@ -136,6 +136,7 @@ void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int n
 
   struct Node * updated_matrix;
   updated_matrix = (struct Node *)malloc(num_nodes * sizeof(struct Node));
+  printf("mallocing node matr\n");
   if (updated_matrix == NULL){
     fprintf(stderr, "ERROR: failed to malloc node matrix!\n");
     exit(-1);
@@ -146,6 +147,7 @@ void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int n
     updated_matrix[i].outgoing_neighbor_count = node_matrix[i].outgoing_neighbor_count;
     updated_matrix[i].incoming_neighbor_count = node_matrix[i].incoming_neighbor_count;
   }
+  printf("intiialized new node matr\n");
 
   for (int i = 0 ; i < num_nodes ; i++){
     for (int j = 0 ; j < num_nodes ; j++){
@@ -154,6 +156,8 @@ void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int n
       }
     }
   }
+
+  printf("finished PGE\n");
   page_rank_execute(updated_matrix, adjacency_matrix, num_runs - 1, num_nodes, error, parameter);
   free(updated_matrix);
 }
