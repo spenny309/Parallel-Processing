@@ -111,12 +111,16 @@ int main(int argc, char *argv[])
 
     //run the PageRank algorithm, and store the error from each run
     page_rank_execute(node_matrix, adjacency_matrix, NUM_RUNS, num_nodes, error, parameter);
+    printf("RETURNED FROM EXEC\n");
 
     for(int i = NUM_RUNS - 1 ; i >= 0 ; i++){
       free(adjacency_matrix[i]);
     }
+    printf("FREED ADJ MATR\n");
     free(adjacency_matrix);
+    printf("AGAIN\n");
     free(node_matrix);
+    printf("NODEMATR FREE\n");
 
     end = clock();
     clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
@@ -160,8 +164,8 @@ void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int n
 
   printf("finished PGE\n");
   page_rank_execute(updated_matrix, adjacency_matrix, num_runs - 1, num_nodes, error, parameter);
-  printf("Trying to free: %d\tnodes: %d!\n", num_runs, num_nodes);
   free(updated_matrix);
+  printf("Freed: %d\n", num_runs);
 }
 
 void print_page_ranks(struct Node * node_matrix, int num_nodes){
