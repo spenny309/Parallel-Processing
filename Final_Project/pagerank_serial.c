@@ -130,7 +130,7 @@ void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int n
   double damping = (1.0 - parameter) / num_nodes;
 
   struct Node * updated_matrix;
-  updated_matrix = (struct Node *)malloc(num_nodes * sizeof(struct Node);
+  updated_matrix = (struct Node *)malloc(num_nodes * sizeof(struct Node));
   if (updated_matrix == NULL){
     fprintf(stderr, "ERROR: failed to malloc node matrix!\n");
     exit(-1);
