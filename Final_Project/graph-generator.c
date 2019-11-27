@@ -37,7 +37,7 @@ int main(int argc, char *argv[]){
     fprintf(fp, "%d\n", node_count);
     for(int i = 0 ; i < edge_count ; i++){
       edge_out = rand() % node_count;
-      while((edge_min = (rand() % node_count)) == edge_out){}
+      while((edge_in = (rand() % node_count)) == edge_out){}
       fprintf(fp, "%d %d\n", edge_out, edge_in);
     }
     fclose(fp);
