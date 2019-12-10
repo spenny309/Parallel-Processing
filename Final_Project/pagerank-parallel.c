@@ -6,33 +6,48 @@
 #include <assert.h>
 #include <string.h>
 
-#define NUM_RUNS 10
+#define THREAD_COUNT 8
+#define ERROR_INVARIANT .0000001
 
 const char* directory = "graphs/";
 const char* file_name = "graph_";
 const char* ext = ".txt";
-double error, parameter;
 
 struct Node
 {
   double weight;
+  double new_weight;
   double incoming_neighbor_count;
   double outgoing_neighbor_count;
 };
 
-void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int num_runs, int num_nodes, double error, double parameter);
+double error, parameter;
+int num_nodes, iteration_count;
+struct Node * node_matrix;
+int ** adjacency_matrix;
+pthread_barrier_t loop_barrier;
+pthread_mutex_t error_lock;
+
+void * page_rank_execute(void * args);
 void print_page_ranks(struct Node * node_matrix, int num_nodes);
 
 int main(int argc, char *argv[])
 {
-  error = .1;
+  long pthread;
+  pthread_t thread_IDs[THREAD_COUNT];
+
+  //initialize a barrier to wait for THREAD_COUNT threads to be used in each loop
+  pthread_barrier_init(&loop_barrier, NULL, THREAD_COUNT);
+  pthread_mutex_init(&error_lock, NULL);
+
+  error = 0.0;
   parameter = .85;
-  int num_nodes;
   char input_file[256];
 
   for(int index = 0 ; index < 100 ; index++){
     clock_t start, end;
     double clock_count;
+    iteration_count = 0;
 
     start = clock();
     sprintf(input_file, "%s%s%d%s", directory, file_name, index, ext);
@@ -99,7 +114,14 @@ int main(int argc, char *argv[])
     }
 
     //run the PageRank algorithm, and store the error from each run
-    page_rank_execute(node_matrix, adjacency_matrix, NUM_RUNS, num_nodes, error, parameter);
+
+    for(long thread = 0 ; thread < num_procs ; thread++){
+      pthread_create(&threadIDs[thread], NULL, pang_rank_execute, (void*) thread);
+    }
+
+    for(long thread = 0 ; thread < num_procs ; thread++){
+      pthread_join(thread_IDs[thread], NULL);
+    }
 
     for(int i = 0 ; i < num_nodes ; i++){
       free(adjacency_matrix[i]);
@@ -110,43 +132,50 @@ int main(int argc, char *argv[])
     end = clock();
     double time = end - start;
     clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Time used on file %d:\t%lf\t%lf\n", index, time, clock_count);
+    printf("Time used on file %d:\t%lf\t%lf\iters: %d\n", index, time, clock_count, iteration_count);
   }
 }
 
-void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int num_runs, int num_nodes, double error, double parameter)
+void page_rank_execute(void *args)
 {
-  //print_page_ranks(node_matrix, num_nodes);
-  if(num_runs == 0){
-    //print_page_ranks(node_matrix, num_nodes);
-    return;
-  }
+  //get current thread number to partition nodes
+  long this_thread = (long)args;
+
+  //CRITICAL: must reset error to 0.0
+  pthread_barrier_wait(&loop_barrier);
+  error = 0.0;
+  pthread_barrier_wait(&loop_barrier);
 
   double damping = (1.0 - parameter) / num_nodes;
 
-  struct Node * updated_matrix;
-  updated_matrix = (struct Node *)malloc(num_nodes * sizeof(struct Node));
-  if (updated_matrix == NULL){
-    fprintf(stderr, "ERROR: failed to malloc node matrix!\n");
-    exit(-1);
+  for (long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
+    node_matrix[i].new_weight = damping;
   }
 
-  for (int i = 0 ; i < num_nodes ; i++){
-    updated_matrix[i].weight = damping;
-    updated_matrix[i].outgoing_neighbor_count = node_matrix[i].outgoing_neighbor_count;
-    updated_matrix[i].incoming_neighbor_count = node_matrix[i].incoming_neighbor_count;
-  }
-
-  for (int i = 0 ; i < num_nodes ; i++){
+  for (long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[i][j] != 0){
-        updated_matrix[j].weight += damping * (node_matrix[i].weight / node_matrix[i].outgoing_neighbor_count);
+        node_matrix[j].new_weight += damping * (node_matrix[i].weight / node_matrix[i].outgoing_neighbor_count);
       }
     }
   }
 
-  page_rank_execute(updated_matrix, adjacency_matrix, num_runs - 1, num_nodes, error, parameter);
-  free(updated_matrix);
+  for(long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
+    pthread_mutex_lock(&error_lock);
+    error += fabs(node_matrix[i].new_weight - node_matrix[i].weight);
+    pthread_mutex_unlock(&error_lock);
+    node_matrix[i].weight = node_matrix[i].new_weight;
+  }
+
+  if (pthread_barrier_wait(&loop_barrier) == PTHREAD_BARRIER_SERIAL_THREAD){
+    iteration_count += 1;
+  }
+
+  if(error > ERROR_INVARIANT) {
+    page_rank_execute(args);
+  } else {
+    pthread_exit((void *) 0);
+  }
 }
 
 void print_page_ranks(struct Node * node_matrix, int num_nodes){
