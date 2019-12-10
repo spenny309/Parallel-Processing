@@ -63,21 +63,21 @@ int main(int argc, char *argv[])
     double initial_weight = 1.0 / num_nodes;
 
     //initialize node matrix with initial_weight before processing
-    printf("creating node_matrix\n");
+    //printf("creating node_matrix\n");
     node_matrix = (struct Node *)malloc(sizeof(struct Node) * num_nodes);
     if (node_matrix == NULL){
       fprintf(stderr, "ERROR: failed to malloc node matrix!\n");
       exit(-1);
     }
 
-    printf("initializing node_matrix\n");
+    //printf("initializing node_matrix\n");
     for (int i = 0 ; i < num_nodes ; i++){
       (node_matrix[i]).weight = initial_weight;
       (node_matrix[i]).outgoing_neighbor_count = 0.0;
       (node_matrix[i]).incoming_neighbor_count = 0.0;
     }
 
-    printf("creating adjacency_matrix\n");
+    //printf("creating adjacency_matrix\n");
     adjacency_matrix = (int **)malloc(num_nodes * sizeof(int*));
 
     if (adjacency_matrix == NULL){
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
       exit(-1);
     }
 
-    printf("malloc for adjacency_matrix\n");
+    //printf("malloc for adjacency_matrix\n");
     for(int i = 0 ; i < num_nodes ; i++){
       adjacency_matrix[i] = (int *)malloc(num_nodes * sizeof(int));
       if (adjacency_matrix[i] == NULL){
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 
     //for Nodes i, j, adjacency_matrix[i][j] is 0 if no edge, 1 if edge from i --> j
     //Set default value to 0
-    printf("filling adjacency_matrix\n");
+    //printf("filling adjacency_matrix\n");
     for (int i = 0 ; i < num_nodes ; i++){
       for (int j = 0 ; j < num_nodes ; j++){
         adjacency_matrix[i][j] = 0;
@@ -119,9 +119,9 @@ int main(int argc, char *argv[])
     }
 
     //run the PageRank algorithm, and store the error from each run
-    printf("NODE COUNT: %d\n", num_nodes);
+    //printf("NODE COUNT: %d\n", num_nodes);
     for(long thread = 0 ; thread < THREAD_COUNT ; thread++){
-      printf("creating thread: %ld\n", thread);
+      //printf("creating thread: %ld\n", thread);
       pthread_create(&thread_IDs[thread], NULL, page_rank_execute, (void*) thread);
     }
 
@@ -146,23 +146,23 @@ void * page_rank_execute(void *args)
 {
   //get current thread number to partition nodes
   long this_thread = (long)args;
-  printf("executing thread: %ld\n", this_thread);
+  //printf("executing thread: %ld\n", this_thread);
 
   //CRITICAL: must reset error to 0.0
   pthread_barrier_wait(&loop_barrier);
-  printf("checkpoint on: %ld\n", this_thread);
+  //printf("checkpoint on: %ld\n", this_thread);
   error = 0.0;
   pthread_barrier_wait(&loop_barrier);
 
   double damping = (1.0 - parameter) / num_nodes;
 
-  printf("setting damping on: %ld\n", this_thread);
+  //printf("setting damping on: %ld\n", this_thread);
   for (long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
-    printf("trying to access: %ld\ton: %ld\n", i, this_thread);
+    //printf("trying to access: %ld\ton: %ld\n", i, this_thread);
     node_matrix[i].new_weight = damping;
   }
 
-  printf("setting new_weight on: %ld\n", this_thread);
+  //printf("setting new_weight on: %ld\n", this_thread);
   for (long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[i][j] != 0){
@@ -171,7 +171,7 @@ void * page_rank_execute(void *args)
     }
   }
 
-  printf("error and updated weight on: %ld\n", this_thread);
+  //printf("error and updated weight on: %ld\n", this_thread);
   for(long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
     pthread_mutex_lock(&error_lock);
     error += fabs(node_matrix[i].new_weight - node_matrix[i].weight);
@@ -179,16 +179,16 @@ void * page_rank_execute(void *args)
     node_matrix[i].weight = node_matrix[i].new_weight;
   }
 
-  printf("barrier on: %ld\n", this_thread);
+  //printf("barrier on: %ld\n", this_thread);
   if (pthread_barrier_wait(&loop_barrier) == PTHREAD_BARRIER_SERIAL_THREAD){
     iteration_count += 1;
   }
 
   if(error > ERROR_INVARIANT) {
-    printf("recurse on: %ld\n", this_thread);
+    //printf("recurse on: %ld\n", this_thread);
     page_rank_execute(args);
   } else {
-    printf("exit on: %ld\n", this_thread);
+    //printf("exit on: %ld\n", this_thread);
     pthread_exit((void *) 0);
   }
 }
