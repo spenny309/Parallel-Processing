@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
     //run the PageRank algorithm, and store the error from each run
 
     for(long thread = 0 ; thread < THREAD_COUNT ; thread++){
-      pthread_create(&threadIDs[thread], NULL, page_rank_execute, (void*) thread);
+      pthread_create(&thread_IDs[thread], NULL, page_rank_execute, (void*) thread);
     }
 
     for(long thread = 0 ; thread < THREAD_COUNT ; thread++){
@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
     end = clock();
     double time = end - start;
     clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Time used on file %d:\t%lf\t%lf\iters: %d\n", index, time, clock_count, iteration_count);
+    printf("Time used on file %d:\t%lf\t%lf\titers: %d\n", index, time, clock_count, iteration_count);
   }
 }
 
