@@ -181,6 +181,7 @@ void * page_rank_execute(void *args)
 
   //printf("barrier on: %ld\n", this_thread);
   if (pthread_barrier_wait(&loop_barrier) == PTHREAD_BARRIER_SERIAL_THREAD){
+    printf("iter: %d\n", iteration_count);
     iteration_count += 1;
   }
 
