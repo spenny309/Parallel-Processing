@@ -8,7 +8,7 @@
 #include <pthread.h>
 
 #define THREAD_COUNT 8
-#define ERROR_INVARIANT .000000001
+#define ERROR_INVARIANT .00000001
 
 const char* directory = "graphs/";
 const char* file_name = "graph_";
