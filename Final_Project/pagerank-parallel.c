@@ -8,7 +8,7 @@
 #include <pthread.h>
 
 #define THREAD_COUNT 8
-#define ERROR_INVARIANT .0000005
+#define ERROR_INVARIANT .00000025
 
 const char* directory = "graphs/";
 const char* file_name = "graph_";
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
   parameter = .85;
   char input_file[256];
 
-  for(int index = 0 ; index < 100 ; index++){
+  for(int index = 100 ; index < 101 ; index++){
     printf("working on file: %d\n", index);
     clock_t start, end;
     double clock_count;
