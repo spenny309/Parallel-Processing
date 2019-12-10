@@ -121,6 +121,7 @@ int main(int argc, char *argv[])
     }
 
     //run the PageRank algorithm, and store the error from each run
+    printf("NODE COUNT: %d\n", num_nodes);
     for(long thread = 0 ; thread < THREAD_COUNT ; thread++){
       printf("creating thread: %ld\n", thread);
       pthread_create(&thread_IDs[thread], NULL, page_rank_execute, (void*) thread);
@@ -159,7 +160,7 @@ void * page_rank_execute(void *args)
 
   printf("setting damping on: %ld\n", this_thread);
   for (long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
-    printf("trying to access: %ld\ton: %ld", i, this_thread);
+    printf("trying to access: %ld\ton: %ld\n", i, this_thread);
     node_matrix[i].new_weight = damping;
   }
 
