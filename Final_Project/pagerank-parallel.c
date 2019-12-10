@@ -159,6 +159,7 @@ void * page_rank_execute(void *args)
 
   printf("setting damping on: %ld\n", this_thread);
   for (long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
+    printf("trying to access: %ld\ton: %ld", i, this_thread);
     node_matrix[i].new_weight = damping;
   }
 
