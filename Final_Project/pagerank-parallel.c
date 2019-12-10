@@ -5,6 +5,7 @@
 #include <math.h>
 #include <assert.h>
 #include <string.h>
+#include <pthread.h>
 
 #define THREAD_COUNT 8
 #define ERROR_INVARIANT .0000001
@@ -115,11 +116,11 @@ int main(int argc, char *argv[])
 
     //run the PageRank algorithm, and store the error from each run
 
-    for(long thread = 0 ; thread < num_procs ; thread++){
-      pthread_create(&threadIDs[thread], NULL, pang_rank_execute, (void*) thread);
+    for(long thread = 0 ; thread < THREAD_COUNT ; thread++){
+      pthread_create(&threadIDs[thread], NULL, page_rank_execute, (void*) thread);
     }
 
-    for(long thread = 0 ; thread < num_procs ; thread++){
+    for(long thread = 0 ; thread < THREAD_COUNT ; thread++){
       pthread_join(thread_IDs[thread], NULL);
     }
 
@@ -136,7 +137,7 @@ int main(int argc, char *argv[])
   }
 }
 
-void page_rank_execute(void *args)
+void * page_rank_execute(void *args)
 {
   //get current thread number to partition nodes
   long this_thread = (long)args;
