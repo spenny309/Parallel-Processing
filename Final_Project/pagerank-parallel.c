@@ -78,7 +78,6 @@ int main(int argc, char *argv[])
     }
 
     printf("creating adjacency_matrix\n");
-    int ** adjacency_matrix;
     adjacency_matrix = (int **)malloc(num_nodes * sizeof(int*));
 
     if (adjacency_matrix == NULL){
