@@ -64,7 +64,6 @@ int main(int argc, char *argv[])
 
     //initialize node matrix with initial_weight before processing
     printf("creating node_matrix\n");
-    struct Node * node_matrix;
     node_matrix = (struct Node *)malloc(sizeof(struct Node) * num_nodes);
     if (node_matrix == NULL){
       fprintf(stderr, "ERROR: failed to malloc node matrix!\n");
