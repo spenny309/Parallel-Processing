@@ -151,6 +151,7 @@ void * page_rank_execute(void *args)
 
   //CRITICAL: must reset error to 0.0
   pthread_barrier_wait(&loop_barrier);
+  printf("checkpoint on: %ld\n", this_thread);
   error = 0.0;
   pthread_barrier_wait(&loop_barrier);
 
