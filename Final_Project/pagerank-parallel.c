@@ -8,7 +8,7 @@
 #include <pthread.h>
 
 #define THREAD_COUNT 8
-#define ERROR_INVARIANT .00000025
+#define ERROR_INVARIANT .000001
 
 const char* directory = "graphs/";
 const char* file_name = "graph_";
@@ -174,7 +174,7 @@ void * page_rank_execute(void *args)
   //printf("error and updated weight on: %ld\n", this_thread);
   for(long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
     pthread_mutex_lock(&error_lock);
-    error += fabs(node_matrix[i].new_weight - node_matrix[i].weight);
+    error += fabsl(node_matrix[i].new_weight - node_matrix[i].weight);
     pthread_mutex_unlock(&error_lock);
     node_matrix[i].weight = node_matrix[i].new_weight;
   }
