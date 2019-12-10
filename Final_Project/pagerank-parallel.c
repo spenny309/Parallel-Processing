@@ -16,13 +16,13 @@ const char* ext = ".txt";
 
 struct Node
 {
-  double weight;
-  double new_weight;
+  long double weight;
+  long double new_weight;
   double incoming_neighbor_count;
   double outgoing_neighbor_count;
 };
 
-double error, parameter;
+long double error, parameter;
 int num_nodes, iteration_count;
 struct Node * node_matrix;
 int ** adjacency_matrix;
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     }
 
     fscanf(fp, "%d\n", &num_nodes);
-    double initial_weight = 1.0 / num_nodes;
+    long double initial_weight = 1.0 / num_nodes;
 
     //initialize node matrix with initial_weight before processing
     //printf("creating node_matrix\n");
@@ -181,7 +181,7 @@ void * page_rank_execute(void *args)
 
   //printf("barrier on: %ld\n", this_thread);
   if (pthread_barrier_wait(&loop_barrier) == PTHREAD_BARRIER_SERIAL_THREAD){
-    printf("iter: %d\terr: %lf", iteration_count, error);
+    printf("iter: %d\terr: %1.14Lf\n", iteration_count, error);
     iteration_count += 1;
   }
 
@@ -196,7 +196,7 @@ void * page_rank_execute(void *args)
 
 void print_page_ranks(struct Node * node_matrix, int num_nodes){
   for(int i = 0; i < num_nodes; i++){
-    printf("Node: %d\t -\t Weight: %1.8lf\n", i, node_matrix[i].weight);
+    printf("Node: %d\t -\t Weight: %1.8Lf\n", i, node_matrix[i].weight);
   }
   printf("-------------------------------------------------\n");
 }
