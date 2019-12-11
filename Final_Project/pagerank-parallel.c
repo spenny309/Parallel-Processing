@@ -165,8 +165,8 @@ void * page_rank_execute(void *args)
   //printf("setting new_weight on: %ld\n", this_thread);
   for (long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
     for (int j = 0 ; j < num_nodes ; j++){
-      if(adjacency_matrix[i][j] != 0){
-        node_matrix[j].new_weight += damping * (node_matrix[i].weight / node_matrix[i].outgoing_neighbor_count);
+      if(adjacency_matrix[j][i] != 0){
+        node_matrix[i].new_weight += damping * (node_matrix[j].weight / node_matrix[j].outgoing_neighbor_count);
       }
     }
   }
