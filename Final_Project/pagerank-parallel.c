@@ -8,7 +8,7 @@
 #include <pthread.h>
 
 #define THREAD_COUNT 8
-#define ERROR_INVARIANT .000001
+#define ERROR_INVARIANT .0000000001
 
 const char* directory = "graphs/";
 const char* file_name = "graph_";
@@ -147,7 +147,7 @@ void * page_rank_execute(void *args)
   //get current thread number to partition nodes
   long this_thread = (long)args;
   //printf("executing thread: %ld\n", this_thread);
-
+  long double local_max_error = 0.0;
   //CRITICAL: must reset error to 0.0
   pthread_barrier_wait(&loop_barrier);
   //printf("checkpoint on: %ld\n", this_thread);
@@ -166,19 +166,22 @@ void * page_rank_execute(void *args)
   for (long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[j][i] != 0){
-        node_matrix[i].new_weight += damping * (node_matrix[j].weight / node_matrix[j].outgoing_neighbor_count);
+        node_matrix[i].new_weight += parameter * (node_matrix[j].weight / node_matrix[j].outgoing_neighbor_count);
       }
     }
   }
 
   //printf("error and updated weight on: %ld\n", this_thread);
   for(long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
-    pthread_mutex_lock(&error_lock);
-    error += fabsl(node_matrix[i].new_weight - node_matrix[i].weight);
-    pthread_mutex_unlock(&error_lock);
+    local_max_error = local_max_error > fabsl(node_matrix[i].new_weight - node_matrix[i].weight) ? local_max_error : fabsl(node_matrix[i].new_weight - node_matrix[i].weight);
     node_matrix[i].weight = node_matrix[i].new_weight;
   }
 
+  pthread_mutex_lock(&error_lock);
+  if(local_max_error > error){
+    error = local_max_error;
+  }
+  pthread_mutex_unlock(&error_lock);
   //printf("barrier on: %ld\n", this_thread);
   if (pthread_barrier_wait(&loop_barrier) == PTHREAD_BARRIER_SERIAL_THREAD){
     printf("iter: %d\terr: %1.14Lf\n", iteration_count, error);
