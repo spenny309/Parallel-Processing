@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
       start = clock();
       sprintf(input_file, "%s%s%d%s%d%s", directory, subdirectory, set_num, file_name, index, ext);
       FILE * fp = fopen(input_file, "r");
+      printf("trying to open: %s\n", input_file);
       if (fp == NULL){
         fprintf(stderr, "ERROR: failed to open edge file!\n");
         exit(-1);
