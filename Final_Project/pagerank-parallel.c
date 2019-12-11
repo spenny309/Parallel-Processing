@@ -46,11 +46,11 @@ int main(int argc, char *argv[])
   parameter = .85;
   char input_file[256];
   printf("executing pagerank\n");
-  for(int set_num = 2; set_num < 3; set_num++){
+  for(int set_num = 1; set_num < 6; set_num++){
     printf("starting set %d\n", set_num);
     clock_t set_start, set_end;
     set_start = clock();
-    for(int index = 0 ; index < 101 ; index++){
+    for(int index = 0 ; index < 100 ; index++){
       clock_t start, end;
       double clock_count;
       iteration_count = 0;
