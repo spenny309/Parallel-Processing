@@ -8,7 +8,7 @@
 #include <pthread.h>
 
 #define THREAD_COUNT 8
-#define ERROR_INVARIANT .0000000001
+#define ERROR_INVARIANT .00000000001
 
 const char* directory = "graphs/";
 const char* subdirectory = "set_";
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
   parameter = .85;
   char input_file[256];
   printf("executing pagerank\n");
-  for(int set_num = 1; set_num < 6; set_num++){
+  for(int set_num = 2; set_num < 3; set_num++){
     printf("starting set %d\n", set_num);
     clock_t set_start, set_end;
     set_start = clock();
