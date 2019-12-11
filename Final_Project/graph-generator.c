@@ -31,12 +31,20 @@ set 3 details:
 const char* subdirectory = "set_3/";
 */
 /*
-set 4 details:*/
+set 4 details:
 #define SEED 100
 #define GRAPH_FILES 100
 #define NODE_MIN 1000
 #define NODE_MAX 2500
 const char* subdirectory = "set_4/";
+*/
+/*set 5 details:*/
+#define SEED 101
+#define GRAPH_FILES 100
+#define NODE_MIN 2500
+#define NODE_MAX 5000
+const char* subdirectory = "set_5/";
+
 
 
 const char* directory = "graphs/";
