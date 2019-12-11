@@ -8,10 +8,11 @@
 
 #define SEED 309
 #define GRAPH_FILES 100
-#define NODE_MIN 1000
-#define NODE_MAX 5000
+#define NODE_MIN 7500
+#define NODE_MAX 12500
 
 const char* directory = "graphs/";
+const char* subdirectory = "set_1/";
 const char* file_name = "graph_";
 const char* ext = ".txt";
 
@@ -19,8 +20,8 @@ int main(int argc, char *argv[]){
 
   int node_range = NODE_MAX - NODE_MIN;
   //testing on sparse graphs is not representative
-  int edge_min = NODE_MIN << 1;
-  int edge_max = NODE_MAX * (NODE_MAX - 1);
+  long long int edge_min = NODE_MIN << 1;
+  long long int edge_max = NODE_MAX * (NODE_MAX - 1);
   int current_file = 0;
   char graph_name[256];
 
@@ -34,7 +35,7 @@ int main(int argc, char *argv[]){
     edge_count = (rand() % edge_range) + edge_min;
 
     // TODO : Add error checking
-    sprintf(graph_name, "%s%s%d%s", directory, file_name, current_file++, ext);
+    sprintf(graph_name, "%s%s%s%d%s", directory, subdirectory, file_name, current_file++, ext);
     FILE * fp = fopen(graph_name, "w+");
 
     fprintf(fp, "%d\n", node_count);
