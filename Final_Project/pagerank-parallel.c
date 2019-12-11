@@ -8,7 +8,7 @@
 #include <pthread.h>
 
 #define THREAD_COUNT 8
-#define ERROR_INVARIANT .0000000001
+#define ERROR_INVARIANT .000000001
 
 const char* directory = "graphs/";
 const char* file_name = "graph_";
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
   parameter = .85;
   char input_file[256];
 
-  for(int index = 100 ; index < 101 ; index++){
+  for(int index = 0 ; index < 101 ; index++){
     printf("working on file: %d\n", index);
     clock_t start, end;
     double clock_count;
@@ -184,7 +184,7 @@ void * page_rank_execute(void *args)
   pthread_mutex_unlock(&error_lock);
   //printf("barrier on: %ld\n", this_thread);
   if (pthread_barrier_wait(&loop_barrier) == PTHREAD_BARRIER_SERIAL_THREAD){
-    printf("iter: %d\terr: %1.14Lf\n", iteration_count, error);
+    //printf("iter: %d\terr: %1.14Lf\n", iteration_count, error);
     iteration_count += 1;
   }
 
