@@ -14,14 +14,14 @@ set 1 details:
 #define NODE_MAX 12500
 const char* subdirectory = "set_1/";
 */
-/*
+
 set 2 details:
 #define SEED 1023
 #define GRAPH_FILES 100
 #define NODE_MIN 100
 #define NODE_MAX 1000
 const char* subdirectory = "set_2/";
-*/
+
 /*
 set 3 details:
 #define SEED 42
@@ -38,12 +38,14 @@ set 4 details:
 #define NODE_MAX 2500
 const char* subdirectory = "set_4/";
 */
-/*set 5 details:*/
+/*
+set 5 details:
 #define SEED 101
 #define GRAPH_FILES 100
 #define NODE_MIN 2500
 #define NODE_MAX 5000
 const char* subdirectory = "set_5/";
+*/
 
 
 
