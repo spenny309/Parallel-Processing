@@ -27,7 +27,7 @@ set 1 details:
 #define NODE_MAX 2500
 
 const char* directory = "graphs/";
-const char* subdirectory = "set_2/";
+const char* subdirectory = "set_3/";
 const char* file_name = "graph_";
 const char* ext = ".txt";
 
