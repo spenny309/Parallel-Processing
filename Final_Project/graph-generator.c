@@ -12,22 +12,34 @@ set 1 details:
 #define GRAPH_FILES 100
 #define NODE_MIN 7500
 #define NODE_MAX 12500
+const char* subdirectory = "set_1/";
 */
-//
-/*set 2 details:
+/*
+set 2 details:
 #define SEED 1023
-#define GRAPH_FILES 250
+#define GRAPH_FILES 100
 #define NODE_MIN 100
 #define NODE_MAX 1000
+const char* subdirectory = "set_2/";
 */
-/*set 3 details:*/
+/*
+set 3 details:
 #define SEED 42
 #define GRAPH_FILES 100
 #define NODE_MIN 1000
 #define NODE_MAX 2500
+const char* subdirectory = "set_3/";
+*/
+/*
+set 4 details:*/
+#define SEED 100
+#define GRAPH_FILES 100
+#define NODE_MIN 1000
+#define NODE_MAX 2500
+const char* subdirectory = "set_4/";
+
 
 const char* directory = "graphs/";
-const char* subdirectory = "set_3/";
 const char* file_name = "graph_";
 const char* ext = ".txt";
 
