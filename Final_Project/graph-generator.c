@@ -6,13 +6,22 @@
 #include <assert.h>
 #include <string.h>
 
+/*
+set 1 details:
 #define SEED 309
 #define GRAPH_FILES 100
 #define NODE_MIN 7500
 #define NODE_MAX 12500
+*/
+//
+/*set 2 details:*/
+#define SEED 1023
+#define GRAPH_FILES 250
+#define NODE_MIN 100
+#define NODE_MAX 1000
 
 const char* directory = "graphs/";
-const char* subdirectory = "set_1/";
+const char* subdirectory = "set_2/";
 const char* file_name = "graph_";
 const char* ext = ".txt";
 
