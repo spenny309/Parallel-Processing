@@ -180,6 +180,9 @@ void * page_rank_execute(void *args)
     }
   }
 
+  //wait until all of the new weights are calculated before updated old weights
+  pthread_barrier_wait(&loop_barrier);
+
   //printf("error and updated weight on: %ld\n", this_thread);
   for(long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
     local_max_error = local_max_error > fabsl(node_matrix[i].new_weight - node_matrix[i].weight) ? local_max_error : fabsl(node_matrix[i].new_weight - node_matrix[i].weight);
