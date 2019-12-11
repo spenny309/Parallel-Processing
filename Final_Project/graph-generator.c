@@ -15,7 +15,7 @@ set 1 details:
 const char* subdirectory = "set_1/";
 */
 
-set 2 details:
+//set 2 details:
 #define SEED 1023
 #define GRAPH_FILES 100
 #define NODE_MIN 100
