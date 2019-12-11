@@ -45,7 +45,9 @@ int main(int argc, char *argv[])
   error = 0.0;
   parameter = .85;
   char input_file[256];
+  printf("executing pagerank\n");
   for(int set_num = 1; set_num < 6; set_num++){
+    printf("starting set %d\n", set_num);
     clock_t set_start, set_end;
     set_start = clock();
     for(int index = 0 ; index < 101 ; index++){
@@ -56,7 +58,6 @@ int main(int argc, char *argv[])
       start = clock();
       sprintf(input_file, "%s%s%d%s%d%s", directory, subdirectory, set_num, file_name, index, ext);
       FILE * fp = fopen(input_file, "r");
-      printf("trying to open: %s\n", input_file);
       if (fp == NULL){
         fprintf(stderr, "ERROR: failed to open edge file!\n");
         exit(-1);
