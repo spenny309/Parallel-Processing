@@ -142,9 +142,9 @@ int main(int argc, char *argv[])
       clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
       printf("Time used on file %d:\t%lf\t%lf\titers: %d\n", index, time, clock_count, iteration_count);
     }
-    set_end = clock()
+    set_end = clock();
     double time = set_end - set_start;
-    double clock_count = time / CLOCKS_PER_SEC;
+    double clock_count = ((double) (set_end - set_start)) / CLOCKS_PER_SEC;
     printf("Time used on set %d:\t%lf\t%lf\n", set_num, time, clock_count);
   }
 }
