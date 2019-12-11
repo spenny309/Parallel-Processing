@@ -7,7 +7,7 @@
 #include <string.h>
 #include <pthread.h>
 
-#define THREAD_COUNT 8
+#define THREAD_COUNT 1
 #define ERROR_INVARIANT .00000000001
 
 const char* directory = "graphs/";

@@ -140,7 +140,7 @@ void page_rank_execute(struct Node * node_matrix, int ** adjacency_matrix, int n
   for (int i = 0 ; i < num_nodes ; i++){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[i][j] != 0){
-        updated_matrix[j].weight += damping * (node_matrix[i].weight / node_matrix[i].outgoing_neighbor_count);
+        updated_matrix[j].weight += parameter * (node_matrix[i].weight / node_matrix[i].outgoing_neighbor_count);
       }
     }
   }
