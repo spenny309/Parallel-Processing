@@ -202,6 +202,7 @@ void * page_rank_execute(void *args)
 
   if(error > ERROR_INVARIANT) {
     //printf("recurse on: %ld\n", this_thread);
+    printf("error: %1.14Lf\n", error);
     page_rank_execute(args);
   } else {
     //printf("exit on: %ld\n", this_thread);
@@ -211,7 +212,7 @@ void * page_rank_execute(void *args)
 
 void print_page_ranks(struct Node * node_matrix, int num_nodes){
   for(int i = 0; i < num_nodes; i++){
-    printf("Node: %ld\t -\t Weight: %1.8Lf\n", i, node_matrix[i].weight);
+    printf("Node: %d\t -\t Weight: %1.8Lf\n", i, node_matrix[i].weight);
   }
   printf("-------------------------------------------------\n");
 }

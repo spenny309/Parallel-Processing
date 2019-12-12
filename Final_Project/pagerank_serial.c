@@ -153,6 +153,8 @@ void page_rank_execute()
     node_matrix[i].weight = node_matrix[i].new_weight;
   }
 
+  printf("error: %1.14Lf\n", error);
+
   if(error > ERROR_INVARIANT){
     page_rank_execute();
   }
