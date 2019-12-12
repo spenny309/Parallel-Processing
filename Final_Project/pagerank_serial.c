@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
   }
 }
 
-int page_rank_execute()
+void page_rank_execute()
 {
   //print_page_ranks(node_matrix, num_nodes);
   iteration_count += 1;
@@ -160,7 +160,7 @@ int page_rank_execute()
 
 void print_page_ranks(){
   for(int i = 0; i < num_nodes; i++){
-    printf("Node: %d\t -\t Weight: %1.8lf\n", i, node_matrix[i].weight);
+    printf("Node: %d\t -\t Weight: %1.8Lf\n", i, node_matrix[i].weight);
   }
   printf("-------------------------------------------------\n");
 }
