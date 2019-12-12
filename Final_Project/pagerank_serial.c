@@ -32,7 +32,6 @@ void print_page_ranks();
 int main(int argc, char *argv[])
 {
   parameter = .85;
-  iteration_count = 0;
   error = 0.0;
   char input_file[256];
 
@@ -44,6 +43,7 @@ int main(int argc, char *argv[])
     for(int index = 0 ; index < 100 ; index++){
       clock_t start, end;
       double clock_count;
+      iteration_count = 0;
 
       start = clock();
       sprintf(input_file, "%s%s%d%s%d%s", directory, subdirectory, set_num, file_name, index, ext);
