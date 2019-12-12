@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
       end = clock();
       double time = end - start;
       clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
-      printf("Time used on file %d:\t%lf\t%lf\n", index, time, clock_count);
+      printf("Time used on file %d:\t%lf\t%lf\titers: %d\n", index, time, clock_count, iteration_count);
     }
     set_end = clock();
     double time = set_end - set_start;
@@ -131,7 +131,6 @@ void page_rank_execute()
 {
   //print_page_ranks(node_matrix, num_nodes);
   iteration_count += 1;
-  printf("executing PR: %d\n", iteration_count);
   error = 0.0;
   double damping = (1.0 - parameter) / num_nodes;
   long double local_error = 0.0;
@@ -154,7 +153,7 @@ void page_rank_execute()
     node_matrix[i].weight = node_matrix[i].new_weight;
   }
 
-  printf("error: %Lf\n", error);
+  printf("error: %1.14Lf\n", error);
 
   if(error > ERROR_INVARIANT){
     page_rank_execute();
