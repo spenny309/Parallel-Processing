@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
   error = 0.0;
   parameter = .85;
   char input_file[256];
+
   printf("executing pagerank\n");
   for(int set_num = 1; set_num < 6; set_num++){
     printf("starting set %d\n", set_num);
@@ -83,7 +84,6 @@ int main(int argc, char *argv[])
 
       //printf("creating adjacency_matrix\n");
       adjacency_matrix = (int **)malloc(num_nodes * sizeof(int*));
-
       if (adjacency_matrix == NULL){
         fprintf(stderr, "ERROR: failed to malloc adjacency matrix!\n");
         exit(-1);
