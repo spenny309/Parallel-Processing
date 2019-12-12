@@ -131,6 +131,7 @@ void page_rank_execute()
 {
   //print_page_ranks(node_matrix, num_nodes);
   iteration_count += 1;
+  printf("executing PR: %d\n", iteration_count);
   error = 0.0;
   double damping = (1.0 - parameter) / num_nodes;
   long double local_error = 0.0;
@@ -152,6 +153,8 @@ void page_rank_execute()
     error = error > local_error ? error : local_error;
     node_matrix[i].weight = node_matrix[i].new_weight;
   }
+
+  printf("error: %Ld\n", error);
 
   if(error > ERROR_INVARIANT){
     page_rank_execute();
