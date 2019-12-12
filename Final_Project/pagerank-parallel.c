@@ -211,7 +211,7 @@ void * page_rank_execute(void *args)
 
 void print_page_ranks(struct Node * node_matrix, int num_nodes){
   for(int i = 0; i < num_nodes; i++){
-    printf("Node: %d\t -\t Weight: %1.8Lf\n", i, node_matrix[i].weight);
+    printf("Node: %ld\t -\t Weight: %1.8Lf\n", i, node_matrix[i].weight);
   }
   printf("-------------------------------------------------\n");
 }
