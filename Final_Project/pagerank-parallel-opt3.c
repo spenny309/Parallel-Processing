@@ -94,7 +94,7 @@ void print_page_ranks(struct Node * node_array, int num_nodes);
 */
 int main(int argc, char *argv[])
 {
-  for(thread_count = 4 ; thread_count <= 4 ; thread_count <<= 1){
+  for(thread_count = 8 ; thread_count <= 8 ; thread_count <<= 1){
     //Initialize thread_count number of threads
     long pthread;
     pthread_t thread_IDs[thread_count];
