@@ -168,7 +168,7 @@ void * page_rank_execute(void *args)
   double damping = (1.0 - parameter) / num_nodes;
   printf("data:\tdamp: %lf\tpara: %Lf\tnumN: %d\n", damping, parameter, num_nodes);
   //printf("setting damping on: %ld\n", this_thread);
-  printf("range for thread %ld:\t %5lf\t-----\t %5lf\n", this_thread, (this_thread * ceil(num_nodes / THREAD_COUNT)), ((1+this_thread) * ceil(num_nodes / THREAD_COUNT)));
+  printf("range for thread %ld:\t %5lf\t-----\t %5lf\n", this_thread, (this_thread * ceil(((8*this_thread)+num_nodes) / THREAD_COUNT)), ((1+this_thread) * ceil(((8*this_thread)+num_nodes) / THREAD_COUNT)));
   for (int i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
     //printf("trying to access: %ld\ton: %ld\n", i, this_thread);
     node_matrix[i].new_weight = damping;
