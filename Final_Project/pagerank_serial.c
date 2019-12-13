@@ -53,7 +53,11 @@ int main(int argc, char *argv[])
         exit(-1);
       }
 
-      fscanf(fp, "%d\n", &num_nodes);
+      if (fscanf(fp, "%d\n", &num_nodes) == -1){
+        fprintf(stderr, "ERROR: failed to read from file!\n");
+        exit(-1);
+      }
+      
       double initial_weight = 1.0 / num_nodes;
 
       //initialize node matrix with initial_weight before processing
