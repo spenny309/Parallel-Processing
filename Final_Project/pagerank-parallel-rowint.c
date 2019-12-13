@@ -229,7 +229,7 @@ void * page_rank_execute(void *args)
   }
 
   //printf("setting new_weight on: %ld\n", this_thread);
-  for (int i = this_thread ; i < num_nodes ; i += thread_count){
+  for (long i = this_thread ; i < num_nodes ; i += thread_count){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[j][i] != 0){
         node_array[i].new_weight += PARAMETER * (node_array[j].weight / node_array[j].outgoing_neighbor_count);

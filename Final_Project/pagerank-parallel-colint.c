@@ -246,7 +246,7 @@ void * page_rank_execute(void *args)
     node_array[i].new_weight = damping;
   }
 
-  for (int i = 0 ; i < num_nodes ; i++){
+  for (long i = 0 ; i < num_nodes ; i++){
     for (int j = this_thread ; j < num_nodes ; j += thread_count){
       if(adjacency_matrix[j][i] != 0){
         pthread_mutex_lock(&node_lock_array[i]);
