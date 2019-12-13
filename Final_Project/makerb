@@ -1,0 +1,27 @@
+######################################################################
+#
+# 'make'         : create program $(PROG)
+# 'make clean'   : clean directory
+#
+######################################################################
+
+# list your source/assembly files in SRCS
+SRCS = pagerank-parallel-rowblock.c
+
+CFLAGS = -I.
+LDLIBS = -L.
+
+PROG = pr-parallel
+
+.PHONY: default clean
+
+default: $(PROG)
+
+$(PROG): $(SRCS)
+	gcc $(CFLAGS) $(LDLIBS) -o $@ $^  -lpthread -ljpeg -lm
+
+$(PROG).o:
+	gcc $(CFLAGS) -o $@ -c $^
+
+clean:
+	rm -f *~ $(DRIVER).o $(PROG) $(PROG).o $(PROGEX)
