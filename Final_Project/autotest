@@ -1,18 +1,10 @@
 #!/bin/bash
 
 #clear old executables
-make --f makeserial clean
-make --f makerb clean
-make --f makeri clean
-make --f makecb clean
-make --f makeci clean
+cleanall
 
 #make executables
-make --f makeserial
-make --f makerb
-make --f makeri
-make --f makecb
-make --f makeci
+makeall
 
 #create output directory
 mkdir test_outputs
@@ -23,6 +15,9 @@ touch test_outputs/rb.txt
 touch test_outputs/ri.txt
 touch test_outputs/cb.txt
 touch test_outputs/ci.txt
+touch test_outputs/opt1.txt
+touch test_outputs/opt2.txt
+touch test_outputs/opt3.txt
 
 #run executables
 ./pr-serial >> test_outputs/serial.txt
@@ -30,3 +25,6 @@ touch test_outputs/ci.txt
 ./pr-parallel-ri >> test_outputs/ri.txt
 ./pr-parallel-cb >> test_outputs/cb.txt
 ./pr-parallel-ci >> test_outputs/ci.txt
+./pr-parallel-opt1 >> test_outputs/opt1.txt
+./pr-parallel-opt2 >> test_outputs/opt2.txt
+./pr-parallel-opt3 >> test_outputs/opt3.txt
