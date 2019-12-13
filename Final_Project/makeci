@@ -6,12 +6,12 @@
 ######################################################################
 
 # list your source/assembly files in SRCS
-SRCS = pagerank-parallel-rowblock.c
+SRCS = pagerank-parallel-colint.c
 
 CFLAGS = -I.
 LDLIBS = -L.
 
-PROG = pr-parallel-rb
+PROG = pr-parallel-ci
 
 .PHONY: default clean
 

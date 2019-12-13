@@ -6,19 +6,19 @@
 ######################################################################
 
 # list your source/assembly files in SRCS
-SRCS = pagerank-parallel-rowblock.c
+SRCS = pagerank-serial.c
 
 CFLAGS = -I.
 LDLIBS = -L.
 
-PROG = pr-parallel-rb
+PROG = pr-serial
 
 .PHONY: default clean
 
 default: $(PROG)
 
 $(PROG): $(SRCS)
-	gcc $(CFLAGS) $(LDLIBS) -o $@ $^ -lpthread -lm -O3
+	gcc $(CFLAGS) $(LDLIBS) -o $@ $^ -lm -O3
 
 $(PROG).o:
 	gcc $(CFLAGS) -o $@ -c $^

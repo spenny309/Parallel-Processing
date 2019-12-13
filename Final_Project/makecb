@@ -18,7 +18,7 @@ PROG = pr-parallel-cb
 default: $(PROG)
 
 $(PROG): $(SRCS)
-	gcc $(CFLAGS) $(LDLIBS) -o $@ $^  -lpthread -ljpeg -lm
+	gcc $(CFLAGS) $(LDLIBS) -o $@ $^ -lpthread -lm -O3
 
 $(PROG).o:
 	gcc $(CFLAGS) -o $@ -c $^

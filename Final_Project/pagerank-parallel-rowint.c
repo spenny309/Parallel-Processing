@@ -1,6 +1,6 @@
 /*
   Parallel program to execute PageRank on many sets of input files.
-  This version of the program uses a row-block method in parallelization,
+  This version of the program uses a row-interleaved method in parallelization,
   which leads to a receiving-node based division of labor per thread.
   One benefit of such an organization is that we don't need to lock receiving nodes,
   as we know each one will only be updated by one thread.
@@ -226,7 +226,7 @@ void * page_rank_execute(void *args)
   }
 
   //printf("setting new_weight on: %ld\n", this_thread);
-  for (int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
+  for (int i = this_thread ; i < num_nodes ; i += thread_count){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[j][i] != 0){
         node_array[i].new_weight += PARAMETER * (node_array[j].weight / node_array[j].outgoing_neighbor_count);
