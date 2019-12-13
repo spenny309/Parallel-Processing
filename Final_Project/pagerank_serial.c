@@ -15,7 +15,7 @@ const char* ext = ".txt";
 
 long double error, parameter;
 int num_nodes, iteration_count;
-struct Node * node_matrix;
+struct Node * node_array;
 int ** adjacency_matrix;
 
 struct Node
@@ -45,7 +45,6 @@ int main(int argc, char *argv[])
       double clock_count;
       iteration_count = 0;
 
-      start = clock();
       sprintf(input_file, "%s%s%d%s%d%s", directory, subdirectory, set_num, file_name, index, ext);
       FILE * fp = fopen(input_file, "r");
       if (fp == NULL){
@@ -57,16 +56,16 @@ int main(int argc, char *argv[])
       double initial_weight = 1.0 / num_nodes;
 
       //initialize node matrix with initial_weight before processing
-      node_matrix = (struct Node *)malloc(sizeof(struct Node) * num_nodes);
-      if (node_matrix == NULL){
+      node_array = (struct Node *)malloc(sizeof(struct Node) * num_nodes);
+      if (node_array == NULL){
         fprintf(stderr, "ERROR: failed to malloc node matrix!\n");
         exit(-1);
       }
 
       for (int i = 0 ; i < num_nodes ; i++){
-        (node_matrix[i]).weight = initial_weight;
-        (node_matrix[i]).outgoing_neighbor_count = 0.0;
-        (node_matrix[i]).incoming_neighbor_count = 0.0;
+        (node_array[i]).weight = initial_weight;
+        (node_array[i]).outgoing_neighbor_count = 0.0;
+        (node_array[i]).incoming_neighbor_count = 0.0;
       }
 
       adjacency_matrix = (int **)malloc(num_nodes * sizeof(int*));
@@ -96,8 +95,8 @@ int main(int argc, char *argv[])
       while(fscanf(fp, "%d %d\n", &out, &in) != EOF){
         if(adjacency_matrix[out][in] == 0){
           adjacency_matrix[out][in] = 1;
-          node_matrix[out].outgoing_neighbor_count += 1.0;
-          node_matrix[in].incoming_neighbor_count += 1.0;
+          node_array[out].outgoing_neighbor_count += 1.0;
+          node_array[in].incoming_neighbor_count += 1.0;
         }
       }
 
@@ -106,52 +105,54 @@ int main(int argc, char *argv[])
         exit(-1);
       }
 
+      start = clock();
       //run the PageRank algorithm, and store the error from each run
       page_rank_execute();
+      end = clock();
 
       for(int i = 0 ; i < num_nodes ; i++){
         free(adjacency_matrix[i]);
       }
       free(adjacency_matrix);
-      free(node_matrix);
+      free(node_array);
 
-      end = clock();
+
       double time = end - start;
       clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
-      printf("Time used on file %d:\t%lf\t%lf\titers: %d\n", index, time, clock_count, iteration_count);
+      printf("set: %d\tfile: %d\t%10.0lf\t%4.6lf\ti: %d\n", set_num, index, time, clock_count, iteration_count);
     }
     set_end = clock();
     double time = set_end - set_start;
     double clock_count = ((double) (set_end - set_start)) / CLOCKS_PER_SEC;
-    printf("Time used on set %d:\t%lf\t%lf\n", set_num, time, clock_count);
+    printf("TOTAL SET: %d\t%10.0lf\t%4.6lf\n", set_num, time, clock_count);
   }
 }
 
 void page_rank_execute()
 {
-  //print_page_ranks(node_matrix, num_nodes);
+  //print_page_ranks(node_array, num_nodes);
   iteration_count += 1;
   error = 0.0;
   double damping = (1.0 - parameter) / num_nodes;
   long double local_error = 0.0;
   for (int i = 0 ; i < num_nodes ; i++){
-    node_matrix[i].new_weight = damping;
+    node_array[i].new_weight = damping;
   }
 
   for (int i = 0 ; i < num_nodes ; i++){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[j][i] != 0){
-        node_matrix[i].new_weight += parameter * (node_matrix[j].weight / node_matrix[j].outgoing_neighbor_count);
+        node_array[i].new_weight += parameter * (node_array[j].weight / node_array[j].outgoing_neighbor_count);
       }
     }
   }
 
   for (int i = 0 ; i < num_nodes ; i++){
-    local_error = fabsl(node_matrix[i].new_weight - node_matrix[i].weight);
+    local_error = fabsl(node_array[i].new_weight - node_array[i].weight);
     error = error > local_error ? error : local_error;
-    node_matrix[i].weight = node_matrix[i].new_weight;
+    node_array[i].weight = node_array[i].new_weight;
   }
-  
+
   if(error > ERROR_INVARIANT){
     page_rank_execute();
   }
@@ -159,7 +160,7 @@ void page_rank_execute()
 
 void print_page_ranks(){
   for(int i = 0; i < num_nodes; i++){
-    printf("Node: %d\t -\t Weight: %1.8Lf\n", i, node_matrix[i].weight);
+    printf("Node: %d\t -\t Weight: %1.8Lf\n", i, node_array[i].weight);
   }
   printf("-------------------------------------------------\n");
 }
