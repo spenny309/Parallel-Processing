@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#remove all executables
+make --f makeserial clean
+make --f makerb clean
+make --f makeri clean
+make --f makecb clean
+make --f makeci clean
+make --f makeop1 clean
+make --f makeop2 clean

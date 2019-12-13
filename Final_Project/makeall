@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#make all executables
+make --f makeserial
+make --f makerb
+make --f makeri
+make --f makecb
+make --f makeci
+make --f makeop1
+make --f makeop2
