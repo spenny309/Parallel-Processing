@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#clear old executables
+make --f makeserial clean
+make --f makerb clean
+make --f makeri clean
+make --f makecb clean
+make --f makeci clean
+
+#make executables
+make --f makeserial
+make --f makerb
+make --f makeri
+make --f makecb
+make --f makeci
+
+#create output directory
+mkdir test_outputs
+
+#create output files
+touch test_outputs/serial.txt
+touch test_outputs/rb.txt
+touch test_outputs/ri.txt
+touch test_outputs/cb.txt
+touch test_outputs/ci.txt
+
+#run executables
+./pr-serial >> test_outputs/serial.txt
+./pr-parallel-rb >> test_outputs/rb.txt
+./pr-parallel-ri >> test_outputs/ri.txt
+./pr-parallel-cb >> test_outputs/cb.txt
+./pr-parallel-ci >> test_outputs/ci.txt
