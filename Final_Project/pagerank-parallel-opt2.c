@@ -7,18 +7,13 @@
 
   This method was the fastest in initial tests, but lost out to the serial version
   as the number of threads increased, due to high overhead, and the need for a lot of
-  locking and barriers. This version implements the two major optimization to try to
+  locking and barriers. This version implements the second major optimization to try to
   increase the efficiency.
 
-  The major improvements in this version are to pre-calculate the range of nodes that
-  each thread is responsible for looking at instead of needing to re-calculate this
-  range in each thread for each iteration, and pre-calculating the contribution of
-  each node to its neighbors. Ordinarily, we calculate this in place as:
-                  PARAMETER * (weight / outgoing neighbors)
-  However, we do this calculation for each edge in the graph which is O(n^2).
-  We can precalculate this value for each node which is O(n), and then have
-  O(n^2) accesses to get the precalculated values. We anticipate the O(n^2) accesses
-  being faster than the O(n^2) calculations.
+  The major improvement in this version is to optimize the PageRank execute function
+  to remove locks and barriers. Instead, we execute everything we can in parallel,
+  then return to main to calculate the current error, update weight with new_weight
+  then execute the next iteration
 */
 
 #include <stdio.h>
@@ -59,9 +54,6 @@ struct Node
 {
   long double weight;
   long double new_weight;
-  //OPTIMIZATION:
-  long double contribution;
-
   double incoming_neighbor_count;
   double outgoing_neighbor_count;
 };
@@ -75,12 +67,16 @@ struct Node * node_array;
 //Adjacency matrix which stores edge links between nodes in graph,
 //where [i][j] == 1 implies i --> j
 int ** adjacency_matrix;
+
+/* OPTIMIZATION: Locks and barriers no longer needed with this optimization
 //barrier to maintain consistency within each generation of algorithm
 pthread_barrier_t loop_barrier;
 //lock to prevent current error race conditions
 pthread_mutex_t error_lock;
+*/
 
-int * thread_node_range;
+//OPTIMIZATION: pre-calculate dampening value outside of each thread
+double damping;
 
 void * page_rank_execute(void * args);
 void print_page_ranks(struct Node * node_array, int num_nodes);
@@ -96,27 +92,13 @@ int main(int argc, char *argv[])
     //Initialize thread_count number of threads
     long pthread;
     pthread_t thread_IDs[thread_count];
-    //initialize a barrier to wait for thread_count threads to be used in each loop
-    pthread_barrier_init(&loop_barrier, NULL, thread_count);
-    //Initialize lock to prevent error race conditions
-    pthread_mutex_init(&error_lock, NULL);
-
-    //Set error to default value
-    error = 0.0;
-
-    //Allocate thread_node_range
-    thread_node_range = (int *)malloc(sizeof(int) * (thread_count+1));
-    if(thread_node_range == NULL){
-      fprintf(stderr, "ERROR: Failed to allocated node range array!\n");
-      exit(-1);
-    }
 
     //Reasonable space to store an input file name.
     char input_file[256];
 
     printf("executing pagerank with %d threads\n", thread_count);
     //Execute PageRank over the range of given sets
-    for(int set_num = 1; set_num < 2; set_num++){
+    for(int set_num = 1; set_num < 6; set_num++){
       printf("starting set %d\n", set_num);
       //Initialize time structures and record start time for this set
       clock_t set_start, set_end;
@@ -143,13 +125,6 @@ int main(int argc, char *argv[])
           fprintf(stderr, "ERROR: failed to read from file!\n");
           exit(-1);
         }
-
-        //Set thread node ranges based on num_nodes and thread_count
-        thread_node_range[thread_count] = num_nodes;
-        for(int i = 0 ; i < thread_count ; i++){
-          thread_node_range[i] = i * ((thread_count+num_nodes) / thread_count);
-        }
-
         //Each node starts with weight: 1 / N
         long double initial_weight = 1.0 / num_nodes;
 
@@ -207,21 +182,34 @@ int main(int argc, char *argv[])
           exit(-1);
         }
 
-        //OPTIMIZATION: calculating contribution for first iteration
-        for(int i = 0 ; i < num_nodes ; i++){
-          (node_array[i]).contribution = PARAMETER * (node_array[i].weight / node_array[i].outgoing_neighbor_count);
-        }
-
         //Time the PageRank execution
         start = clock();
 
-        //Run the PageRank algorithm on thread_count threads, passing thread_num as args
-        for(long thread = 0 ; thread < thread_count ; thread++){
-          pthread_create(&thread_IDs[thread], NULL, page_rank_execute, (void*) thread);
-        }
-        //Wait for all threads to finish execution and return
-        for(long thread = 0 ; thread < thread_count ; thread++){
-          pthread_join(thread_IDs[thread], NULL);
+        error = 1.0;
+        damping = (1.0 - PARAMETER) / num_nodes;
+
+        //OPTIMIZATION: Calculate iteration, error and weight <-- new_weight sequentially,
+        //  to avoid heavy locks and barriers within the page_rank_execute function.
+        while(error > ERROR_INVARIANT){
+          //track how many iterations the program runs for
+          iteration_count += 1;
+
+          //Run the PageRank algorithm on thread_count threads, passing thread_num as args
+          for(long thread = 0 ; thread < thread_count ; thread++){
+            pthread_create(&thread_IDs[thread], NULL, page_rank_execute, (void*) thread);
+          }
+          //Wait for all threads to finish execution and return
+          for(long thread = 0 ; thread < thread_count ; thread++){
+            pthread_join(thread_IDs[thread], NULL);
+          }
+
+          //Calculate error from this iteration
+          //Update weight to be new_weight for next iteration
+          error = 0.0;
+          for(int i = 0 ; i < num_nodes ; i++){
+            error = error > fabsl(node_array[i].new_weight - node_array[i].weight) ? error : fabsl(node_array[i].new_weight - node_array[i].weight);
+            node_array[i].weight = node_array[i].new_weight;
+          }
         }
         //Time the PageRank execution
         end = clock();
@@ -246,63 +234,26 @@ int main(int argc, char *argv[])
       double clock_count = ((double) (set_end - set_start)) / CLOCKS_PER_SEC;
       printf("TOTAL SET: %d\t%10.0lf\t%4.6lf\n", set_num, time, clock_count);
     }
-    free(thread_node_range);
   }
 }
 
+//OPTIMIZATION: page_rank_execute is now very simple, and simply calculates the new_weight for each node
+//  no longer requires any locks, barriers, etc. Which may reduce heavy overhead
 void * page_rank_execute(void *args)
 {
   //get current thread number to partition nodes
   long this_thread = (long)args;
-  long double local_max_error = 0.0;
-  //CRITICAL: must reset error to 0.0
-  pthread_barrier_wait(&loop_barrier);
-  //printf("checkpoint on: %ld\n", this_thread);
-  error = 0.0;
-  pthread_barrier_wait(&loop_barrier);
 
-  double damping = (1.0 - PARAMETER) / num_nodes;
-
-  for (int i = thread_node_range[this_thread] ; i < thread_node_range[this_thread + 1] ; i++){
-    //printf("trying to access: %ld\ton: %ld\n", i, this_thread);
+  for (int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
     node_array[i].new_weight = damping;
   }
 
-  //printf("setting new_weight on: %ld\n", this_thread);
-  for (int i = thread_node_range[this_thread] ; i < thread_node_range[this_thread + 1] ; i++){
+  for (int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[j][i] != 0){
-        //OPTIMIZATION: using pre-calculated contribution instead of re-calculating value
-        node_array[i].new_weight += node_array[j].contribution;
+        node_array[i].new_weight += PARAMETER * (node_array[j].weight / node_array[j].outgoing_neighbor_count);
       }
     }
-  }
-
-  //wait until all of the new weights are calculated before updated old weights
-  pthread_barrier_wait(&loop_barrier);
-
-  for(int i = thread_node_range[this_thread] ; i < thread_node_range[this_thread + 1] ; i++){
-    local_max_error = local_max_error > fabsl(node_array[i].new_weight - node_array[i].weight) ? local_max_error : fabsl(node_array[i].new_weight - node_array[i].weight);
-    node_array[i].weight = node_array[i].new_weight;
-
-    //OPTIMIZATION: calculating contribution for next iteration
-    node_array[i].contribution = PARAMETER * (node_array[i].new_weight / node_array[i].outgoing_neighbor_count);
-  }
-
-  pthread_mutex_lock(&error_lock);
-  if(local_max_error > error){
-    error = local_max_error;
-  }
-  pthread_mutex_unlock(&error_lock);
-
-  if (pthread_barrier_wait(&loop_barrier) == PTHREAD_BARRIER_SERIAL_THREAD){
-    iteration_count += 1;
-  }
-
-  if(error > ERROR_INVARIANT) {
-    page_rank_execute(args);
-  } else {
-    pthread_exit((void *) 0);
   }
 }
 
