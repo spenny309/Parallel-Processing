@@ -85,7 +85,7 @@ double damping;
 int * thread_node_range;
 
 void * page_rank_execute(void * args);
-void print_page_ranks(struct Node * node_array, int num_nodes);
+void print_page_ranks();
 
 /*
   The main program will initialize the required data structures, then execute
@@ -94,7 +94,7 @@ void print_page_ranks(struct Node * node_array, int num_nodes);
 */
 int main(int argc, char *argv[])
 {
-  for(thread_count = 8 ; thread_count <= 8 ; thread_count <<= 1){
+  for(thread_count = 16 ; thread_count <= 16 ; thread_count <<= 1){
     //Initialize thread_count number of threads
     long pthread;
     pthread_t thread_IDs[thread_count];
@@ -290,7 +290,7 @@ void * page_rank_execute(void *args)
   }
 }
 
-void print_page_ranks(struct Node * node_array, int num_nodes){
+void print_page_ranks(){
   for(int i = 0; i < num_nodes; i++){
     printf("Node: %d\t -\t Weight: %1.8Lf\n", i, node_array[i].weight);
   }
