@@ -112,7 +112,9 @@ int main(int argc, char *argv[])
         }
 
         //Get num_nodes from first line of file
-        fscanf(fp, "%d\n", &num_nodes);
+        if (fscanf(fp, "%d\n", &num_nodes) == -1){
+          fprintf(stderr, "ERROR: failed to read from file!\n");
+        }
         //Each node starts with weight: 1 / N
         long double initial_weight = 1.0 / num_nodes;
 
