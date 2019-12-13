@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 
       double time = end - start;
       clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
-      printf("set: %d\tfile: %d\tn: %5d\te: %12Ld\t%10.0lf\t%4.6lf\ti: %d\n", set_num, index, num_nodes, edge_count, time, clock_count, iteration_count);
+      printf("set: %d\tfile: %3d\tn: %5d\te: %12Ld\t%10.0lf\t%4.6lf\ti: %d\n", set_num, index, num_nodes, edge_count, time, clock_count, iteration_count);
     }
     set_end = clock();
     double time = set_end - set_start;

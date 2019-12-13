@@ -72,7 +72,7 @@ void print_page_ranks(struct Node * node_array, int num_nodes);
 */
 int main(int argc, char *argv[])
 {
-  for(thread_count = 2 ; thread_count <= 16 ; thread_count << 1){
+  for(thread_count = 16 ; thread_count <= 16 ; thread_count << 1){
     //Initialize thread_count number of threads
     long pthread;
     pthread_t thread_IDs[thread_count];
@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
         //Print information relating to this execution
         double time = end - start;
         clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
-        printf("set: %d\tfile: %d\tn: %5d\te: %12Ld\t%10.0lf\t%4.6lf\ti: %d\n", set_num, index, num_nodes, edge_count, time, clock_count, iteration_count);
+        printf("set: %d\tfile: %3d\tn: %5d\te: %12Ld\t%10.0lf\t%4.6lf\ti: %d\n", set_num, index, num_nodes, edge_count, time, clock_count, iteration_count);
       }
       //Time PageRank execution on this set
       set_end = clock();
