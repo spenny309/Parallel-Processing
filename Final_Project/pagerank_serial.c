@@ -134,7 +134,7 @@ void page_rank_execute()
   error = 0.0;
   double damping = (1.0 - parameter) / num_nodes;
   long double local_error = 0.0;
-
+  printf("data:\tdamp: %lf\tpara: %Lf\tnumN: %Lf\n", damping, parameter, num_nodes);
   for (int i = 0 ; i < num_nodes ; i++){
     node_matrix[i].new_weight = damping;
   }

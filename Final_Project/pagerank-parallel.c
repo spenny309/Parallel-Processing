@@ -158,21 +158,24 @@ void * page_rank_execute(void *args)
   //printf("executing thread: %ld\n", this_thread);
   long double local_max_error = 0.0;
   //CRITICAL: must reset error to 0.0
+  printf("check 1 on thread: %ld\n", this_thread);
   pthread_barrier_wait(&loop_barrier);
   //printf("checkpoint on: %ld\n", this_thread);
   error = 0.0;
+  printf("check 2 on thread: %ld\n", this_thread);
   pthread_barrier_wait(&loop_barrier);
 
   double damping = (1.0 - parameter) / num_nodes;
-
+  printf("data:\tdamp: %lf\tpara: %Lf\tnumN: %Lf\n", damping, parameter, num_nodes);
   //printf("setting damping on: %ld\n", this_thread);
-  for (long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
+  printf("range for thread %ld:\t %10ld ----- %10ld\n", this_thread, this_thread * (num_nodes / THREAD_COUNT), (this_thread+1) * (num_nodes / THREAD_COUNT));
+  for (int i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
     //printf("trying to access: %ld\ton: %ld\n", i, this_thread);
     node_matrix[i].new_weight = damping;
   }
 
   //printf("setting new_weight on: %ld\n", this_thread);
-  for (long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
+  for (int i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[j][i] != 0){
         node_matrix[i].new_weight += parameter * (node_matrix[j].weight / node_matrix[j].outgoing_neighbor_count);
@@ -180,6 +183,7 @@ void * page_rank_execute(void *args)
     }
   }
 
+  printf("check 3 on thread: %ld\n", this_thread);
   //wait until all of the new weights are calculated before updated old weights
   pthread_barrier_wait(&loop_barrier);
 
@@ -195,9 +199,9 @@ void * page_rank_execute(void *args)
   }
   pthread_mutex_unlock(&error_lock);
   //printf("barrier on: %ld\n", this_thread);
+  printf("check 4 on thread: %ld\n", this_thread);
   if (pthread_barrier_wait(&loop_barrier) == PTHREAD_BARRIER_SERIAL_THREAD){
     //printf("iter: %d\terr: %1.14Lf\n", iteration_count, error);
-    printf("incrementing on thread: %ld\n", this_thread);
     iteration_count += 1;
   }
 
