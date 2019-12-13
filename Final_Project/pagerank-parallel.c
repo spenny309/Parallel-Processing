@@ -155,20 +155,15 @@ void * page_rank_execute(void *args)
 {
   //get current thread number to partition nodes
   long this_thread = (long)args;
-  //printf("executing thread: %ld\n", this_thread);
   long double local_max_error = 0.0;
   //CRITICAL: must reset error to 0.0
-  printf("check 1 on thread: %ld\n", this_thread);
   pthread_barrier_wait(&loop_barrier);
   //printf("checkpoint on: %ld\n", this_thread);
   error = 0.0;
-  printf("check 2 on thread: %ld\n", this_thread);
   pthread_barrier_wait(&loop_barrier);
 
   double damping = (1.0 - parameter) / num_nodes;
-  printf("data:\tdamp: %lf\tpara: %Lf\tnumN: %d\n", damping, parameter, num_nodes);
-  //printf("setting damping on: %ld\n", this_thread);
-  printf("range for thread %ld:\t %5ld\t-----\t %5ld\n", this_thread, (this_thread * (THREAD_COUNT+num_nodes) / THREAD_COUNT), ((1+this_thread) * (THREAD_COUNT+num_nodes) / THREAD_COUNT));
+
   for (int i = (this_thread * (THREAD_COUNT+num_nodes) / THREAD_COUNT) ; i < ((1+this_thread) * (THREAD_COUNT+num_nodes) / THREAD_COUNT) && i < num_nodes ; i++){
     //printf("trying to access: %ld\ton: %ld\n", i, this_thread);
     node_matrix[i].new_weight = damping;
@@ -183,11 +178,9 @@ void * page_rank_execute(void *args)
     }
   }
 
-  printf("check 3 on thread: %ld\n", this_thread);
   //wait until all of the new weights are calculated before updated old weights
   pthread_barrier_wait(&loop_barrier);
 
-  //printf("error and updated weight on: %ld\n", this_thread);
   for(int i = (this_thread * (THREAD_COUNT+num_nodes) / THREAD_COUNT) ; i < ((1+this_thread) * (THREAD_COUNT+num_nodes) / THREAD_COUNT) && i < num_nodes ; i++){
     local_max_error = local_max_error > fabsl(node_matrix[i].new_weight - node_matrix[i].weight) ? local_max_error : fabsl(node_matrix[i].new_weight - node_matrix[i].weight);
     node_matrix[i].weight = node_matrix[i].new_weight;
@@ -198,19 +191,14 @@ void * page_rank_execute(void *args)
     error = local_max_error;
   }
   pthread_mutex_unlock(&error_lock);
-  //printf("barrier on: %ld\n", this_thread);
-  printf("check 4 on thread: %ld\n", this_thread);
+
   if (pthread_barrier_wait(&loop_barrier) == PTHREAD_BARRIER_SERIAL_THREAD){
-    //printf("iter: %d\terr: %1.14Lf\n", iteration_count, error);
     iteration_count += 1;
   }
 
   if(error > ERROR_INVARIANT) {
-    //printf("recurse on: %ld\n", this_thread);
-    printf("error: %1.14Lf\n", error);
     page_rank_execute(args);
   } else {
-    //printf("exit on: %ld\n", this_thread);
     pthread_exit((void *) 0);
   }
 }
