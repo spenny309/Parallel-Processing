@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
   error = 0.0;
   char input_file[256];
 
-  printf("executing pagerank\n");
+  printf("executing pagerank sequential version\n");
   for(int set_num = 1 ; set_num < 6 ; set_num++){
     printf("starting set %d\n", set_num);
     clock_t set_start, set_end;
@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
     for(int index = 0 ; index < 100 ; index++){
       clock_t start, end;
       double clock_count;
+      long long int edge_count = 0;
       iteration_count = 0;
 
       sprintf(input_file, "%s%s%d%s%d%s", directory, subdirectory, set_num, file_name, index, ext);
@@ -97,6 +98,7 @@ int main(int argc, char *argv[])
           adjacency_matrix[out][in] = 1;
           node_array[out].outgoing_neighbor_count += 1.0;
           node_array[in].incoming_neighbor_count += 1.0;
+          edge_count++;
         }
       }
 
@@ -119,7 +121,7 @@ int main(int argc, char *argv[])
 
       double time = end - start;
       clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
-      printf("set: %d\tfile: %d\t%10.0lf\t%4.6lf\ti: %d\n", set_num, index, time, clock_count, iteration_count);
+      printf("set: %d\tfile: %d\tn: %5d\te: %12Ld\t%10.0lf\t%4.6lf\ti: %d\n", set_num, index, num_nodes, edge_count, time, clock_count, iteration_count);
     }
     set_end = clock();
     double time = set_end - set_start;

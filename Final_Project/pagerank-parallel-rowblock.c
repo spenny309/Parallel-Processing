@@ -17,9 +17,9 @@
 
 //Allow user to specify number of THREADS, or default to 8
 #ifdef THREADS
-  #define THREAD_COUNT THREADS
+  #define thread_count THREADS
 #else
-  #define THREAD_COUNT 8
+  #define thread_count 8
 #endif
 
 //Default error invariant for PageRank algorithm; 1 * 10^-10
@@ -49,7 +49,7 @@ struct Node
 //global value for current error
 long double error;
 //Store node count on current graph and number of iterations PageRank takes to converge
-int num_nodes, iteration_count;
+int num_nodes, iteration_count, thread_count;
 //Store num_nodes in array for fast access and updates
 struct Node * node_array;
 //Adjacency matrix which stores edge links between nodes in graph,
@@ -70,11 +70,12 @@ void print_page_ranks(struct Node * node_array, int num_nodes);
 */
 int main(int argc, char *argv[])
 {
-  //Initialize THREAD_COUNT number of threads
+  for(thread_count = 2 ; thread_count <= 16 ; thread_count << 1)
+  //Initialize thread_count number of threads
   long pthread;
-  pthread_t thread_IDs[THREAD_COUNT];
-  //initialize a barrier to wait for THREAD_COUNT threads to be used in each loop
-  pthread_barrier_init(&loop_barrier, NULL, THREAD_COUNT);
+  pthread_t thread_IDs[thread_count];
+  //initialize a barrier to wait for thread_count threads to be used in each loop
+  pthread_barrier_init(&loop_barrier, NULL, thread_count);
   //Initialize lock to prevent error race conditions
   pthread_mutex_init(&error_lock, NULL);
 
@@ -84,7 +85,7 @@ int main(int argc, char *argv[])
   //Reasonable space to store an input file name.
   char input_file[256];
 
-  printf("executing pagerank\n");
+  printf("executing pagerank with %d threads\n", thread_count);
   //Execute PageRank over the range of given sets
   for(int set_num = 1; set_num < 6; set_num++){
     printf("starting set %d\n", set_num);
@@ -96,6 +97,7 @@ int main(int argc, char *argv[])
       //Initialize time structures and set default values
       clock_t start, end;
       double clock_count;
+      long long int edge_count = 0;
       iteration_count = 0;
 
       //Generate current file's  name
@@ -156,6 +158,7 @@ int main(int argc, char *argv[])
           adjacency_matrix[out][in] = 1;
           node_array[out].outgoing_neighbor_count += 1.0;
           node_array[in].incoming_neighbor_count += 1.0;
+          edge_count++;
         }
       }
 
@@ -168,12 +171,12 @@ int main(int argc, char *argv[])
       //Time the PageRank execution
       start = clock();
 
-      //Run the PageRank algorithm on THREAD_COUNT threads, passing thread_num as args
-      for(long thread = 0 ; thread < THREAD_COUNT ; thread++){
+      //Run the PageRank algorithm on thread_count threads, passing thread_num as args
+      for(long thread = 0 ; thread < thread_count ; thread++){
         pthread_create(&thread_IDs[thread], NULL, page_rank_execute, (void*) thread);
       }
       //Wait for all threads to finish execution and return
-      for(long thread = 0 ; thread < THREAD_COUNT ; thread++){
+      for(long thread = 0 ; thread < thread_count ; thread++){
         pthread_join(thread_IDs[thread], NULL);
       }
       //Time the PageRank execution
@@ -189,7 +192,7 @@ int main(int argc, char *argv[])
       //Print information relating to this execution
       double time = end - start;
       clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
-      printf("set: %d\tfile: %d\t%10.0lf\t%4.6lf\ti: %d\n", set_num, index, time, clock_count, iteration_count);
+      printf("set: %d\tfile: %d\tn: %5d\te: %12Ld\t%10.0lf\t%4.6lf\ti: %d\n", set_num, index, num_nodes, edge_count, time, clock_count, iteration_count);
     }
     //Time PageRank execution on this set
     set_end = clock();
@@ -214,13 +217,13 @@ void * page_rank_execute(void *args)
 
   double damping = (1.0 - PARAMETER) / num_nodes;
 
-  for (int i = (this_thread * (THREAD_COUNT+num_nodes) / THREAD_COUNT) ; i < ((1+this_thread) * (THREAD_COUNT+num_nodes) / THREAD_COUNT) && i < num_nodes ; i++){
+  for (int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
     //printf("trying to access: %ld\ton: %ld\n", i, this_thread);
     node_array[i].new_weight = damping;
   }
 
   //printf("setting new_weight on: %ld\n", this_thread);
-  for (int i = (this_thread * (THREAD_COUNT+num_nodes) / THREAD_COUNT) ; i < ((1+this_thread) * (THREAD_COUNT+num_nodes) / THREAD_COUNT) && i < num_nodes ; i++){
+  for (int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[j][i] != 0){
         node_array[i].new_weight += PARAMETER * (node_array[j].weight / node_array[j].outgoing_neighbor_count);
@@ -231,7 +234,7 @@ void * page_rank_execute(void *args)
   //wait until all of the new weights are calculated before updated old weights
   pthread_barrier_wait(&loop_barrier);
 
-  for(int i = (this_thread * (THREAD_COUNT+num_nodes) / THREAD_COUNT) ; i < ((1+this_thread) * (THREAD_COUNT+num_nodes) / THREAD_COUNT) && i < num_nodes ; i++){
+  for(int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
     local_max_error = local_max_error > fabsl(node_array[i].new_weight - node_array[i].weight) ? local_max_error : fabsl(node_array[i].new_weight - node_array[i].weight);
     node_array[i].weight = node_array[i].new_weight;
   }

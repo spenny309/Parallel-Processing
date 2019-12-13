@@ -11,7 +11,7 @@ SRCS = pagerank-parallel-rowblock.c
 CFLAGS = -I.
 LDLIBS = -L.
 
-PROG = pr-parallel
+PROG = pr-parallel-rb
 
 .PHONY: default clean
 
