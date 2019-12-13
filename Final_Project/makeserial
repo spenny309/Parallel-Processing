@@ -6,7 +6,7 @@
 ######################################################################
 
 # list your source/assembly files in SRCS
-SRCS = pagerank-serial.c
+SRCS = pagerank_serial.c
 
 CFLAGS = -I.
 LDLIBS = -L.
