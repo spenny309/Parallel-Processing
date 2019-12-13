@@ -28,8 +28,8 @@
 #endif
 */
 
-//Default error invariant for PageRank algorithm; 1 * 10^-10
-#define ERROR_INVARIANT .00000000001
+//Default error invariant for PageRank algorithm
+#define ERROR_INVARIANT .000000000001
 //Default dampening parameter for sequential browsing in PageRank algorithm: 85% seq, 15% random
 #define PARAMETER 0.85
 
@@ -65,6 +65,8 @@ int ** adjacency_matrix;
 pthread_barrier_t loop_barrier;
 //lock to prevent current error race conditions
 pthread_mutex_t error_lock;
+//lock array for updating node values in parallel
+pthread_mutex_t * node_lock_array;
 
 void * page_rank_execute(void * args);
 void print_page_ranks(struct Node * node_array, int num_nodes);
@@ -174,6 +176,18 @@ int main(int argc, char *argv[])
           exit(-1);
         }
 
+        //Malloc node lock array for num_nodes
+        node_lock_array = (pthread_mutex_t *)malloc(num_nodes * sizeof(pthread_mutex_t));
+        if (node_lock_array == NULL){
+          fprintf(stderr, "ERROR: failed to malloc node lock array!\n");
+          exit(-1);
+        }
+
+        //Initialize locks for node_lock_array
+        for(int i = 0 ; i < num_nodes ; i++){
+          pthread_mutex_init(&node_lock_array[i], NULL);
+        }
+
         //Time the PageRank execution
         start = clock();
 
@@ -194,6 +208,7 @@ int main(int argc, char *argv[])
         }
         free(adjacency_matrix);
         free(node_array);
+        free(node_lock_array);
 
         //Print information relating to this execution
         double time = end - start;
@@ -225,15 +240,15 @@ void * page_rank_execute(void *args)
   double damping = (1.0 - PARAMETER) / num_nodes;
 
   for (int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
-    //printf("trying to access: %ld\ton: %ld\n", i, this_thread);
     node_array[i].new_weight = damping;
   }
 
-  //printf("setting new_weight on: %ld\n", this_thread);
-  for (int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
-    for (int j = 0 ; j < num_nodes ; j++){
+  for (int i = 0 ; i < num_nodes ; i++){
+    for (int j = (this_thread * (thread_count+num_nodes) / thread_count) ; j < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && j < num_nodes ; j++){
       if(adjacency_matrix[j][i] != 0){
+        pthread_mutex_lock(&node_lock_array[i]);
         node_array[i].new_weight += PARAMETER * (node_array[j].weight / node_array[j].outgoing_neighbor_count);
+        pthread_mutex_unlock(&node_lock_array[i]);
       }
     }
   }

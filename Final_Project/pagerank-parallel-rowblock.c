@@ -24,8 +24,8 @@
 #endif
 */
 
-//Default error invariant for PageRank algorithm; 1 * 10^-10
-#define ERROR_INVARIANT .00000000001
+//Default error invariant for PageRank algorithm
+#define ERROR_INVARIANT .000000000001
 //Default dampening parameter for sequential browsing in PageRank algorithm: 85% seq, 15% random
 #define PARAMETER 0.85
 
