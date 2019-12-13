@@ -80,6 +80,7 @@ pthread_barrier_t loop_barrier;
 //lock to prevent current error race conditions
 pthread_mutex_t error_lock;
 
+//OPTIMIZATION: pre-calculate node range per thread
 int * thread_node_range;
 
 void * page_rank_execute(void * args);
@@ -104,7 +105,7 @@ int main(int argc, char *argv[])
     //Set error to default value
     error = 0.0;
 
-    //Allocate thread_node_range
+    //OPTIMIZATION: Allocate thread_node_range
     thread_node_range = (int *)malloc(sizeof(int) * (thread_count+1));
     if(thread_node_range == NULL){
       fprintf(stderr, "ERROR: Failed to allocated node range array!\n");
@@ -144,7 +145,7 @@ int main(int argc, char *argv[])
           exit(-1);
         }
 
-        //Set thread node ranges based on num_nodes and thread_count
+        //OPTIMIZATION: Set thread node ranges based on num_nodes and thread_count
         thread_node_range[thread_count] = num_nodes;
         for(int i = 0 ; i < thread_count ; i++){
           thread_node_range[i] = i * ((thread_count+num_nodes) / thread_count);

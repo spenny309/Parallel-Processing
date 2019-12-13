@@ -7,15 +7,12 @@
 
   This method was the fastest in initial tests, but lost out to the serial version
   as the number of threads increased, due to high overhead, and the need for a lot of
-  locking and barriers. This version implements the second major optimization to try to
-  increase the efficiency.
+  locking and barriers.
 
-  The major improvement in this version is to optimize the PageRank execute function
-  to remove locks and barriers. Instead, we execute everything we can in parallel,
-  then return to main to calculate the current error, update weight with new_weight
-  then execute the next iteration
-
-  We also include a minor optimization of pre-calculating the damping value outside of each thread
+  This version implements all three major optimizations to try to
+  increase the efficiency. the first two optimizations come from opt1, and include
+  the optimization from opt2. We also include the minor optimization from opt2 of
+  precalculating the damping value outside of each thread
 */
 
 #include <stdio.h>
@@ -56,6 +53,10 @@ struct Node
 {
   long double weight;
   long double new_weight;
+
+  //OPTIMIZATION:
+  long double contribution;
+
   double incoming_neighbor_count;
   double outgoing_neighbor_count;
 };
@@ -80,6 +81,9 @@ pthread_mutex_t error_lock;
 //OPTIMIZATION: pre-calculate dampening value outside of each thread
 double damping;
 
+//OPTIMIZATION: pre-calculate node range per thread
+int * thread_node_range;
+
 void * page_rank_execute(void * args);
 void print_page_ranks(struct Node * node_array, int num_nodes);
 
@@ -94,6 +98,13 @@ int main(int argc, char *argv[])
     //Initialize thread_count number of threads
     long pthread;
     pthread_t thread_IDs[thread_count];
+
+    //OPTIMIZATION: Allocate thread_node_range
+    thread_node_range = (int *)malloc(sizeof(int) * (thread_count+1));
+    if(thread_node_range == NULL){
+      fprintf(stderr, "ERROR: Failed to allocated node range array!\n");
+      exit(-1);
+    }
 
     //Reasonable space to store an input file name.
     char input_file[256];
@@ -127,6 +138,13 @@ int main(int argc, char *argv[])
           fprintf(stderr, "ERROR: failed to read from file!\n");
           exit(-1);
         }
+
+        //OPTIMIZATION: Set thread node ranges based on num_nodes and thread_count
+        thread_node_range[thread_count] = num_nodes;
+        for(int i = 0 ; i < thread_count ; i++){
+          thread_node_range[i] = i * ((thread_count+num_nodes) / thread_count);
+        }
+
         //Each node starts with weight: 1 / N
         long double initial_weight = 1.0 / num_nodes;
 
@@ -184,10 +202,16 @@ int main(int argc, char *argv[])
           exit(-1);
         }
 
+        //OPTIMIZATION: calculating contribution for first iteration
+        for(int i = 0 ; i < num_nodes ; i++){
+          (node_array[i]).contribution = PARAMETER * (node_array[i].weight / node_array[i].outgoing_neighbor_count);
+        }
+
         //Time the PageRank execution
         start = clock();
 
         error = 1.0;
+        //OPTIMIZATION: pre-calculate damping value
         damping = (1.0 - PARAMETER) / num_nodes;
 
         //OPTIMIZATION: Calculate iteration, error and weight <-- new_weight sequentially,
@@ -211,6 +235,9 @@ int main(int argc, char *argv[])
           for(int i = 0 ; i < num_nodes ; i++){
             error = error > fabsl(node_array[i].new_weight - node_array[i].weight) ? error : fabsl(node_array[i].new_weight - node_array[i].weight);
             node_array[i].weight = node_array[i].new_weight;
+
+            //OPTIMIZATION: calculating contribution for next iteration
+            node_array[i].contribution = PARAMETER * (node_array[i].new_weight / node_array[i].outgoing_neighbor_count);;
           }
         }
         //Time the PageRank execution
@@ -236,6 +263,7 @@ int main(int argc, char *argv[])
       double clock_count = ((double) (set_end - set_start)) / CLOCKS_PER_SEC;
       printf("TOTAL SET: %d\t%10.0lf\t%4.6lf\n", set_num, time, clock_count);
     }
+    free(thread_node_range);
   }
 }
 
@@ -246,14 +274,17 @@ void * page_rank_execute(void *args)
   //get current thread number to partition nodes
   long this_thread = (long)args;
 
-  for (int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
+  //OPTIMIZATION: use pre-calculate thread_node_range for values
+  for (int i = thread_node_range[this_thread] ; i < thread_node_range[this_thread + 1] ; i++){
     node_array[i].new_weight = damping;
   }
 
-  for (int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
+  //OPTIMIZATION: use pre-calculate thread_node_range for values
+  for (int i = thread_node_range[this_thread] ; i < thread_node_range[this_thread + 1] ; i++){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[j][i] != 0){
-        node_array[i].new_weight += PARAMETER * (node_array[j].weight / node_array[j].outgoing_neighbor_count);
+        //OPTIMIZATION: using pre-calculated contribution instead of re-calculating value
+        node_array[i].new_weight += node_array[j].contribution;
       }
     }
   }

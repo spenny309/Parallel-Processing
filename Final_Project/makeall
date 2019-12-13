@@ -8,3 +8,4 @@ make --f makecb
 make --f makeci
 make --f makeop1
 make --f makeop2
+make --f makeop3

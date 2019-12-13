@@ -8,3 +8,4 @@ make --f makecb clean
 make --f makeci clean
 make --f makeop1 clean
 make --f makeop2 clean
+make --f makeop3 clean
