@@ -16,11 +16,13 @@
 #include <pthread.h>
 
 //Allow user to specify number of THREADS, or default to 8
+/*
 #ifdef THREADS
   #define thread_count THREADS
 #else
   #define thread_count 8
 #endif
+*/
 
 //Default error invariant for PageRank algorithm; 1 * 10^-10
 #define ERROR_INVARIANT .00000000001
