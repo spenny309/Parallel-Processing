@@ -72,137 +72,138 @@ void print_page_ranks(struct Node * node_array, int num_nodes);
 */
 int main(int argc, char *argv[])
 {
-  for(thread_count = 2 ; thread_count <= 16 ; thread_count << 1)
-  //Initialize thread_count number of threads
-  long pthread;
-  pthread_t thread_IDs[thread_count];
-  //initialize a barrier to wait for thread_count threads to be used in each loop
-  pthread_barrier_init(&loop_barrier, NULL, thread_count);
-  //Initialize lock to prevent error race conditions
-  pthread_mutex_init(&error_lock, NULL);
+  for(thread_count = 2 ; thread_count <= 16 ; thread_count << 1){
+    //Initialize thread_count number of threads
+    long pthread;
+    pthread_t thread_IDs[thread_count];
+    //initialize a barrier to wait for thread_count threads to be used in each loop
+    pthread_barrier_init(&loop_barrier, NULL, thread_count);
+    //Initialize lock to prevent error race conditions
+    pthread_mutex_init(&error_lock, NULL);
 
-  //Set error to default value
-  error = 0.0;
+    //Set error to default value
+    error = 0.0;
 
-  //Reasonable space to store an input file name.
-  char input_file[256];
+    //Reasonable space to store an input file name.
+    char input_file[256];
 
-  printf("executing pagerank with %d threads\n", thread_count);
-  //Execute PageRank over the range of given sets
-  for(int set_num = 1; set_num < 6; set_num++){
-    printf("starting set %d\n", set_num);
-    //Initialize time structures and record start time for this set
-    clock_t set_start, set_end;
-    set_start = clock();
-    //Execute PgaeRank over the range of given file numbers
-    for(int index = 0 ; index < 100 ; index++){
-      //Initialize time structures and set default values
-      clock_t start, end;
-      double clock_count;
-      long long int edge_count = 0;
-      iteration_count = 0;
+    printf("executing pagerank with %d threads\n", thread_count);
+    //Execute PageRank over the range of given sets
+    for(int set_num = 1; set_num < 6; set_num++){
+      printf("starting set %d\n", set_num);
+      //Initialize time structures and record start time for this set
+      clock_t set_start, set_end;
+      set_start = clock();
+      //Execute PgaeRank over the range of given file numbers
+      for(int index = 0 ; index < 100 ; index++){
+        //Initialize time structures and set default values
+        clock_t start, end;
+        double clock_count;
+        long long int edge_count = 0;
+        iteration_count = 0;
 
-      //Generate current file's  name
-      sprintf(input_file, "%s%s%d%s%d%s", directory, subdirectory, set_num, file_name, index, ext);
-      //Open file
-      FILE * fp = fopen(input_file, "r");
-      if (fp == NULL){
-        fprintf(stderr, "ERROR: failed to open edge file!\n");
-        exit(-1);
-      }
+        //Generate current file's  name
+        sprintf(input_file, "%s%s%d%s%d%s", directory, subdirectory, set_num, file_name, index, ext);
+        //Open file
+        FILE * fp = fopen(input_file, "r");
+        if (fp == NULL){
+          fprintf(stderr, "ERROR: failed to open edge file!\n");
+          exit(-1);
+        }
 
-      //Get num_nodes from first line of file
-      fscanf(fp, "%d\n", &num_nodes);
-      //Each node starts with weight: 1 / N
-      long double initial_weight = 1.0 / num_nodes;
+        //Get num_nodes from first line of file
+        fscanf(fp, "%d\n", &num_nodes);
+        //Each node starts with weight: 1 / N
+        long double initial_weight = 1.0 / num_nodes;
 
-      //initialize node array to hold num_nodes Nodes
-      node_array = (struct Node *)malloc(sizeof(struct Node) * num_nodes);
-      if (node_array == NULL){
-        fprintf(stderr, "ERROR: failed to malloc node array!\n");
-        exit(-1);
-      }
-      //set initial weight for all nodes to be 1 / N
-      for (int i = 0 ; i < num_nodes ; i++){
-        (node_array[i]).weight = initial_weight;
-        (node_array[i]).outgoing_neighbor_count = 0.0;
-        (node_array[i]).incoming_neighbor_count = 0.0;
-      }
+        //initialize node array to hold num_nodes Nodes
+        node_array = (struct Node *)malloc(sizeof(struct Node) * num_nodes);
+        if (node_array == NULL){
+          fprintf(stderr, "ERROR: failed to malloc node array!\n");
+          exit(-1);
+        }
+        //set initial weight for all nodes to be 1 / N
+        for (int i = 0 ; i < num_nodes ; i++){
+          (node_array[i]).weight = initial_weight;
+          (node_array[i]).outgoing_neighbor_count = 0.0;
+          (node_array[i]).incoming_neighbor_count = 0.0;
+        }
 
-      //initialize adjacency matrix to hold num_nodes X num_nodes edges (ints)
-      adjacency_matrix = (int **)malloc(num_nodes * sizeof(int*));
-      if (adjacency_matrix == NULL){
-        fprintf(stderr, "ERROR: failed to malloc adjacency matrix!\n");
-        exit(-1);
-      }
-      for(int i = 0 ; i < num_nodes ; i++){
-        adjacency_matrix[i] = (int *)malloc(num_nodes * sizeof(int));
-        if (adjacency_matrix[i] == NULL){
+        //initialize adjacency matrix to hold num_nodes X num_nodes edges (ints)
+        adjacency_matrix = (int **)malloc(num_nodes * sizeof(int*));
+        if (adjacency_matrix == NULL){
           fprintf(stderr, "ERROR: failed to malloc adjacency matrix!\n");
           exit(-1);
         }
-      }
-
-      //for Nodes i, j, adjacency_matrix[i][j] is 0 if no edge, 1 if edge from i --> j
-      //Set default value to 0
-      for (int i = 0 ; i < num_nodes ; i++){
-        for (int j = 0 ; j < num_nodes ; j++){
-          adjacency_matrix[i][j] = 0;
+        for(int i = 0 ; i < num_nodes ; i++){
+          adjacency_matrix[i] = (int *)malloc(num_nodes * sizeof(int));
+          if (adjacency_matrix[i] == NULL){
+            fprintf(stderr, "ERROR: failed to malloc adjacency matrix!\n");
+            exit(-1);
+          }
         }
-      }
 
-      int out;
-      int in;
-      //Scan from fp line-by-line to read edge data; set new edges to 1 in adjacency_matrix
-      //Increment outoging and incoming neighbor counts appropriately
-      while(fscanf(fp, "%d %d\n", &out, &in) != EOF){
-        if(adjacency_matrix[out][in] == 0){
-          adjacency_matrix[out][in] = 1;
-          node_array[out].outgoing_neighbor_count += 1.0;
-          node_array[in].incoming_neighbor_count += 1.0;
-          edge_count++;
+        //for Nodes i, j, adjacency_matrix[i][j] is 0 if no edge, 1 if edge from i --> j
+        //Set default value to 0
+        for (int i = 0 ; i < num_nodes ; i++){
+          for (int j = 0 ; j < num_nodes ; j++){
+            adjacency_matrix[i][j] = 0;
+          }
         }
-      }
 
-      //Cleanup
-      if (fclose(fp) == EOF){
-        fprintf(stderr, "ERROR: failed to close edge file!\n");
-        exit(-1);
-      }
+        int out;
+        int in;
+        //Scan from fp line-by-line to read edge data; set new edges to 1 in adjacency_matrix
+        //Increment outoging and incoming neighbor counts appropriately
+        while(fscanf(fp, "%d %d\n", &out, &in) != EOF){
+          if(adjacency_matrix[out][in] == 0){
+            adjacency_matrix[out][in] = 1;
+            node_array[out].outgoing_neighbor_count += 1.0;
+            node_array[in].incoming_neighbor_count += 1.0;
+            edge_count++;
+          }
+        }
 
-      //Time the PageRank execution
-      start = clock();
+        //Cleanup
+        if (fclose(fp) == EOF){
+          fprintf(stderr, "ERROR: failed to close edge file!\n");
+          exit(-1);
+        }
 
-      //Run the PageRank algorithm on thread_count threads, passing thread_num as args
-      for(long thread = 0 ; thread < thread_count ; thread++){
-        pthread_create(&thread_IDs[thread], NULL, page_rank_execute, (void*) thread);
-      }
-      //Wait for all threads to finish execution and return
-      for(long thread = 0 ; thread < thread_count ; thread++){
-        pthread_join(thread_IDs[thread], NULL);
-      }
-      //Time the PageRank execution
-      end = clock();
+        //Time the PageRank execution
+        start = clock();
 
-      //Free data structures related to the current graph
-      for(int i = 0 ; i < num_nodes ; i++){
-        free(adjacency_matrix[i]);
-      }
-      free(adjacency_matrix);
-      free(node_array);
+        //Run the PageRank algorithm on thread_count threads, passing thread_num as args
+        for(long thread = 0 ; thread < thread_count ; thread++){
+          pthread_create(&thread_IDs[thread], NULL, page_rank_execute, (void*) thread);
+        }
+        //Wait for all threads to finish execution and return
+        for(long thread = 0 ; thread < thread_count ; thread++){
+          pthread_join(thread_IDs[thread], NULL);
+        }
+        //Time the PageRank execution
+        end = clock();
 
-      //Print information relating to this execution
-      double time = end - start;
-      clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
-      printf("set: %d\tfile: %d\tn: %5d\te: %12Ld\t%10.0lf\t%4.6lf\ti: %d\n", set_num, index, num_nodes, edge_count, time, clock_count, iteration_count);
+        //Free data structures related to the current graph
+        for(int i = 0 ; i < num_nodes ; i++){
+          free(adjacency_matrix[i]);
+        }
+        free(adjacency_matrix);
+        free(node_array);
+
+        //Print information relating to this execution
+        double time = end - start;
+        clock_count = ((double) (end - start)) / CLOCKS_PER_SEC;
+        printf("set: %d\tfile: %d\tn: %5d\te: %12Ld\t%10.0lf\t%4.6lf\ti: %d\n", set_num, index, num_nodes, edge_count, time, clock_count, iteration_count);
+      }
+      //Time PageRank execution on this set
+      set_end = clock();
+
+      //Print information relating to the execution of this set
+      double time = set_end - set_start;
+      double clock_count = ((double) (set_end - set_start)) / CLOCKS_PER_SEC;
+      printf("TOTAL SET: %d\t%10.0lf\t%4.6lf\n", set_num, time, clock_count);
     }
-    //Time PageRank execution on this set
-    set_end = clock();
-
-    //Print information relating to the execution of this set
-    double time = set_end - set_start;
-    double clock_count = ((double) (set_end - set_start)) / CLOCKS_PER_SEC;
-    printf("TOTAL SET: %d\t%10.0lf\t%4.6lf\n", set_num, time, clock_count);
   }
 }
 
