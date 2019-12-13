@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <string.h>
 
-#define ERROR_INVARIANT .00000000001
+#define ERROR_INVARIANT .000000000001
 
 const char* directory = "graphs/";
 const char* subdirectory = "set_";

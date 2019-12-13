@@ -1,9 +1,13 @@
 /*
   Parallel program to execute PageRank on many sets of input files.
-  This version of the program uses a row-block method in parallelization,
-  which leads to a receiving-node based division of labor per thread.
-  One benefit of such an organization is that we don't need to lock receiving nodes,
-  as we know each one will only be updated by one thread.
+  This version of the program uses a column-block method in parallelization,
+  which leads to a sender-node based division of labor per thread.
+  One drawback of such an organization is that we need to lock receiving nodes,
+  as we know each can be updated by several threads.
+
+  One signficant optimization we will make here is altering the locking scheme,
+  as in project 2. That is to say, we will test having individual locks, bucket locks,
+  and one big lock.
 */
 
 #include <stdio.h>
