@@ -169,13 +169,13 @@ void * page_rank_execute(void *args)
   printf("data:\tdamp: %lf\tpara: %Lf\tnumN: %d\n", damping, parameter, num_nodes);
   //printf("setting damping on: %ld\n", this_thread);
   printf("range for thread %ld:\t %5ld\t-----\t %5ld\n", this_thread, (this_thread * (THREAD_COUNT+num_nodes) / THREAD_COUNT), ((1+this_thread) * (THREAD_COUNT+num_nodes) / THREAD_COUNT));
-  for (int i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
+  for (int i = (this_thread * (THREAD_COUNT+num_nodes) / THREAD_COUNT) ; i < ((1+this_thread) * (THREAD_COUNT+num_nodes) / THREAD_COUNT) && i < num_nodes ; i++){
     //printf("trying to access: %ld\ton: %ld\n", i, this_thread);
     node_matrix[i].new_weight = damping;
   }
 
   //printf("setting new_weight on: %ld\n", this_thread);
-  for (int i = this_thread * ((1+num_nodes) / THREAD_COUNT) ; i < (this_thread+1) * ((1+num_nodes)/ THREAD_COUNT) ; i++){
+  for (int i = (this_thread * (THREAD_COUNT+num_nodes) / THREAD_COUNT) ; i < ((1+this_thread) * (THREAD_COUNT+num_nodes) / THREAD_COUNT) && i < num_nodes ; i++){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[j][i] != 0){
         node_matrix[i].new_weight += parameter * (node_matrix[j].weight / node_matrix[j].outgoing_neighbor_count);
@@ -188,7 +188,7 @@ void * page_rank_execute(void *args)
   pthread_barrier_wait(&loop_barrier);
 
   //printf("error and updated weight on: %ld\n", this_thread);
-  for(long i = this_thread * (num_nodes / THREAD_COUNT) ; i < (this_thread+1) * (num_nodes / THREAD_COUNT) ; i++){
+  for(int i = (this_thread * (THREAD_COUNT+num_nodes) / THREAD_COUNT) ; i < ((1+this_thread) * (THREAD_COUNT+num_nodes) / THREAD_COUNT) && i < num_nodes ; i++){
     local_max_error = local_max_error > fabsl(node_matrix[i].new_weight - node_matrix[i].weight) ? local_max_error : fabsl(node_matrix[i].new_weight - node_matrix[i].weight);
     node_matrix[i].weight = node_matrix[i].new_weight;
   }
