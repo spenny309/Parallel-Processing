@@ -78,7 +78,7 @@ void print_page_ranks(struct Node * node_array, int num_nodes);
 */
 int main(int argc, char *argv[])
 {
-  for(thread_count = 2 ; thread_count <= 16 ; thread_count <<= 1){
+  for(thread_count = 2 ; thread_count <= 2 ; thread_count <<= 1){
     //Initialize thread_count number of threads
     long pthread;
     pthread_t thread_IDs[thread_count];
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 
     printf("executing pagerank with %d threads\n", thread_count);
     //Execute PageRank over the range of given sets
-    for(int set_num = 1; set_num < 6; set_num++){
+    for(int set_num = 1; set_num < 2; set_num++){
       printf("starting set %d\n", set_num);
       //Initialize time structures and record start time for this set
       clock_t set_start, set_end;
