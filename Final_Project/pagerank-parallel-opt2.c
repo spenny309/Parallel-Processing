@@ -15,7 +15,7 @@
   then return to main to calculate the current error, update weight with new_weight
   then execute the next iteration
 
-  We also include a minor optimization of pre-calculating the damping value outside of each thread
+  We also include an optimization of pre-calculating the damping value outside of each thread
 */
 
 #include <stdio.h>
@@ -26,15 +26,6 @@
 #include <assert.h>
 #include <string.h>
 #include <pthread.h>
-
-//Allow user to specify number of THREADS, or default to 8
-/*
-#ifdef THREADS
-  #define thread_count THREADS
-#else
-  #define thread_count 8
-#endif
-*/
 
 //Default error invariant for PageRank algorithm
 #define ERROR_INVARIANT .000000000001
@@ -70,10 +61,9 @@ struct Node * node_array;
 //where [i][j] == 1 implies i --> j
 int ** adjacency_matrix;
 
-/* OPTIMIZATION: Locks and barriers no longer needed with this optimization
-//barrier to maintain consistency within each generation of algorithm
+/*
+OPTIMIZATION: Locks and barriers no longer needed with this optimization
 pthread_barrier_t loop_barrier;
-//lock to prevent current error race conditions
 pthread_mutex_t error_lock;
 */
 
@@ -81,7 +71,7 @@ pthread_mutex_t error_lock;
 double damping;
 
 void * page_rank_execute(void * args);
-void print_page_ranks(struct Node * node_array, int num_nodes);
+void print_page_ranks();
 
 /*
   The main program will initialize the required data structures, then execute
@@ -90,7 +80,8 @@ void print_page_ranks(struct Node * node_array, int num_nodes);
 */
 int main(int argc, char *argv[])
 {
-  for(thread_count = 2 ; thread_count <= 2 ; thread_count <<= 1){
+  //Execute PageRank with the given number of threads (2, 4, 8, and 16)
+  for(thread_count = 2 ; thread_count <= 16 ; thread_count <<= 1){
     //Initialize thread_count number of threads
     long pthread;
     pthread_t thread_IDs[thread_count];
@@ -100,7 +91,7 @@ int main(int argc, char *argv[])
 
     printf("executing pagerank with %d threads\n", thread_count);
     //Execute PageRank over the range of given sets
-    for(int set_num = 1; set_num < 2; set_num++){
+    for(int set_num = 1; set_num < 6; set_num++){
       printf("starting set %d\n", set_num);
       //Initialize time structures and record start time for this set
       clock_t set_start, set_end;
@@ -188,6 +179,7 @@ int main(int argc, char *argv[])
         start = clock();
 
         error = 1.0;
+        //OPTIMIZATION: pre-calculate damping value
         damping = (1.0 - PARAMETER) / num_nodes;
 
         //OPTIMIZATION: Calculate iteration, error and weight <-- new_weight sequentially,
@@ -246,10 +238,13 @@ void * page_rank_execute(void *args)
   //get current thread number to partition nodes
   long this_thread = (long)args;
 
+  //set new_weight to damping (random) factor before calculating neighbor contributions
   for (int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
     node_array[i].new_weight = damping;
   }
 
+  //add neighbor contributions to new_weight
+  //row-block ordering
   for (int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[j][i] != 0){
@@ -259,7 +254,11 @@ void * page_rank_execute(void *args)
   }
 }
 
-void print_page_ranks(struct Node * node_array, int num_nodes){
+/*
+  Simple function to print out current state of node_array
+  Recommended to only use on very tiny test files.
+*/
+void print_page_ranks(){
   for(int i = 0; i < num_nodes; i++){
     printf("Node: %d\t -\t Weight: %1.8Lf\n", i, node_array[i].weight);
   }

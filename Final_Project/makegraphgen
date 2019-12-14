@@ -6,19 +6,19 @@
 ######################################################################
 
 # list your source/assembly files in SRCS
-SRCS = pagerank_serial.c
+SRCS = graph-generator.c
 
 CFLAGS = -I.
 LDLIBS = -L.
 
-PROG = pr-serial
+PROG = graph-generator
 
 .PHONY: default clean
 
 default: $(PROG)
 
 $(PROG): $(SRCS)
-	gcc $(CFLAGS) $(LDLIBS) -o $@ $^  -lpthread -ljpeg -lm
+	gcc $(CFLAGS) $(LDLIBS) -o $@ $^ -lm -O3
 
 $(PROG).o:
 	gcc $(CFLAGS) -o $@ -c $^

@@ -15,15 +15,6 @@
 #include <string.h>
 #include <pthread.h>
 
-//Allow user to specify number of THREADS, or default to 8
-/*
-#ifdef THREADS
-  #define thread_count THREADS
-#else
-  #define thread_count 8
-#endif
-*/
-
 //Default error invariant for PageRank algorithm
 #define ERROR_INVARIANT .000000000001
 //Default dampening parameter for sequential browsing in PageRank algorithm: 85% seq, 15% random
@@ -63,7 +54,7 @@ pthread_barrier_t loop_barrier;
 pthread_mutex_t error_lock;
 
 void * page_rank_execute(void * args);
-void print_page_ranks(struct Node * node_array, int num_nodes);
+void print_page_ranks();
 
 /*
   The main program will initialize the required data structures, then execute
@@ -72,7 +63,8 @@ void print_page_ranks(struct Node * node_array, int num_nodes);
 */
 int main(int argc, char *argv[])
 {
-  for(thread_count = 4 ; thread_count <= 16 ; thread_count <<= 1){
+  //Execute PageRank with the given number of threads (2, 4, 8, and 16)
+  for(thread_count = 2 ; thread_count <= 16 ; thread_count <<= 1){
     //Initialize thread_count number of threads
     long pthread;
     pthread_t thread_IDs[thread_count];
@@ -89,7 +81,7 @@ int main(int argc, char *argv[])
 
     printf("executing pagerank with %d threads\n", thread_count);
     //Execute PageRank over the range of given sets
-    for(int set_num = 1; set_num < 2; set_num++){
+    for(int set_num = 1; set_num < 6; set_num++){
       printf("starting set %d\n", set_num);
       //Initialize time structures and record start time for this set
       clock_t set_start, set_end;
@@ -210,6 +202,11 @@ int main(int argc, char *argv[])
   }
 }
 
+/*
+  Function to execute PageRank in Parallel. args is a pointer the thread number
+  for the currently executing thread. PageRank runs in parallel until convergence,
+  using the ERROR_INVARIANT.
+*/
 void * page_rank_execute(void *args)
 {
   //get current thread number to partition nodes
@@ -217,18 +214,19 @@ void * page_rank_execute(void *args)
   long double local_max_error = 0.0;
   //CRITICAL: must reset error to 0.0
   pthread_barrier_wait(&loop_barrier);
-  //printf("checkpoint on: %ld\n", this_thread);
   error = 0.0;
   pthread_barrier_wait(&loop_barrier);
 
+  //calculate damping value for new_weight
   double damping = (1.0 - PARAMETER) / num_nodes;
 
+  //set new_weight to damping (random) factor before calculating neighbor contributions
   for (int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
-    //printf("trying to access: %ld\ton: %ld\n", i, this_thread);
     node_array[i].new_weight = damping;
   }
 
-  //printf("setting new_weight on: %ld\n", this_thread);
+  //add neighbor contributions to new_weight
+  //row-interleaved ordering
   for (long i = this_thread ; i < num_nodes ; i += thread_count){
     for (int j = 0 ; j < num_nodes ; j++){
       if(adjacency_matrix[j][i] != 0){
@@ -240,21 +238,25 @@ void * page_rank_execute(void *args)
   //wait until all of the new weights are calculated before updated old weights
   pthread_barrier_wait(&loop_barrier);
 
+  //find max local error, and set weight <-- new_weight
   for(int i = (this_thread * (thread_count+num_nodes) / thread_count) ; i < ((1+this_thread) * (thread_count+num_nodes) / thread_count) && i < num_nodes ; i++){
     local_max_error = local_max_error > fabsl(node_array[i].new_weight - node_array[i].weight) ? local_max_error : fabsl(node_array[i].new_weight - node_array[i].weight);
     node_array[i].weight = node_array[i].new_weight;
   }
 
+  //find max global error
   pthread_mutex_lock(&error_lock);
   if(local_max_error > error){
     error = local_max_error;
   }
   pthread_mutex_unlock(&error_lock);
 
+  //wait for global error to be set, then increment iteration count once
   if (pthread_barrier_wait(&loop_barrier) == PTHREAD_BARRIER_SERIAL_THREAD){
     iteration_count += 1;
   }
 
+  //continue to next generation unless error < ERROR_INVARIANT
   if(error > ERROR_INVARIANT) {
     page_rank_execute(args);
   } else {
@@ -262,7 +264,11 @@ void * page_rank_execute(void *args)
   }
 }
 
-void print_page_ranks(struct Node * node_array, int num_nodes){
+/*
+  Simple function to print out current state of node_array
+  Recommended to only use on very tiny test files.
+*/
+void print_page_ranks(){
   for(int i = 0; i < num_nodes; i++){
     printf("Node: %d\t -\t Weight: %1.8Lf\n", i, node_array[i].weight);
   }

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #make all executables
+make --f makegraphgen
 make --f makeserial
 make --f makerb
 make --f makeri

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #remove all executables
+make --f makegraphgen clean
 make --f makeserial clean
 make --f makerb clean
 make --f makeri clean
