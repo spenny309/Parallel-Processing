@@ -13,7 +13,7 @@
 #include <string.h>
 
 
-set 1 details:
+//set 1 details:
 #define SEED 309
 #define GRAPH_FILES 100
 #define NODE_MIN 7500
