@@ -45,7 +45,7 @@ Contents of this directory:
   * Clean all implementations – cleanall
 * Graphs:
   * Tiny sample test – sample.txt
-  * Directory of 5 large graph sets [each set contains 100 large graphs] – graphs/
+  * The set of 500 graphs form the graph generator had to be deleted, as they total over 50GB of storage. They can be recreated by running the graph generator with each of the 5 provided configurations (commented within the graph generator C file)
 * Outputs:
   * Output from all test – test_outputs/
   * Images generated from outputs – test_outputs/data_sheet_files/\*.png
